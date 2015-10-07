@@ -20,6 +20,13 @@ int get_category(int index);
 // Initializes the array of questions for the game
 void initialize_game(void)
 {
+		strcpy(questions[0].category, categories[0]);
+		strcpy(questions[0].question, "What is the color of a firetruck?");
+		strcpy(questions[0].answer, "Red");
+		questions[0].value = 100;
+		questions[0].answered = false;
+
+
 		// for(int i = 0; i < sizeof(questions); i++){
 		// 	questions[i].answered = false;
 		// }
@@ -88,14 +95,18 @@ void initialize_game(void)
 // Displays each of the remaining categories and question dollar values that have not been answered
 void display_categories(void)
 {
-    
+	for(int i = 0; i < 1; i++){
+		if(questions[i].answered == false){
+			printf("%s %d\n", questions[i].category, questions[i].value);			
+		}
+	}
     // print categories and dollar values for each unanswered question in questions array
 }
 
 // Displays the question for the category and dollar value
 void display_question(char *category, int value)
 {
-    
+	   
 }
 
 // bool already_answered(char *category, int value)

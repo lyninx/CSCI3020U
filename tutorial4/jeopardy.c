@@ -56,7 +56,10 @@ int main(int argc, char *argv[])
         // Don't need to print
         //printf("%d\n", player_exists(players, &checkName));
 
-
+        if(player_exists(players, &checkName) == 1){
+            display_categories();
+            
+        }
 
         // Display the final results and exit
     }
