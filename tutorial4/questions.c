@@ -5,17 +5,11 @@
  * All rights reserved.
  *
  */
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "questions.h"
-
-/**
-*   Determines question category based on the index of the question
-*   - Kathryn
-**/
-//int get_category(int index);
-
 
 // Initializes the array of questions for the game
 void initialize_game(void)
@@ -32,6 +26,7 @@ void initialize_game(void)
 // Displays each of the remaining categories and question dollar values that have not been answered
 void display_categories(void)
 {
+	printf("Available Categories\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\nPick One\n");
 	for(int i = 0; i < 1; i++){	//CHANGE 1 LATER AFTER TESTING
 		if(questions[i].answered == false){
 			printf("%s %d\n", questions[i].category, questions[i].value);			
@@ -137,3 +132,9 @@ bool already_answered(char *category, int value)
     
 //     //return valid_answer(
 // }
+
+/**
+*   Determines question category based on the index of the question
+*   - Kathryn
+**/
+//int get_category(int index);
