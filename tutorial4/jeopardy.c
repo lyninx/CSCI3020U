@@ -24,9 +24,10 @@ void tokenize(char *input, char **tokens);
 // Displays the game results for each player, their name and final score, ranked from first to last place
 void show_results(player *players);
 
-
 int main(int argc, char *argv[])
 {
+    char checkName[BUFFER_LEN];
+
     // An array of 4 players, may need to be a pointer if you want it set dynamically
     player players[4];
     
@@ -34,16 +35,27 @@ int main(int argc, char *argv[])
     char buffer[BUFFER_LEN] = { 0 };
 
     // Display the game introduction and prompt for players names
-    // initialize each of the players in the array
+    // initial size each of the players in the array
+    for(int i = 0; i < 4; i++){
+        printf("What is your name player %d\n", i+1);
+        scanf("%s", players[i].name);
+        players[i].score = 0;
+    }
+
+    // Call functions from the questions and players source files
+    initialize_game();
 
     // Perform an infinite loop getting command input from users until game ends
     while (fgets(buffer, BUFFER_LEN, stdin) != NULL)
     {
-        // Call functions from the questions and players source files
-        initialize_game();
-
         // Execute the game until all questions are answered
-       
+        printf("Enter a name\n");
+        scanf("%s", checkName);
+
+        // Prints 1 if the name exists
+        printf("%d\n", player_exists(players, &checkName));
+
+
         // Display the final results and exit
     }
     return EXIT_SUCCESS;
