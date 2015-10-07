@@ -13,7 +13,15 @@
 // Initializes the array of questions for the game
 void initialize_game(void)
 {
-    // initialize each question struct and assign it to the questions array
+	question* questions = malloc(num_questions * sizeof *question);
+
+	questions[0].category = categories[get_category()];
+	questions[0].question = "q1";
+	questions[0].answer = "ans1";
+	questions[0].value = "";
+	questions[0].answered = false;
+
+
 }
 
 // Displays each of the remaining categories and question dollar values that have not been answered
