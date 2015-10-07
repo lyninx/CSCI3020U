@@ -56,10 +56,7 @@ bool already_answered(char *category, int value)
     return false;
 }
 
-#define TEMP_VALUE_4_CAT_CATS
-#define TEMP_VALUE_4_CAT_QS
-
 int get_category(int index)
 {
-    return(TEMP_VALUE_4_CAT_CATS*index)/TEMP_VALUE_4_CAT_QS;
+    return(N_CATS*index)/N_QUESTIONS;
 }
