@@ -100,13 +100,13 @@ void display_question(char *category, int value)
         question* currq = &questions[i];
         
         // skip if the question has been answered
-        if(currqu->answered)
+        if(currq->answered)
         {
             continue;
         }
         
         // match dollar values
-        if(currqu->value == value)
+        if(currq->value == value)
         {
             // match category values
             if(strcmp(currq->category, category) == 0)
