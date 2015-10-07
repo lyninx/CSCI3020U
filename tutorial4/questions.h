@@ -44,6 +44,16 @@ extern void display_categories(void);
 // Displays the question for the category and dollar value
 extern void display_question(char *category, int value);
 
+// Finds an unanswered question that matches the category and money values
+// given.
+// When no question is found, the question size (12) is returned.
+extern int match_unanswered(const char* category, int value);
+
+// Displays a prompt to answer the given question.
+// If the question is answered correctly, the function returns true.
+// Something else is responsible for distributing points to the player.
+extern bool prompt_answer(question* q);
+
 // Returns true if the answer is correct for the question for that category and dollar value
 extern bool valid_answer(char *category, int value, char *answer);
 

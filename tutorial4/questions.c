@@ -16,6 +16,7 @@
 **/
 int get_category(int index);
 
+
 // Initializes the array of questions for the game
 void initialize_game(void)
 {
@@ -39,7 +40,31 @@ void display_categories(void)
 // Displays the question for the category and dollar value
 void display_question(char *category, int value)
 {
-
+    for(int i = 0; i < N_QUESTIONS; i++)
+    {
+        // get current question
+        question* currq = &questions[i];
+        
+        // skip if the question has been answered
+        if(currqu->answered)
+        {
+            continue;
+        }
+        
+        // match dollar values
+        if(currqu->value == value)
+        {
+            // match category values
+            if(strcmp(currq->category, category) == 0)
+            {
+                // display the question
+                
+                
+                // break from loop
+                break;
+            }
+        }
+    }
 }
 
 // Returns true if the answer is correct for the question for that category and dollar value
