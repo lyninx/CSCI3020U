@@ -49,11 +49,13 @@ int main(int argc, char *argv[])
     while (fgets(buffer, BUFFER_LEN, stdin) != NULL)
     {
         // Execute the game until all questions are answered
-        printf("Enter a name\n");
+        printf("Enter a name of a contestant: ");
         scanf("%s", checkName);
 
-        // Prints 1 if the name exists
-        printf("%d\n", player_exists(players, &checkName));
+        // Prints 1 if the name exists - this works
+        // Don't need to print
+        //printf("%d\n", player_exists(players, &checkName));
+
 
 
         // Display the final results and exit

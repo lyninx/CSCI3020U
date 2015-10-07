@@ -88,6 +88,7 @@ void initialize_game(void)
 // Displays each of the remaining categories and question dollar values that have not been answered
 void display_categories(void)
 {
+    
     // print categories and dollar values for each unanswered question in questions array
 }
 
@@ -96,6 +97,12 @@ void display_question(char *category, int value)
 {
     
 }
+
+// bool already_answered(char *category, int value)
+// {
+//     // lookup the question and see if it's already been marked as answered
+//     return false;
+// }
 
 question* match_unanswered(const char* category, int value)
 {
