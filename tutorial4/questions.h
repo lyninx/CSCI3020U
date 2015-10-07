@@ -44,15 +44,15 @@ extern void display_categories(void);
 // Finds an unanswered question that matches the category and money values
 // given.
 // When no question is found, a pointer initialized to NULL is returned.
-extern question* match_unanswered(const char* category, int value);
+//extern question* match_unanswered(const char* category, int value);
 
 // Displays a prompt to answer the given question.
 // If the question is answered correctly, the function returns true.
 // Something else is responsible for distributing points to the player.
-extern bool prompt_answer(question* q);
+//extern bool prompt_answer(question* q);
 
 // Returns true if the answer is correct for the question
-extern bool valid_answer(question* q, char *answer);
+extern bool valid_answer(char *category, int value, char *answer);
 
 // Returns true if the question has already been answered
 extern bool already_answered(char *category, int value);

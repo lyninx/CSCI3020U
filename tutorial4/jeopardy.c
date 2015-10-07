@@ -27,6 +27,8 @@ void show_results(player *players);
 int main(int argc, char *argv[])
 {
     char checkName[BUFFER_LEN];
+    char category[BUFFER_LEN];
+    int val;
 
     // An array of 4 players, may need to be a pointer if you want it set dynamically
     player players[4];
@@ -58,7 +60,8 @@ int main(int argc, char *argv[])
 
         if(player_exists(players, &checkName) == 1){
             display_categories();
-            
+            scanf("%s %d", category, &val);
+            display_question(category, val);
         }
 
         // Display the final results and exit
