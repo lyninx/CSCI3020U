@@ -10,6 +10,12 @@
 #include <string.h>
 #include "questions.h"
 
+/**
+*   Determines question category based on the index of the question
+*   - Kathryn
+**/
+int get_category(int index);
+
 // Initializes the array of questions for the game
 void initialize_game(void)
 {
@@ -40,4 +46,12 @@ bool already_answered(char *category, int value)
 {
     // lookup the question and see if it's already been marked as answered
     return false;
+}
+
+#define TEMP_VALUE_4_CAT_CATS
+#define TEMP_VALUE_4_CAT_QS
+
+int get_category(int index)
+{
+    return(TEMP_VALUE_4_CAT_CATS*index)/TEMP_VALUE_4_CAT_QS;
 }
