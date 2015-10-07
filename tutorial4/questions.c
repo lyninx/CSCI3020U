@@ -19,8 +19,6 @@ int get_category(int index);
 // Initializes the array of questions for the game
 void initialize_game(void)
 {
-	question* questions = malloc(N_QUESTIONS * sizeof *question);
-
 		questions[0].category = categories[get_category(0)];
 		questions[0].question = "q1";
 		questions[0].answer = "ans1";
