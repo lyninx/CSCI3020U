@@ -94,6 +94,13 @@ void display_categories(void)
 // Displays the question for the category and dollar value
 void display_question(char *category, int value)
 {
+    
+}
+
+question* match_unanswered(const char* category, int value)
+{
+    
+    // check each question
     for(int i = 0; i < N_QUESTIONS; i++)
     {
         // get current question
@@ -111,18 +118,26 @@ void display_question(char *category, int value)
             // match category values
             if(strcmp(currq->category, category) == 0)
             {
-                // display the question
-                
-                
-                // break from loop
-                break;
+                // return question pointer
+                return currq;
             }
         }
     }
+    
+    return NULL;
+}
+
+bool prompt_answer(question* q)
+{
+    // print out answer
+    
+    // take in answer
+    
+    //return valid_answer(
 }
 
 // Returns true if the answer is correct for the question for that category and dollar value
-bool valid_answer(char *category, int value, char *answer)
+bool valid_answer(question* q, char *answer)
 {
     // Look into string comparison functions
     return false;
