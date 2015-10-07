@@ -19,14 +19,31 @@ int get_category(int index);
 // Initializes the array of questions for the game
 void initialize_game(void)
 {
-	question* questions = malloc(num_questions * sizeof *question);
+	question* questions = malloc(N_QUESTIONS * sizeof *question);
 
-	questions[0].category = categories[get_category()];
-	questions[0].question = "q1";
-	questions[0].answer = "ans1";
-	questions[0].value = "";
-	questions[0].answered = false;
+		questions[0].category = categories[get_category(0)];
+		questions[0].question = "q1";
+		questions[0].answer = "ans1";
+		questions[0].value = "100";
+		questions[0].answered = false;
 
+		questions[1].category = categories[get_category(0)];
+		questions[1].question = "q2";
+		questions[1].answer = "ans2";
+		questions[1].value = "200";
+		questions[1].answered = false;
+
+		questions[2].category = categories[get_category(0)];
+		questions[2].question = "q3";
+		questions[2].answer = "ans3";
+		questions[2].value = "300";
+		questions[2].answered = false;
+
+		questions[3].category = categories[get_category(0)];
+		questions[3].question = "q4";
+		questions[3].answer = "ans4";
+		questions[3].value = "400";
+		questions[3].answered = false;
 
 }
 
