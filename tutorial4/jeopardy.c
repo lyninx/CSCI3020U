@@ -79,8 +79,6 @@ int main(int argc, char *argv[])
 
             //answerCorrect = valid_answer(category, val, &userAnswer); //returns boolean
 
-
-
             // if(answerCorrect == 1){                  //UNCOMMENT THIS ONCE THE TOKENIZATION IS DONE
             //     printf("Correct Answer!\n");
             //     update_score(players, checkName, val);
