@@ -19,18 +19,26 @@
 // Put global environment variables here
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
-void tokenize(char *input, char **tokens);
+void tokenize(char *input, char **tokens){
+
+}
 
 // Displays the game results for each player, their name and final score, ranked from first to last place
-void show_results(player *players);
+void show_results(player *players){
+    for(int i = 0; i < 4; i++){
+        printf("Name: %s, Score: %d\n", players[i].name, players[i].score);
+    }
+}
 
 int main(int argc, char *argv[])
 {
     char checkName[BUFFER_LEN];
     char category[BUFFER_LEN];
     int val;
+    bool answerCorrect = false;
+    char userAnswer[BUFFER_LEN];
 
-    // An array of 4 players, may need to be a pointer if you want it set dynamically
+    // An ar/ray of 4 players, may need to be a pointer if you want it set dynamically
     player players[4];
     
     // Input buffer and and commands
@@ -62,6 +70,30 @@ int main(int argc, char *argv[])
             display_categories();
             scanf("%s %d", category, &val);
             display_question(category, val);
+
+            //USER INPUT here (scanf maybe?)
+
+            //TOKENIZE CODE HERE (NOTE: scanf and strtok do not work together well (need to find a trick/hack))
+
+            //tokenize(userAnswer, tokens) 
+
+            //answerCorrect = valid_answer(category, val, &userAnswer); //returns boolean
+
+
+
+            // if(answerCorrect == 1){                     //uncomment when the above code works
+            //     printf("Correct Answer!\n");
+            //     update_score(players, checkName, val);
+            // } else{
+            //     printf("Incorrect Answer!\n");
+            //     printAnswer(category, val);
+            // }
+            // if(gameDone() == 1){
+            //     printf("Game is over!\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+            //     show_results(players);
+            //     break;
+            // }
+
         }
 
         // Display the final results and exit

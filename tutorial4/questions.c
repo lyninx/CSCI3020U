@@ -27,7 +27,7 @@ void initialize_game(void)
 void display_categories(void)
 {
 	printf("Available Categories\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\nPick One\n");
-	for(int i = 0; i < 1; i++){	//CHANGE 1 LATER AFTER TESTING
+	for(int i = 0; i < num_questions; i++){	//CHANGE 1 LATER AFTER TESTING
 		if(questions[i].answered == false){
 			printf("%s %d\n", questions[i].category, questions[i].value);			
 		}
@@ -41,11 +41,10 @@ void display_question(char *category, int value)
 	bool display = true;
 	display = already_answered(category, value);
 	if(display == false){
-		for(int i = 0; i < 1; i++){
+		for(int i = 0; i < num_questions; i++){
 			if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
 				questions[i].answered = true;
 				printf("%s\n", questions[i].question);
-				valid_answer(questions[i].category, questions[i].value, questions[i].answer);
 			}
 		}			
 	}
@@ -56,13 +55,13 @@ void display_question(char *category, int value)
 
 // Returns true if the answer is correct for the question for that category and dollar value
 bool valid_answer(char *category, int value, char *answer)
-{
-	char userAnswer[MAX_LEN];
-	printf("Please enter an answer: ");
-	scanf("%s", userAnswer);
+{	
+    // Look into string comparison functions
 
-    // Look into string comparison functions	//DO NOT TOKENIZE HERE
-    
+
+ 
+
+
     return false;
 }
 
@@ -70,7 +69,7 @@ bool valid_answer(char *category, int value, char *answer)
 bool already_answered(char *category, int value)
 {
     // lookup the question and see if it's already been marked as answered
-	for(int i = 0; i < 1; i++){ //CHANGE 1 LATER AFTER TESTING
+	for(int i = 0; i < num_questions; i++){ 
 		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value) && questions[i].answered == false){
 			return false;
 		}
@@ -81,60 +80,19 @@ bool already_answered(char *category, int value)
     return true;
 }
 
-// int get_category(int index)
-// {
-//     return(N_CATS*index)/N_QUESTIONS;
-// }
+void printAnswer(char *category, int value){
+	for(int i = 0; i < num_questions; i++){ 
+		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
+			printf("%s\n", questions[i].answer);
+		}
+	}
+}
 
-// bool already_answered(char *category, int value)
-// {
-//     // lookup the question and see if it's already been marked as answered
-//     return false;
-// }
-
-// question* match_unanswered(const char* category, int value)
-// {
-    
-//     // check each question
-//     for(int i = 0; i < N_QUESTIONS; i++)
-//     {
-//         // get current question
-//         question* currq = &questions[i];
-        
-//         // skip if the question has been answered
-//         if(currq->answered)
-//         {
-//             continue;
-//         }
-        
-//         // match dollar values
-//         if(currq->value == value)
-//         {
-//             // match category values
-//             if(strcmp(currq->category, category) == 0)
-//             {
-//                 // return question pointer
-//                 return currq;
-//             }
-//         }
-//     }
-    
-//     return NULL;
-// }
-
-// bool prompt_answer(question* q)
-// {
-	
-
-//     // take in answer
-
-//     // print out answer
-    
-//     //return valid_answer(
-// }
-
-/**
-*   Determines question category based on the index of the question
-*   - Kathryn
-**/
-//int get_category(int index);
+bool gameDone(){
+	for(int i = 0; i < num_questions; i++){
+		if(questions[i].answered == false){
+			return false;
+		}
+	}
+	return true;
+}

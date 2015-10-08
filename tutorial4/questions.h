@@ -5,6 +5,7 @@
  * All rights reserved.
  *
  */
+ 
 #ifndef QUESTIONS_H_
 #define QUESTIONS_H_
 
@@ -18,6 +19,8 @@
 
 // question count constant
 #define N_QUESTIONS 12
+#define num_questions 1			//DELETE THIS AND CHANGE ALL "num_questions" in questions.c to "N_QUESTIONS"
+ 								//ONCE ALL THE QUESTIONS ARE WRITTEN
 
 // List of 3 categories as array of strings
 static char categories[N_CATS][MAX_LEN] = {"programming", "algorithms", "databases"};
@@ -40,16 +43,6 @@ extern void initialize_game(void);
 
 // Displays each of the remaining categories and question dollar values that have not been answered
 extern void display_categories(void);
-
-// Finds an unanswered question that matches the category and money values
-// given.
-// When no question is found, a pointer initialized to NULL is returned.
-//extern question* match_unanswered(const char* category, int value);
-
-// Displays a prompt to answer the given question.
-// If the question is answered correctly, the function returns true.
-// Something else is responsible for distributing points to the player.
-//extern bool prompt_answer(question* q);
 
 // Returns true if the answer is correct for the question
 extern bool valid_answer(char *category, int value, char *answer);
