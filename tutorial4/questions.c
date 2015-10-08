@@ -61,7 +61,7 @@ bool valid_answer(char *category, int value, char *answer)
 	printf("Please enter an answer: ");
 	scanf("%s", userAnswer);
 
-    // Look into string comparison functions	//TOKENIZATION TIME
+    // Look into string comparison functions	//DO NOT TOKENIZE HERE
     
     return false;
 }
