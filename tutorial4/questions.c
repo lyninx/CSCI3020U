@@ -11,13 +11,14 @@
 #include <string.h>
 #include "questions.h"
 
-// reference for point tiers
-const int point_tiers[N_QUESTIONS/N_CATS] = {100, 200, 300, 500};
 
 
-// Functions that bother no one
+
+// Initialization Functions
 int get_category_index(int questionindex);
 int get_question_value(int questionindex);
+
+
 
 // Initializes the array of questions for the game
 void initialize_game(void)
@@ -25,22 +26,12 @@ void initialize_game(void)
         // initialize questions
         for(int i = 0; i < N_QUESTIONS; ++i)
         {
-            strcpy(questions[i].category, categories[get_category(i)]);
+			strcpy(questions[i].question, question_questions[i]);
+			strcpy(questions[i].answer, question_answers[i]);
+            strcpy(questions[i].category, categories[get_category_index(i)]);
             questions[i].value = get_question_value(i);
             questions[i].answered = false;
         }
-        
-        //INSERT 11 MORE QUESTIONS, 4 OF EACH CATEGORY
-        
-        // Programming Questions
-		strcpy(questions[0].question, "What the symbol for a pointer?");
-		strcpy(questions[0].answer, "*");
-
-        // Algorithms Questions
-        
-        // Database Questions
-        
-		
 }
 
 // Displays each of the remaining categories and question dollar values that have not been answered

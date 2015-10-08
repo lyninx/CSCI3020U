@@ -1,7 +1,7 @@
 /*
  * Tutorial 4 Jeopardy Project for SOFE 3950U / CSCI 3020U: Operating Systems
  *
- * Copyright (C) 2015, <GROUP MEMBERS>
+ * Copyright (C) 2015, Akira Aida(ID:100526064), Kathryn McKay(ID:100524201), Dennis Pacewicz (ID:), Truyen Truong(ID:)
  * All rights reserved.
  *
  */
@@ -20,7 +20,7 @@
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens){
-
+	
 }
 
 // Displays the game results for each player, their name and final score, ranked from first to last place
@@ -32,31 +32,40 @@ void show_results(player *players){
 
 int main(int argc, char *argv[])
 {
+	// Name buffer
     char checkName[BUFFER_LEN];
+
+	// Category buffer
     char category[BUFFER_LEN];
+
+	// Question's money value
     int val;
+
+	// Correct answer buffer
     bool answerCorrect = false;
+
+	// user's answer buffer
     char userAnswer[BUFFER_LEN];
 
-    // An array of 4 players, may need to be a pointer if you want it set dynamically
+    // An array of 4 players
     player players[4];
     
     // Input buffer and and commands
     char buffer[BUFFER_LEN] = { 0 };
 
     // Display the game introduction and prompt for players names
-    // initial size each of the players in the array
+    // initialize each of the players in the array
     for(int i = 0; i < 4; i++){
         printf("What is your name player %d\n", i+1);
         scanf("%s", players[i].name);
         players[i].score = 0;
     }
 
-    // Call functions from the questions and players source files
+    // Generate the game's data
     initialize_game();
 
-    // Perform an infinite loop getting command input from users until game ends
-    while (fgets(buffer, BUFFER_LEN, stdin) != NULL)
+    // Game loop; continues to prompt until all questions have answers
+    while (!gameDone())
     {
         // Execute the game until all questions are answered
         printf("Enter a name of a contestant: ");
@@ -66,12 +75,18 @@ int main(int argc, char *argv[])
         // Don't need to print
         //printf("%d\n", player_exists(players, &checkName));
 
+		// Quiz the player
         if(player_exists(players, checkName) == 1){
-            display_categories();
-            scanf("%s %d", category, &val);
-            display_question(category, val);
 
-            //USER INPUT here (scanf maybe?)
+			// display choices
+            display_categories();
+
+			// get choice from player
+			printf("Select a category & value: ");
+            scanf("%s %d", category, &val);
+
+			// quiz player
+            display_question(category, val);
 
             //TOKENIZE CODE HERE (NOTE: scanf and strtok do not work together well (need to find a trick/hack))
 

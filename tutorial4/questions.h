@@ -23,6 +23,89 @@
 // List of 3 categories as array of strings
 static char categories[N_CATS][MAX_LEN] = {"programming", "algorithms", "databases"};
 
+// reference for point tiers
+static const int point_tiers[N_QUESTIONS / N_CATS] = { 100, 200, 300, 500 };
+
+// Content - Quiz questions
+static const char question_questions[N_QUESTIONS][MAX_LEN] =
+{
+	// Programming 100 question
+	"What is the symbol for a pointer?",
+
+	// Programming 200 question
+	"",
+
+	// Programming 300 question
+	"",
+
+	// Programming 500 question
+	"",
+
+	// Algorithms 100 question
+	"",
+
+	// Algorithm 200 question
+	"",
+
+	// Algorithm 300 question
+	"",
+
+	// Algorithm 500 question
+	"",
+
+	// Databases 100 question
+	"",
+
+	// Databases 200 question
+	"",
+
+	// Databases 300 question
+	"",
+
+	// Databases 500 question
+	""
+};
+
+// Content - Quiz answers
+static const char question_answers[N_QUESTIONS][MAX_LEN] =
+{
+	// Programming 100 answer
+	"*",
+
+	// Programming 200 answer
+	"",
+
+	// Programming 300 answer
+	"",
+
+	// Programming 500 answer
+	"",
+
+	// Algorithms 100 answer
+	"",
+
+	// Algorithm 200 answer
+	"",
+
+	// Algorithm 300 answer
+	"",
+
+	// Algorithm 500 answer
+	"",
+
+	// Databases 100 answer
+	"",
+
+	// Databases 200 answer
+	"",
+
+	// Databases 300 answer
+	"",
+
+	// Databases 500 answer
+	""
+};
+
 // Questions struct for each question
 typedef struct {
     char category[MAX_LEN];
