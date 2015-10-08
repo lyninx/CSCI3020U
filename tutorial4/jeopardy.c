@@ -15,40 +15,44 @@
 
 // Put macros or constants here using #define
 #define BUFFER_LEN 256
-#define TOKENS_COUNT 8
+#define TOKENS_COUNT 3
 
 // Put global environment variables here
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens){
-	// get first token
-	scanf("%s", input);
-	strcpy(input, tokens);
-	gets(input);
 
-	// get remaining tokens
-	//gets(input) <--- should get remaining tokens until newline
-	char token[MAX_LEN] = { 0 };
-	while (sscanf(token, "%s", input) )
-	{
-		// nab token
+	for(int i = 0; i < TOKENS_COUNT; i++){	//prints the tokens
+		printf("%s\n", tokens[i]);
+	}
+	// // get first token
+	// scanf("%s", input);
+	// strcpy(input, tokens);
+	// gets(input);
+
+	// // get remaining tokens
+	// //gets(input) <--- should get remaining tokens until newline
+	// char token[MAX_LEN] = { 0 };
+	// while (sscanf(token, "%s", input) )
+	// {
+	// 	// nab token
 		
 
-		// truncate input string
-		char* next = strchr(input, ' ');
-		if (next == NULL || strlen)
-		{
-			break;
-		}
-		else {
-			input = next;
-		}
+	// 	// truncate input string
+	// 	char* next = strchr(input, ' ');
+	// 	if (next == NULL || strlen)
+	// 	{
+	// 		break;
+	// 	}
+	// 	else {
+	// 		input = next;
+	// 	}
 
-		printf("'%s'\n", token);
+	// 	printf("'%s'\n", token);
 
-		// increment tokens
-		tokens += MAX_LEN / 4;
-	}
+	// 	// increment tokens
+	// 	tokens += MAX_LEN / 4;
+	// }
 
 }
 
@@ -74,7 +78,11 @@ int main(int argc, char *argv[])
 	bool answerCorrect = false;
 
 	// user's answer buffer
-	char userAnswer[BUFFER_LEN] = { 0 };
+	char userAnswer[BUFFER_LEN] = "What is *";	//TEST CASE - CHANGE TO INPUT FROM USER
+	const char delimiter[2] = " ";					//strtok looks for a space
+	char *token;									//the individual token(string)
+	char *tokens[BUFFER_LEN];						//array of tokens
+	int k = 0;										//KEEPS TRACK OF TOKENS ARRAY
 
 	// An array of 4 players
 	player players[4];
@@ -82,13 +90,14 @@ int main(int argc, char *argv[])
 	// Input buffer and and commands
 	char buffer[BUFFER_LEN] = { 0 };
 
+
 	// token buffer
-	char tokens[TOKENS_COUNT][MAX_LEN] = {"one", "two", "three", "four", "five", "six", "seven", "eight"};//{ 0 };// = { "", "", "", "", "", "", "", "" };
-	char** tokens_test = tokens;
-	for (int i = 0; i < 5; i++)
-	{
-		printf("'%s'", tokens_test + i*(MAX_LEN/4));
-	}
+	// char tokens[TOKENS_COUNT][MAX_LEN] = {"one", "two", "three", "four", "five", "six", "seven", "eight"};//{ 0 };// = { "", "", "", "", "", "", "", "" };
+	// char** tokens_test = tokens;
+	// for (int i = 0; i < 5; i++)
+	// {
+	// 	printf("'%s'", tokens_test + i*(MAX_LEN/4));
+	// }
 
     // Display the game introduction and prompt for players names
     // initialize each of the players in the array
@@ -102,7 +111,7 @@ int main(int argc, char *argv[])
     initialize_game();
 
     // Game loop; continues to prompt until all questions have answers
-    while (!gameDone())
+    while(fgets(buffer, BUFFER_LEN, stdin) != NULL)
     {
         // Execute the game until all questions are answered
         printf("Enter a name of a contestant: ");
@@ -123,9 +132,21 @@ int main(int argc, char *argv[])
             scanf("%s %d", category, &val);
 
 			// quiz player
+
+
             display_question(category, val);
 
             //TOKENIZE CODE HERE (NOTE: scanf and strtok do not work together well (need to find a trick/hack))
+
+            token = strtok(userAnswer, delimiter);
+
+            while( token != NULL ) 
+		    {
+		    	tokens[k] = token;
+		        k++;
+		    
+		    	token = strtok(NULL, delimiter);
+		   	}
             tokenize(userAnswer, tokens);
 
             //answerCorrect = valid_answer(category, val, &userAnswer); //returns boolean
