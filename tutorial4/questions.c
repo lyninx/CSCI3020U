@@ -18,8 +18,6 @@
 int get_category_index(int questionindex);
 int get_question_value(int questionindex);
 
-
-
 // Initializes the array of questions for the game
 void initialize_game(void)
 {

@@ -33,7 +33,7 @@ static const char question_questions[N_QUESTIONS][MAX_LEN] =
 	"What is the symbol for a pointer?",
 
 	// Programming 200 question
-	"",
+	"What does RAII stand for?",
 
 	// Programming 300 question
 	"",
@@ -48,7 +48,7 @@ static const char question_questions[N_QUESTIONS][MAX_LEN] =
 	"",
 
 	// Algorithm 300 question
-	"",
+	"What is the worst case big-O efficency of a binary search?",
 
 	// Algorithm 500 question
 	"",
@@ -73,7 +73,7 @@ static const char question_answers[N_QUESTIONS][MAX_LEN] =
 	"*",
 
 	// Programming 200 answer
-	"",
+	"Resource Acquisition Is Initialization",
 
 	// Programming 300 answer
 	"",
@@ -88,7 +88,7 @@ static const char question_answers[N_QUESTIONS][MAX_LEN] =
 	"",
 
 	// Algorithm 300 answer
-	"",
+	"n",
 
 	// Algorithm 500 answer
 	"",
