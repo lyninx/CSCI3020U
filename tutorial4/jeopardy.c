@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     bool answerCorrect = false;
     char userAnswer[BUFFER_LEN];
 
-    // An ar/ray of 4 players, may need to be a pointer if you want it set dynamically
+    // An array of 4 players, may need to be a pointer if you want it set dynamically
     player players[4];
     
     // Input buffer and and commands
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         // Don't need to print
         //printf("%d\n", player_exists(players, &checkName));
 
-        if(player_exists(players, &checkName) == 1){
+        if(player_exists(players, checkName) == 1){
             display_categories();
             scanf("%s %d", category, &val);
             display_question(category, val);
@@ -75,13 +75,13 @@ int main(int argc, char *argv[])
 
             //TOKENIZE CODE HERE (NOTE: scanf and strtok do not work together well (need to find a trick/hack))
 
-            //tokenize(userAnswer, tokens) 
+            //tokenize(userAnswer, tokens); 
 
             //answerCorrect = valid_answer(category, val, &userAnswer); //returns boolean
 
 
 
-            // if(answerCorrect == 1){                     //uncomment when the above code works
+            // if(answerCorrect == 1){                  //UNCOMMENT THIS ONCE THE TOKENIZATION IS DONE
             //     printf("Correct Answer!\n");
             //     update_score(players, checkName, val);
             // } else{

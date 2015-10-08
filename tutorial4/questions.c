@@ -27,7 +27,7 @@ void initialize_game(void)
 void display_categories(void)
 {
 	printf("Available Categories\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\nPick One\n");
-	for(int i = 0; i < num_questions; i++){	//CHANGE 1 LATER AFTER TESTING
+	for(int i = 0; i < N_QUESTIONS; i++){	//CHANGE 1 LATER AFTER TESTING
 		if(questions[i].answered == false){
 			printf("%s %d\n", questions[i].category, questions[i].value);			
 		}
@@ -41,7 +41,7 @@ void display_question(char *category, int value)
 	bool display = true;
 	display = already_answered(category, value);
 	if(display == false){
-		for(int i = 0; i < num_questions; i++){
+		for(int i = 0; i < N_QUESTIONS; i++){
 			if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
 				questions[i].answered = true;
 				printf("%s\n", questions[i].question);
@@ -69,7 +69,7 @@ bool valid_answer(char *category, int value, char *answer)
 bool already_answered(char *category, int value)
 {
     // lookup the question and see if it's already been marked as answered
-	for(int i = 0; i < num_questions; i++){ 
+	for(int i = 0; i < N_QUESTIONS; i++){ 
 		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value) && questions[i].answered == false){
 			return false;
 		}
@@ -81,7 +81,7 @@ bool already_answered(char *category, int value)
 }
 
 void printAnswer(char *category, int value){
-	for(int i = 0; i < num_questions; i++){ 
+	for(int i = 0; i < N_QUESTIONS; i++){ 
 		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
 			printf("%s\n", questions[i].answer);
 		}
@@ -89,7 +89,7 @@ void printAnswer(char *category, int value){
 }
 
 bool gameDone(){
-	for(int i = 0; i < num_questions; i++){
+	for(int i = 0; i < N_QUESTIONS; i++){
 		if(questions[i].answered == false){
 			return false;
 		}

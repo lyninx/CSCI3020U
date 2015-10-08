@@ -18,9 +18,7 @@
 #define N_CATS 3
 
 // question count constant
-#define N_QUESTIONS 12
-#define num_questions 1			//DELETE THIS AND CHANGE ALL "num_questions" in questions.c to "N_QUESTIONS"
- 								//ONCE ALL THE QUESTIONS ARE WRITTEN
+#define N_QUESTIONS 1 //CHANGE TO 12 AFTER THE QUESTIONS HAVE BEEN ADDED
 
 // List of 3 categories as array of strings
 static char categories[N_CATS][MAX_LEN] = {"programming", "algorithms", "databases"};
@@ -44,10 +42,16 @@ extern void initialize_game(void);
 // Displays each of the remaining categories and question dollar values that have not been answered
 extern void display_categories(void);
 
+extern void display_question(char *category, int value);
+
 // Returns true if the answer is correct for the question
 extern bool valid_answer(char *category, int value, char *answer);
 
 // Returns true if the question has already been answered
 extern bool already_answered(char *category, int value);
+
+extern void printAnswer(char *category, int value);
+
+extern bool gameDone();
 
 #endif /* QUESTIONS_H_ */
