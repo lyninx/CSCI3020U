@@ -1,7 +1,7 @@
 /*
  * Tutorial 4 Jeopardy Project for SOFE 3950U / CSCI 3020U: Operating Systems
  *
- * Copyright (C) 2015, <GROUP MEMBERS>
+ * Copyright (C) 2015, Akira Aida(ID:100526064), Kathryn McKay(ID:100524201), Dennis Pacewicz (ID:), Truyen Truong(ID:)
  * All rights reserved.
  *
  */
@@ -15,11 +15,40 @@
 
 // Put macros or constants here using #define
 #define BUFFER_LEN 256
+#define TOKENS_COUNT 8
 
 // Put global environment variables here
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens){
+	// get first token
+	scanf("%s", input);
+	strcpy(input, tokens);
+	gets(input);
+
+	// get remaining tokens
+	//gets(input) <--- should get remaining tokens until newline
+	char token[MAX_LEN] = { 0 };
+	while (sscanf(token, "%s", input) )
+	{
+		// nab token
+		
+
+		// truncate input string
+		char* next = strchr(input, ' ');
+		if (next == NULL || strlen)
+		{
+			break;
+		}
+		else {
+			input = next;
+		}
+
+		printf("'%s'\n", token);
+
+		// increment tokens
+		tokens += MAX_LEN / 4;
+	}
 
 }
 
@@ -32,31 +61,48 @@ void show_results(player *players){
 
 int main(int argc, char *argv[])
 {
-    char checkName[BUFFER_LEN];
-    char category[BUFFER_LEN];
-    int val;
-    bool answerCorrect = false;
-    char userAnswer[BUFFER_LEN];
+	// Name buffer
+	char checkName[BUFFER_LEN];
 
-    // An array of 4 players, may need to be a pointer if you want it set dynamically
-    player players[4];
-    
-    // Input buffer and and commands
-    char buffer[BUFFER_LEN] = { 0 };
+	// Category buffer
+	char category[BUFFER_LEN];
+
+	// Question's money value
+	int val;
+
+	// Correct answer buffer
+	bool answerCorrect = false;
+
+	// user's answer buffer
+	char userAnswer[BUFFER_LEN] = { 0 };
+
+	// An array of 4 players
+	player players[4];
+
+	// Input buffer and and commands
+	char buffer[BUFFER_LEN] = { 0 };
+
+	// token buffer
+	char tokens[TOKENS_COUNT][MAX_LEN] = {"one", "two", "three", "four", "five", "six", "seven", "eight"};//{ 0 };// = { "", "", "", "", "", "", "", "" };
+	char** tokens_test = tokens;
+	for (int i = 0; i < 5; i++)
+	{
+		printf("'%s'", tokens_test + i*(MAX_LEN/4));
+	}
 
     // Display the game introduction and prompt for players names
-    // initial size each of the players in the array
+    // initialize each of the players in the array
     for(int i = 0; i < 4; i++){
         printf("What is your name player %d\n", i+1);
         scanf("%s", players[i].name);
         players[i].score = 0;
     }
 
-    // Call functions from the questions and players source files
+    // Generate the game's data
     initialize_game();
 
-    // Perform an infinite loop getting command input from users until game ends
-    while (fgets(buffer, BUFFER_LEN, stdin) != NULL)
+    // Game loop; continues to prompt until all questions have answers
+    while (!gameDone())
     {
         // Execute the game until all questions are answered
         printf("Enter a name of a contestant: ");
@@ -66,16 +112,21 @@ int main(int argc, char *argv[])
         // Don't need to print
         //printf("%d\n", player_exists(players, &checkName));
 
+		// Quiz the player
         if(player_exists(players, checkName) == 1){
+
+			// display choices
             display_categories();
+
+			// get choice from player
+			printf("Select a category & value: ");
             scanf("%s %d", category, &val);
+
+			// quiz player
             display_question(category, val);
 
-            //USER INPUT here (scanf maybe?)
-
             //TOKENIZE CODE HERE (NOTE: scanf and strtok do not work together well (need to find a trick/hack))
-
-            //tokenize(userAnswer, tokens); 
+            tokenize(userAnswer, tokens);
 
             //answerCorrect = valid_answer(category, val, &userAnswer); //returns boolean
 
@@ -93,6 +144,13 @@ int main(int argc, char *argv[])
             // }
 
         }
+
+		// I'm saving this condition
+		/*while (fgets(buffer, BUFFER_LEN, stdin) != NULL)
+		{
+
+		}*/
+
 
         // Display the final results and exit
     }
