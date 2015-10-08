@@ -18,7 +18,7 @@
 #define N_CATS 3
 
 // question count constant
-#define N_QUESTIONS 1 //CHANGE TO 12 AFTER THE QUESTIONS HAVE BEEN ADDED
+#define N_QUESTIONS 12 //CHANGE TO 12 AFTER THE QUESTIONS HAVE BEEN ADDED
 
 // List of 3 categories as array of strings
 static char categories[N_CATS][MAX_LEN] = {"programming", "algorithms", "databases"};
