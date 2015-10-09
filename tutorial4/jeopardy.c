@@ -22,38 +22,18 @@
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens){
 
-	for(int i = 0; i < TOKENS_COUNT; i++){	//prints the tokens
-		printf("%s\n", tokens[i]);
+	int k = 0;	
+	char *token;									//the individual token(string)
+	const char delimiter[2] = " ";					//strtok looks for a space
+
+    token = strtok(input, delimiter);
+
+    while( token != NULL ){
+	  	tokens[k] = token;
+	    k++;
+	   
+	   	token = strtok(NULL, delimiter);
 	}
-	// // get first token
-	// scanf("%s", input);
-	// strcpy(input, tokens);
-	// gets(input);
-
-	// // get remaining tokens
-	// //gets(input) <--- should get remaining tokens until newline
-	// char token[MAX_LEN] = { 0 };
-	// while (sscanf(token, "%s", input) )
-	// {
-	// 	// nab token
-		
-
-	// 	// truncate input string
-	// 	char* next = strchr(input, ' ');
-	// 	if (next == NULL || strlen)
-	// 	{
-	// 		break;
-	// 	}
-	// 	else {
-	// 		input = next;
-	// 	}
-
-	// 	printf("'%s'\n", token);
-
-	// 	// increment tokens
-	// 	tokens += MAX_LEN / 4;
-	// }
-
 }
 
 // Displays the game results for each player, their name and final score, ranked from first to last place
@@ -65,7 +45,7 @@ void show_results(player *players){
 
 int main(int argc, char *argv[])
 {
-	// Name buffer
+    // Name buffer
 	char checkName[BUFFER_LEN];
 
 	// Category buffer
@@ -78,26 +58,17 @@ int main(int argc, char *argv[])
 	bool answerCorrect = false;
 
 	// user's answer buffer
-	char userAnswer[BUFFER_LEN] = "What is *";	//TEST CASE - CHANGE TO INPUT FROM USER
-	const char delimiter[2] = " ";					//strtok looks for a space
-	char *token;									//the individual token(string)
+	char userAnswer[BUFFER_LEN] = "what are *";	//TEST CASE - CHANGE TO INPUT FROM USER
 	char *tokens[BUFFER_LEN];						//array of tokens
-	int k = 0;										//KEEPS TRACK OF TOKENS ARRAY
+													//KEEPS TRACK OF TOKENS ARRAY
+	int ans1;
+	int ans2;
 
 	// An array of 4 players
 	player players[4];
 
 	// Input buffer and and commands
 	char buffer[BUFFER_LEN] = { 0 };
-
-
-	// token buffer
-	// char tokens[TOKENS_COUNT][MAX_LEN] = {"one", "two", "three", "four", "five", "six", "seven", "eight"};//{ 0 };// = { "", "", "", "", "", "", "", "" };
-	// char** tokens_test = tokens;
-	// for (int i = 0; i < 5; i++)
-	// {
-	// 	printf("'%s'", tokens_test + i*(MAX_LEN/4));
-	// }
 
     // Display the game introduction and prompt for players names
     // initialize each of the players in the array
@@ -116,10 +87,7 @@ int main(int argc, char *argv[])
         // Execute the game until all questions are answered
         printf("Enter a name of a contestant: ");
         scanf("%s", checkName);
-
-        // Prints 1 if the name exists - this works
-        // Don't need to print
-        //printf("%d\n", player_exists(players, &checkName));
+        answerCorrect = false;
 
 		// Quiz the player
         if(player_exists(players, checkName) == 1){
@@ -132,48 +100,41 @@ int main(int argc, char *argv[])
             scanf("%s %d", category, &val);
 
 			// quiz player
-
-
             display_question(category, val);
 
             //TOKENIZE CODE HERE (NOTE: scanf and strtok do not work together well (need to find a trick/hack))
-
-            token = strtok(userAnswer, delimiter);
-
-            while( token != NULL ) 
-		    {
-		    	tokens[k] = token;
-		        k++;
-		    
-		    	token = strtok(NULL, delimiter);
-		   	}
             tokenize(userAnswer, tokens);
 
-            //answerCorrect = valid_answer(category, val, &userAnswer); //returns boolean
+            //THIS BREAKS IF 3 INPUTS ARE NOT ENTERED - NO ERROR CHECKING
+            //checks if "what is <answer>" or "who is <answer>" is valid
+            ans1 = strcmp(tokens[0], "what");
 
-            // if(answerCorrect == 1){                  //UNCOMMENT THIS ONCE THE TOKENIZATION IS DONE
-            //     printf("Correct Answer!\n");
-            //     update_score(players, checkName, val);
-            // } else{
-            //     printf("Incorrect Answer!\n");
-            //     printAnswer(category, val);
-            // }
-            // if(gameDone() == 1){
-            //     printf("Game is over!\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
-            //     show_results(players);
-            //     break;
-            // }
+            if(ans1 != 0){
+            	ans1 = strcmp(tokens[0], "who");
+            }
+            if(ans1 == 0){
+                ans2 = strcmp(tokens[1], "is");
+            
+                if((ans1 == 0) && (ans2 == 0)){
+            	   answerCorrect = valid_answer(category, val, tokens[2]); //returns boolean
+            	} else{
+            	   printf("You forgot to use \"What is/Who is\"!\n");
+               }
+            }
 
+            if(answerCorrect == 1){                  //UNCOMMENT THIS ONCE THE TOKENIZATION IS DONE
+                printf("Correct Answer!\n");
+                update_score(players, checkName, val);
+            } else if(answerCorrect != 1){
+                printf("Incorrect Answer! The correct answer was: ");
+                printAnswer(category, val);
+            }
+            if(gameDone() == 1){
+                printf("Game is over!\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+                show_results(players);
+                break;
+            }
         }
-
-		// I'm saving this condition
-		/*while (fgets(buffer, BUFFER_LEN, stdin) != NULL)
-		{
-
-		}*/
-
-
-        // Display the final results and exit
     }
     return EXIT_SUCCESS;
 }

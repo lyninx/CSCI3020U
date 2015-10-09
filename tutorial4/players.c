@@ -31,6 +31,7 @@ void update_score(player *players, char *name, int score)
 	for(int i = 0; i < 4; i++){
 		if(strcmp(players[i].name, name) == 0){
 			players[i].score = players[i].score + score;
+			printf("Name: %s, Score: %d\n", players[i].name, players[i].score);
 		}
 	}
 }

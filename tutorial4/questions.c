@@ -11,9 +11,6 @@
 #include <string.h>
 #include "questions.h"
 
-
-
-
 // Initialization Functions
 int get_category_index(int questionindex);
 int get_question_value(int questionindex);
@@ -66,11 +63,13 @@ void display_question(char *category, int value)
 bool valid_answer(char *category, int value, char *answer)
 {	
     // Look into string comparison functions
-
-
- 
-
-
+	for(int i = 0; i < N_QUESTIONS; i++){
+		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
+			if(strcmp(answer, questions[i].answer) == 0){
+				return true;
+			}
+		}
+	}
     return false;
 }
 
