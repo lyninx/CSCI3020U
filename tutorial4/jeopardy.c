@@ -25,18 +25,14 @@ void prompt_player_names(player* players, int count);
 void prompt_line(char* dest, FILE* file);
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
-void tokenize(const char *input, char **tokens){
-	// initialize values
+void tokenize(char *input, char **tokens){
+
 	int k = 0;	
-	char inputcpy[MAX_LEN] = { 0 }; // input copy
 	char *token;									//the individual token(string)
 	const char delimiter[2] = " ";					//strtok looks for a space
 
-	// perform copy
-	strcpy(inputcpy, input);
+    token = strtok(input, delimiter);
 
-	// tokenize input
-    token = strtok(inputcpy, delimiter);
     while( token != NULL ){
 	  	tokens[k] = token;
 	    k++;
@@ -58,11 +54,11 @@ void show_results(player *players){
 *		- So whether or not we accept that there are 25 questions now...
 *			- currently a bug where the 2 new 2 word name categories cannot be
 *				selected
+*			- bug where questions cannot be answered with form 'who is'/'what is'.
 *			- bug where answer input chokes if only content is 'who' or 'what'
 *		- Use of the function 'prompt_line' has a strange effect when paired
 *			with the fgets condition set in the main loop; it makes it so that
 *			each iteration of the loop asks for input.
-*		- player's name prompts does not check for duplicate names
 *
 *
 **/
@@ -95,46 +91,43 @@ int main(int argc, char *argv[])
 		// Quiz the player
         if(player_exists(players, checkName) == true){
 
+
 			// display choices
 			display_categories();
-
+			// get choice from player;
+			printf("Select a category & value: ");
+			scanf("%s %d", category, &val);
 			// select a question
-			while (already_answered(category, val))
+			while (!already_answered(category, val))
 			{
-				// get choice from player
-				printf("Select a category & value: ");
-				scanf("%s %d", category, &val);
-
 				// display question OR status
 				display_question(category, val);
-			}
 
-			// get answer
-			prompt_line(userAnswer, stdin);
-			printf("'%s'\n", userAnswer);
+				// get answer
+				prompt_line(userAnswer, stdin);
+				printf("You inputted: '%s'.\n", userAnswer);
 
-			// validate answer
-            tokenize(userAnswer, tokens);
-			if (!is_valid_answer(tokens))
-			{
-				printf("You forgot to use \"What is/Who is\"!\n");
-			}
-			else {
-				answerCorrect = valid_answer(category, val, userAnswer); //returns boolean
-			}
-
-			// return result
-			if (answerCorrect == 1){
-				printf("Correct Answer!\n");
-				update_score(players, checkName, val);
-			}
-			else if (answerCorrect != 1){
-				printf("Incorrect Answer! The correct answer was: ");
-				print_answer(category, val);
-			}
-
-
-			
+				// validate answer
+	            tokenize(userAnswer, tokens);
+				if (!is_valid_answer(tokens))
+				{
+					printf("You forgot to use \"What is/Who is\"!\n");
+					valid_answer(category, val, "wrong");	//puts the questions's answered as true so it isn't displayed twice
+					break;
+				}
+				else {
+					answerCorrect = valid_answer(category, val, tokens[2]); //returns boolean
+					// return result
+					if (answerCorrect == 1){
+						printf("Correct Answer!\n");
+						update_score(players, checkName, val);
+					}
+					else if (answerCorrect != 1){
+						printf("Incorrect Answer! The correct answer was: ");
+						print_answer(category, val);
+					}
+				}
+			}			
 		}
 			
     }

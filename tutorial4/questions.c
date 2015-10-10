@@ -25,21 +25,11 @@ void initialize_game(void)
         // initialize questions
         for(int i = 0; i < N_QUESTIONS; ++i)
         {
-			// Initialize values
 			strcpy(questions[i].question, question_questions[i]);
 			strcpy(questions[i].answer, question_answers[i]);
             strcpy(questions[i].category, categories[get_category_index(i)]);
             questions[i].value = get_question_value(i);
             questions[i].answered = false;
-
-			// Append 'what is' to answer
-			if (INIT_APPEND_WHAT_IS)
-			{
-				char whatis[MAX_LEN] = "what is ";
-				strcat(whatis, questions[i].answer);
-				strcpy(questions[i].answer, whatis);
-			}
-
         }
 }
 
@@ -88,13 +78,10 @@ bool valid_answer(char *category, int value, char *answer)
 				return true;
 			}
 			else {
-				printf("for '%s' and '%s' strcmp returns %d\n", answer, questions[i].answer, strcmp(answer, questions[i].answer));
-				return false;
+				break;
 			}
 		}
 	}
-
-	printf("ERROR: the question matching category '%s' and value '%d' does not exist\n", category, value);
     return false;
 }
 
@@ -103,13 +90,10 @@ bool already_answered(char *category, int value)
 {
     // lookup the question and see if it's already been marked as answered
 	for(int i = 0; i < N_QUESTIONS; i++){ 
-		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value) && questions[i].answered == false){
-
-			
+		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value) && questions[i].answered == false){		
 			return false;
 		}
 		else if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value) && questions[i].answered == true){
-
 			return true;
 		}
 	}
@@ -119,7 +103,7 @@ bool already_answered(char *category, int value)
 void print_answer(char *category, int value){
 	for(int i = 0; i < N_QUESTIONS; i++){ 
 		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
-			printf("'%s'\n", questions[i].answer);
+			printf("%s\n", questions[i].answer);
 		}
 	}
 }

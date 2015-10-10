@@ -17,7 +17,7 @@
 *						Function declarations
 *----------------------------------------------------------------------------*/
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
-extern void tokenize(const char *input, char **tokens);
+extern void tokenize(char *input, char **tokens);
 
 // Checks if the format of the answer matches who is/what iss
 extern bool is_valid_answer(char **tokens);
