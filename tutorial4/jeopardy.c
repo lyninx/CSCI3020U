@@ -16,9 +16,13 @@
 // Put macros or constants here using #define
 #define BUFFER_LEN 256
 #define TOKENS_COUNT 3
+#define PLAYER_COUNT 4
 
-// Put global environment variables here
+// Retrieves user names for number of participants indicated
+void prompt_player_names(player* players, int count);
 
+// Waits for a line of input
+void prompt_line(char* dest, FILE* file);
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens){
@@ -46,51 +50,42 @@ void show_results(player *players){
 
 /**
 *
-*	KNOWN ISSUES (Kathryn, 2015/10/09, 20:14):
+*	KNOWN ISSUES (Kathryn, 2015/10/10, 12:48):
 *		- So whether or not we accept that there are 25 questions now...
 *			- currently a bug where the 2 new 2 word name categories cannot be
 *				selected
 *			- bug where questions cannot be answered with form 'who is'/'what is'.
 *			- bug where answer input chokes if only content is 'who' or 'what'
+*		- Use of the function 'prompt_line' has a strange effect when paired
+*			with the fgets condition set in the main loop; it makes it so that
+*			each iteration of the loop asks for input.
 *
 *
 **/
 int main(int argc, char *argv[])
 {
 	// Values
-	char checkName[BUFFER_LEN];						// Name buffer
-	char category[BUFFER_LEN] = { 0 };				// Category buffer
 	int val = 0;									// Question's money value
+	char *tokens[BUFFER_LEN];						//array of tokens
+	player players[PLAYER_COUNT];					// An array of 4 players
+	char buffer[BUFFER_LEN] = { 0 };				// Input buffer and and commands
+	char checkName[BUFFER_LEN];						// Current user's name
+	char category[BUFFER_LEN] = { 0 };				// Current Category
 	bool answerCorrect = false;						// Correct answer buffer
 	char userAnswer[BUFFER_LEN] = { 0 };			// user's answer buffer
-	char *tokens[BUFFER_LEN];						//array of tokens
-	player players[4];								// An array of 4 players
-	char buffer[BUFFER_LEN] = { 0 };				// Input buffer and and commands
 
-    // Display the game introduction and prompt for players names
-    // initialize each of the players in the array
-    for(int i = 0; i < 4; i++){
-        printf("What is your name player %d\n", i+1);
-        scanf("%s", players[i].name);
-        players[i].score = 0;
-    }
+    // Initialize each of the players in the array
+	prompt_player_names(players, PLAYER_COUNT);
 
     // Generate the game's data
     initialize_game();
 
-    // Game loop; continues to prompt until all questions have answers
-    while(fgets(buffer, BUFFER_LEN, stdin) != NULL)
+    // Game loop; continues to prompt until all questions have answers or input ends
+    while(!game_done() /*&& fgets(buffer, BUFFER_LEN, stdin) != NULL*/) // If this concerns you, please look at the issues list I've outlined above and then talk to me - Kathryn
     {
-		// check if game is done
-		if (game_done() == 1){
-			printf("Game is over!\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
-			show_results(players);
-			break;
-		}
-
         // Execute the game until all questions are answered
         printf("Enter a name of a contestant: ");
-        scanf("%s", checkName);
+		prompt_line(checkName, stdin);
         answerCorrect = false;
 
 		// Quiz the player
@@ -111,25 +106,7 @@ int main(int argc, char *argv[])
 			}
 
 			// get answer
-			scanf("%s", userAnswer);
-
-			// get remaining tokens
-			int answerlen = strlen(userAnswer) + 1;
-			if (answerlen < BUFFER_LEN)
-			{
-				// get all before newline
-				fgets(buffer, BUFFER_LEN - answerlen, stdin);
-				int bufferlen = strlen(buffer);
-				if (bufferlen > 0)
-				{
-					buffer[strlen(buffer) - 1] = 0;
-				}
-
-				// attach other tokens to answer
-				strcat(userAnswer, buffer);
-
-			}
-
+			prompt_line(userAnswer, stdin);
 			printf("'%s'\n", userAnswer);
 
 			// validate answer
@@ -155,12 +132,14 @@ int main(int argc, char *argv[])
 
 			
 		}
-
-
-		printf("press enter to continue:");
 			
     }
 
+	// Show results
+	printf("Game is over!\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+	show_results(players);
+
+	// return
     return EXIT_SUCCESS;
 }
 
@@ -168,4 +147,37 @@ int main(int argc, char *argv[])
 bool is_valid_answer(char **tokens)
 {
 	return (strcmp(tokens[0], "what") == 0 || strcmp(tokens[0], "who") == 0) && strcmp(tokens[1], "is") == 0;
+}
+
+void prompt_player_names(player* players, int count)
+{
+	for (int i = 0; i < count; i++){
+		printf("What is your name player %d\n", i + 1);
+		prompt_line(players[i].name, stdin);
+		players[i].score = 0;
+	}
+}
+
+void prompt_line(char* dest, FILE* file)
+{
+	// prompt for input
+	scanf("%s", dest);
+
+	// get remaining tokens
+	char buffer[BUFFER_LEN] = { 0 };
+	int answerlen = strlen(dest) + 1;
+	if (answerlen < BUFFER_LEN)
+	{
+		// get all before newline
+		fgets(buffer, BUFFER_LEN - answerlen, file);
+		int bufferlen = strlen(buffer);
+		if (bufferlen > 0)
+		{
+			// erase newline from buffer
+			buffer[strlen(buffer) - 1] = 0;
+		}
+
+		// attach other tokens to answer
+		strcat(dest, buffer);
+	}
 }
