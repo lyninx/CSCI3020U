@@ -25,11 +25,21 @@ void initialize_game(void)
         // initialize questions
         for(int i = 0; i < N_QUESTIONS; ++i)
         {
+			// Initialize values
 			strcpy(questions[i].question, question_questions[i]);
 			strcpy(questions[i].answer, question_answers[i]);
             strcpy(questions[i].category, categories[get_category_index(i)]);
             questions[i].value = get_question_value(i);
             questions[i].answered = false;
+
+			// Append 'what is' to answer
+			if (INIT_APPEND_WHAT_IS)
+			{
+				char whatis[MAX_LEN] = "what is ";
+				strcat(whatis, questions[i].answer);
+				strcpy(questions[i].answer, whatis);
+			}
+
         }
 }
 
