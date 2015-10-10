@@ -5,7 +5,6 @@
  * All rights reserved.
  *
  */
- 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -112,7 +111,7 @@ void print_answer(char *category, int value){
 	}
 }
 
-bool gameDone(){
+bool game_done(){
 	for(int i = 0; i < N_QUESTIONS; i++){
 		if(questions[i].answered == false){
 			return false;

@@ -5,12 +5,16 @@
  * All rights reserved.
  *
  */
-
 #ifndef QUESTIONS_H_
 #define QUESTIONS_H_
-
+/*-----------------------------------------------------------------------------
+*								Headers
+*----------------------------------------------------------------------------*/
 #include <stdbool.h>
 
+/*-----------------------------------------------------------------------------
+*							Constants/Macros
+*----------------------------------------------------------------------------*/
 // string length constant
 #define MAX_LEN 256
 
@@ -29,6 +33,10 @@ static char categories[N_CATS][MAX_LEN] = {"programming", "algorithms", "databas
 // reference for point tiers
 static const int point_tiers[N_POINT_TIERS] = { 100, 200, 300, 400, 500 };
 
+
+/*-----------------------------------------------------------------------------
+*						Question & Answer Strings
+*----------------------------------------------------------------------------*/
 // Content - Quiz questions
 static const char question_questions[N_QUESTIONS][MAX_LEN] =
 {
@@ -187,6 +195,10 @@ static const char question_answers[N_QUESTIONS][MAX_LEN] =
 	"corrupted"
 };
 
+
+/*-----------------------------------------------------------------------------
+*								Typedefs
+*----------------------------------------------------------------------------*/
 // Questions struct for each question
 typedef struct {
     char category[MAX_LEN];
@@ -196,6 +208,9 @@ typedef struct {
     bool answered;
 } question;
 
+/*-----------------------------------------------------------------------------
+*						Function declarations
+*----------------------------------------------------------------------------*/
 // An array of 12 questions (4 for each category), initialized in initialize_game
 // this may need to be a pointer if you want it set dynamically
 question questions[N_QUESTIONS];
@@ -214,8 +229,13 @@ extern bool valid_answer(char *category, int value, char *answer);
 // Returns true if the question has already been answered
 extern bool already_answered(char *category, int value);
 
+// Prints the answer
 extern void print_answer(char *category, int value);
 
-extern bool gameDone();
+// Checks if the game has finished.
+extern bool game_done();
 
+
+//-----------------------------------------------------------------------------
 #endif /* QUESTIONS_H_ */
+//-----------------------------------------------------------------------------

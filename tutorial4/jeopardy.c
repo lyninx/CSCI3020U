@@ -19,9 +19,6 @@
 
 // Put global environment variables here
 
-// Gets a line from the user.
-
-
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens){
@@ -60,28 +57,15 @@ void show_results(player *players){
 **/
 int main(int argc, char *argv[])
 {
-    // Name buffer
-	char checkName[BUFFER_LEN];
-
-	// Category buffer
-	char category[BUFFER_LEN] = { 0 };
-
-	// Question's money value
-	int val = 0;
-
-	// Correct answer buffer
-	bool answerCorrect = false;
-
-	// user's answer buffer
-	char userAnswer[BUFFER_LEN] = "what are *";	//TEST CASE - CHANGE TO INPUT FROM USER
+	// Values
+	char checkName[BUFFER_LEN];						// Name buffer
+	char category[BUFFER_LEN] = { 0 };				// Category buffer
+	int val = 0;									// Question's money value
+	bool answerCorrect = false;						// Correct answer buffer
+	char userAnswer[BUFFER_LEN] = { 0 };			// user's answer buffer
 	char *tokens[BUFFER_LEN];						//array of tokens
-													//KEEPS TRACK OF TOKENS ARRAY
-
-	// An array of 4 players
-	player players[4];
-
-	// Input buffer and and commands
-	char buffer[BUFFER_LEN] = { 0 };
+	player players[4];								// An array of 4 players
+	char buffer[BUFFER_LEN] = { 0 };				// Input buffer and and commands
 
     // Display the game introduction and prompt for players names
     // initialize each of the players in the array
@@ -98,7 +82,7 @@ int main(int argc, char *argv[])
     while(fgets(buffer, BUFFER_LEN, stdin) != NULL)
     {
 		// check if game is done
-		if (gameDone() == 1){
+		if (game_done() == 1){
 			printf("Game is over!\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
 			show_results(players);
 			break;
