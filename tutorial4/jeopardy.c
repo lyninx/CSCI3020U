@@ -47,6 +47,17 @@ void show_results(player *players){
     }
 }
 
+/**
+*
+*	KNOWN ISSUES (Kathryn, 2015/10/09, 20:14):
+*		- So whether or not we accept that there are 25 questions now...
+*			- currently a bug where the 2 new 2 word name categories cannot be
+*				selected
+*			- bug where questions cannot be answered with form 'who is'/'what is'.
+*			- bug where answer input chokes if only content is 'who' or 'what'
+*
+*
+**/
 int main(int argc, char *argv[])
 {
     // Name buffer
@@ -162,7 +173,7 @@ int main(int argc, char *argv[])
 		}
 
 
-
+		printf("press enter to continue:");
 			
     }
 
