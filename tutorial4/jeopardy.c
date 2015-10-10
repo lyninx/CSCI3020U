@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 				printf("You forgot to use \"What is/Who is\"!\n");
 			}
 			else {
-				answerCorrect = valid_answer(category, val, tokens[2]); //returns boolean
+				answerCorrect = valid_answer(category, val, userAnswer); //returns boolean
 			}
 
 			// return result

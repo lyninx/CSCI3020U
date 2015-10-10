@@ -88,10 +88,13 @@ bool valid_answer(char *category, int value, char *answer)
 				return true;
 			}
 			else {
-				break;
+				printf("for '%s' and '%s' strcmp returns %d\n", answer, questions[i].answer, strcmp(answer, questions[i].answer));
+				return false;
 			}
 		}
 	}
+
+	printf("ERROR: the question matching category '%s' and value '%d' does not exist\n", category, value);
     return false;
 }
 
@@ -116,7 +119,7 @@ bool already_answered(char *category, int value)
 void print_answer(char *category, int value){
 	for(int i = 0; i < N_QUESTIONS; i++){ 
 		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
-			printf("%s\n", questions[i].answer);
+			printf("'%s'\n", questions[i].answer);
 		}
 	}
 }
