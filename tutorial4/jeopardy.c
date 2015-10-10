@@ -25,14 +25,18 @@ void prompt_player_names(player* players, int count);
 void prompt_line(char* dest, FILE* file);
 
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
-void tokenize(char *input, char **tokens){
-
+void tokenize(const char *input, char **tokens){
+	// initialize values
 	int k = 0;	
+	char inputcpy[MAX_LEN] = { 0 }; // input copy
 	char *token;									//the individual token(string)
 	const char delimiter[2] = " ";					//strtok looks for a space
 
-    token = strtok(input, delimiter);
+	// perform copy
+	strcpy(inputcpy, input);
 
+	// tokenize input
+    token = strtok(inputcpy, delimiter);
     while( token != NULL ){
 	  	tokens[k] = token;
 	    k++;
@@ -54,11 +58,11 @@ void show_results(player *players){
 *		- So whether or not we accept that there are 25 questions now...
 *			- currently a bug where the 2 new 2 word name categories cannot be
 *				selected
-*			- bug where questions cannot be answered with form 'who is'/'what is'.
 *			- bug where answer input chokes if only content is 'who' or 'what'
 *		- Use of the function 'prompt_line' has a strange effect when paired
 *			with the fgets condition set in the main loop; it makes it so that
 *			each iteration of the loop asks for input.
+*		- player's name prompts does not check for duplicate names
 *
 *
 **/
