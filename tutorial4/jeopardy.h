@@ -12,12 +12,14 @@
 *							Constants/Macros
 *----------------------------------------------------------------------------*/
 #define MAX_LEN 256
+#define GAME_CATS_USED 3
+#define GAME_TIERS_USED 4
 
 /*-----------------------------------------------------------------------------
 *						Function declarations
 *----------------------------------------------------------------------------*/
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
-extern void tokenize(char *input, char **tokens);
+extern void tokenize(const char *input, char **tokens);
 
 // Checks if the format of the answer matches who is/what iss
 extern bool is_valid_answer(char **tokens);

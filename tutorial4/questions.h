@@ -27,6 +27,9 @@
 // question count constant
 #define N_QUESTIONS 25
 
+// Flag to set whether 'What is' should be prefixed onto answers upon game initialization.
+#define INIT_APPEND_WHAT_IS true
+
 // List of 3 categories as array of strings
 static char categories[N_CATS][MAX_LEN] = {"programming", "algorithms", "databases", "operating systems", "computer networks"};
 
@@ -56,16 +59,16 @@ static const char question_questions[N_QUESTIONS][MAX_LEN] =
 	"Low-level programming language that corresponds strongly between the language and architecture's machine code instructions.",
 
 	// Algorithms 100 question
-	"According Von Neumann's Model of a computer, a computer has adressable ________?",
+	"According Von Neumann's Model of a computer, a computer has addressable ________?",
 
 	// Algorithm 200 question
-	"Can Java dereference variables?",
+	"Unlike C, Java lacks a _______ operator.",
 
 	// Algorithm 300 question
 	"The _______ of a binding is the part of the program that can refer to that bind.",
 
 	// Algorithm 400 question
-	"Is g = O(f). (True or False)",
+	"The efficency of quicksort belongs to big-O of ____.",
 
 	// Algorithm 500 question
 	"Merge sort is a ______ & conquer kind of algorithm.",
@@ -138,13 +141,13 @@ static const char question_answers[N_QUESTIONS][MAX_LEN] =
 	"memory",
 
 	// Algorithm 200 answer
-	"no",
+	"dereference",
 
 	// Algorithm 300 answer
 	"scope",
 
 	// Algorithm 400 answer
-	"false",
+	"n^2",
 
 	// Algorithm 500 answer
 	"divide",
@@ -215,8 +218,8 @@ typedef struct {
 // this may need to be a pointer if you want it set dynamically
 question questions[N_QUESTIONS];
 
-// Initializes the array of questions for the game
-extern void initialize_game(void);
+// Initializes the array of questions for the game; up to ncats categories and ntiers value tiers
+extern void initialize_game(int ncats, int ntiers);
 
 // Displays each of the remaining categories and question dollar values that have not been answered
 extern void display_categories(void);
