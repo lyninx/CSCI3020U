@@ -19,6 +19,10 @@
 
 // Put global environment variables here
 
+// Gets a line from the user.
+
+
+
 // Processes the answer from the user containing what is or who is and tokenizes it to retrieve the answer.
 void tokenize(char *input, char **tokens){
 
@@ -49,10 +53,10 @@ int main(int argc, char *argv[])
 	char checkName[BUFFER_LEN];
 
 	// Category buffer
-	char category[BUFFER_LEN];
+	char category[BUFFER_LEN] = { 0 };
 
 	// Question's money value
-	int val;
+	int val = 0;
 
 	// Correct answer buffer
 	bool answerCorrect = false;
@@ -61,8 +65,6 @@ int main(int argc, char *argv[])
 	char userAnswer[BUFFER_LEN] = "what are *";	//TEST CASE - CHANGE TO INPUT FROM USER
 	char *tokens[BUFFER_LEN];						//array of tokens
 													//KEEPS TRACK OF TOKENS ARRAY
-	int ans1;
-	int ans2;
 
 	// An array of 4 players
 	player players[4];
@@ -84,57 +86,91 @@ int main(int argc, char *argv[])
     // Game loop; continues to prompt until all questions have answers
     while(fgets(buffer, BUFFER_LEN, stdin) != NULL)
     {
+		// check if game is done
+		if (gameDone() == 1){
+			printf("Game is over!\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
+			show_results(players);
+			break;
+		}
+
         // Execute the game until all questions are answered
         printf("Enter a name of a contestant: ");
         scanf("%s", checkName);
         answerCorrect = false;
 
 		// Quiz the player
-        if(player_exists(players, checkName) == 1){
+        if(player_exists(players, checkName) == true){
 
 			// display choices
-            display_categories();
+			display_categories();
 
-			// get choice from player
-			printf("Select a category & value: ");
-            scanf("%s %d", category, &val);
+			// select a question
+			while (already_answered(category, val))
+			{
+				// get choice from player
+				printf("Select a category & value: ");
+				scanf("%s %d", category, &val);
 
-			// quiz player
-            display_question(category, val);
+				// display question OR status
+				display_question(category, val);
+			}
 
-            //TOKENIZE CODE HERE (NOTE: scanf and strtok do not work together well (need to find a trick/hack))
+			// get answer
+			scanf("%s", userAnswer);
+
+			// get remaining tokens
+			int answerlen = strlen(userAnswer) + 1;
+			if (answerlen < BUFFER_LEN)
+			{
+				// get all before newline
+				fgets(buffer, BUFFER_LEN - answerlen, stdin);
+				int bufferlen = strlen(buffer);
+				if (bufferlen > 0)
+				{
+					buffer[strlen(buffer) - 1] = 0;
+				}
+
+				// attach other tokens to answer
+				strcat(userAnswer, buffer);
+
+			}
+
+			printf("'%s'\n", userAnswer);
+
+			// validate answer
             tokenize(userAnswer, tokens);
+			if (!is_valid_answer(tokens))
+			{
+				printf("You forgot to use \"What is/Who is\"!\n");
+			}
+			else {
+				answerCorrect = valid_answer(category, val, tokens[2]); //returns boolean
+			}
 
-            //THIS BREAKS IF 3 INPUTS ARE NOT ENTERED - NO ERROR CHECKING
-            //checks if "what is <answer>" or "who is <answer>" is valid
-            ans1 = strcmp(tokens[0], "what");
+			// return result
+			if (answerCorrect == 1){
+				printf("Correct Answer!\n");
+				update_score(players, checkName, val);
+			}
+			else if (answerCorrect != 1){
+				printf("Incorrect Answer! The correct answer was: ");
+				print_answer(category, val);
+			}
 
-            if(ans1 != 0){
-            	ans1 = strcmp(tokens[0], "who");
-            }
-            if(ans1 == 0){
-                ans2 = strcmp(tokens[1], "is");
-            
-                if((ans1 == 0) && (ans2 == 0)){
-            	   answerCorrect = valid_answer(category, val, tokens[2]); //returns boolean
-            	} else{
-            	   printf("You forgot to use \"What is/Who is\"!\n");
-               }
-            }
 
-            if(answerCorrect == 1){                  //UNCOMMENT THIS ONCE THE TOKENIZATION IS DONE
-                printf("Correct Answer!\n");
-                update_score(players, checkName, val);
-            } else if(answerCorrect != 1){
-                printf("Incorrect Answer! The correct answer was: ");
-                printAnswer(category, val);
-            }
-            if(gameDone() == 1){
-                printf("Game is over!\n=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
-                show_results(players);
-                break;
-            }
-        }
+			
+		}
+
+
+
+			
     }
+
     return EXIT_SUCCESS;
+}
+
+
+bool is_valid_answer(char **tokens)
+{
+	return (strcmp(tokens[0], "what") == 0 || strcmp(tokens[0], "who") == 0) && strcmp(tokens[1], "is") == 0;
 }

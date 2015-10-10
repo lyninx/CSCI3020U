@@ -15,16 +15,19 @@
 #define MAX_LEN 256
 
 // category count constant
-#define N_CATS 3
+#define N_CATS 5
+
+// point tier count constant
+#define N_POINT_TIERS 5
 
 // question count constant
-#define N_QUESTIONS 12 //CHANGE TO 12 AFTER THE QUESTIONS HAVE BEEN ADDED
+#define N_QUESTIONS 25
 
 // List of 3 categories as array of strings
-static char categories[N_CATS][MAX_LEN] = {"programming", "algorithms", "databases"};
+static char categories[N_CATS][MAX_LEN] = {"programming", "algorithms", "databases", "operating systems", "computer networks"};
 
 // reference for point tiers
-static const int point_tiers[N_QUESTIONS / N_CATS] = { 100, 200, 300, 500 };
+static const int point_tiers[N_POINT_TIERS] = { 100, 200, 300, 400, 500 };
 
 // Content - Quiz questions
 static const char question_questions[N_QUESTIONS][MAX_LEN] =
@@ -211,7 +214,7 @@ extern bool valid_answer(char *category, int value, char *answer);
 // Returns true if the question has already been answered
 extern bool already_answered(char *category, int value);
 
-extern void printAnswer(char *category, int value);
+extern void print_answer(char *category, int value);
 
 extern bool gameDone();
 

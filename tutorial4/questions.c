@@ -15,6 +15,11 @@
 int get_category_index(int questionindex);
 int get_question_value(int questionindex);
 
+// search functions
+// CURRENTLY NOT USED
+question* get_question(const char* category, int value);
+
+
 // Initializes the array of questions for the game
 void initialize_game(void)
 {
@@ -49,7 +54,6 @@ void display_question(char *category, int value)
 	if(display == false){
 		for(int i = 0; i < N_QUESTIONS; i++){
 			if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
-				questions[i].answered = true;
 				printf("%s\n", questions[i].question);
 			}
 		}			
@@ -65,8 +69,17 @@ bool valid_answer(char *category, int value, char *answer)
     // Look into string comparison functions
 	for(int i = 0; i < N_QUESTIONS; i++){
 		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
+
+			// mark question as answered
+			questions[i].answered = true;
+
+			// determine if true or false
 			if(strcmp(answer, questions[i].answer) == 0){
+
 				return true;
+			}
+			else {
+				break;
 			}
 		}
 	}
@@ -79,16 +92,19 @@ bool already_answered(char *category, int value)
     // lookup the question and see if it's already been marked as answered
 	for(int i = 0; i < N_QUESTIONS; i++){ 
 		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value) && questions[i].answered == false){
+
+			
 			return false;
 		}
 		else if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value) && questions[i].answered == true){
+
 			return true;
 		}
 	}
     return true;
 }
 
-void printAnswer(char *category, int value){
+void print_answer(char *category, int value){
 	for(int i = 0; i < N_QUESTIONS; i++){ 
 		if((strcmp(questions[i].category, category) == 0) && (questions[i].value == value)){
 			printf("%s\n", questions[i].answer);
@@ -113,4 +129,18 @@ int get_category_index(int questionindex)
 int get_question_value(int questionindex)
 {
     return point_tiers[questionindex % (N_QUESTIONS/N_CATS)];
+}
+
+question* get_question(const char* category, int value)
+{
+	// traverse questions
+	for (int i = 0; i < N_QUESTIONS; i++){
+		question* q = &questions[i];
+		if ((strcmp(q->category, category) == 0) && (q->value == value)){
+			return q;
+		}
+	}
+
+	// question not found
+	return NULL;
 }
