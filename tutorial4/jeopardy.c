@@ -52,20 +52,6 @@ void show_results(player *players){
     }
 }
 
-/**
-*
-*	KNOWN ISSUES (Kathryn, 2015/10/10, 12:48):
-*		- So whether or not we accept that there are 25 questions now...
-*			- currently a bug where the 2 new 2 word name categories cannot be
-*				selected
-*			- bug where answer input chokes if only content is 'who' or 'what'
-*		- Use of the function 'prompt_line' has a strange effect when paired
-*			with the fgets condition set in the main loop; it makes it so that
-*			each iteration of the loop asks for input.
-*		- player's name prompts does not check for duplicate names
-*
-*
-**/
 int main(int argc, char *argv[])
 {
 	// Values
