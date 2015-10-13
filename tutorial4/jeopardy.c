@@ -73,16 +73,17 @@ int main()//int argc, char *argv[])
     // Game loop; continues to prompt until all questions have answers or input ends
     while(!game_done() /*&& fgets(buffer, BUFFER_LEN, stdin) != NULL*/) // If this concerns you, please look at the issues list I've outlined above and then talk to me - Kathryn
     {
+   		// display choices
+        display_categories();
+
         // Execute the game until all questions are answered
         printf("Enter a name of a contestant: ");
 		prompt_line(checkName, stdin);
         answerCorrect = false;
 
+
 		// Quiz the player
         if(player_exists(players, checkName) == true){
-
-			// display choices
-			display_categories();
 
 			// select a question
 			while (already_answered(category, val))
