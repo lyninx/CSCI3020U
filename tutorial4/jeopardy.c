@@ -1,10 +1,11 @@
 /*
  * Tutorial 4 Jeopardy Project for SOFE 3950U / CSCI 3020U: Operating Systems
  *
- * Copyright (C) 2015, Akira Aida(ID:100526064), Kathryn McKay(ID:100524201), Dennis Pacewicz (ID:), Truyen Truong(ID:)
+ * Copyright (C) 2015, Akira Aida(ID: 100526064), Kathryn McKay(ID: 100524201), Dennis Pacewicz (ID: 100524231), Truyen Truong(ID: 100516976)
  * All rights reserved.
  *
  */
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
