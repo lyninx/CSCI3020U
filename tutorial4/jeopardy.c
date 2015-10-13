@@ -52,13 +52,13 @@ void show_results(player *players){
     }
 }
 
-int main(int argc, char *argv[])
+int main()//int argc, char *argv[])
 {
 	// Values
 	int val = 0;									// Question's money value
 	char *tokens[BUFFER_LEN];						//array of tokens
 	player players[PLAYER_COUNT];					// An array of 4 players
-	char buffer[BUFFER_LEN] = { 0 };				// Input buffer and and commands
+	//char buffer[BUFFER_LEN] = { 0 };				// Input buffer and and commands
 	char checkName[BUFFER_LEN];						// Current user's name
 	char category[BUFFER_LEN] = { 0 };				// Current Category
 	bool answerCorrect = false;						// Correct answer buffer
