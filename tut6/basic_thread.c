@@ -70,10 +70,74 @@ void read_grades(void)
 	//todo
 }
 
+// question 1 program
+void do_q1(void)
+{
+	//todo
+}
+
+// question 2 program
+void do_q2(void)
+{
+	//todo
+}
+
+// question 3 program
+void do_q3(void)
+{
+	//todo
+}
+
+//question 4 program
+void do_q4(void)
+{
+	//todo
+}
+
+//question 5 program
+void do_q5(void)
+{
+	//todo
+}
+
 /**
  * Basic example that showing threading interleaving.
  */
 int main(int argc, char *argv[]) {
+	if (argc < 2)
+	{
+		basic_example();
+	}
+	else {
+		switch ((int)(argv[1][0]))
+		{
+		case '1':
+			do_q1();
+			break;
 
-	basic_example();
+		case '2':
+			do_q2();
+			break;
+
+		case '3':
+			do_q3();
+			break;
+
+		case '4':
+			do_q4();
+			break;
+
+		case '5':
+			do_q5();
+			break;
+
+		default:
+			basic_example();
+			break;
+		}
+	}
+
+
+
+	
 }
