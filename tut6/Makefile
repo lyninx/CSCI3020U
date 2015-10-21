@@ -29,7 +29,7 @@ q1: question1.c
 	$(CC) $(CFLAGS) question1.c -o q1.exe $(LIBS)
 
 q2: question2.c
-	$(CC) $(CFLAGS) question2.c -o q2.exde $(LIBS)
+	$(CC) $(CFLAGS) question2.c -o q2.exe $(LIBS)
 
 clean:
 	$(RM) $(LIST)
