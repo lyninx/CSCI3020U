@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 
@@ -17,8 +17,7 @@ void *goodbye(void *arg){
     return NULL;
 }
 
-
-int main() {
+int main(){
 
     pthread_t pth;
     pthread_t pth2;
