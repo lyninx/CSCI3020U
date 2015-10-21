@@ -1,0 +1,13 @@
+1. Read the pthread documentation and explain the following three functions: pthread_create, pthread_join, pthread_exit
+
+
+2. Explain how the memory of threads work in comparison to processes, do threads share the same memory, can threads access the memory of other threads?
+
+
+3. Name the differences between multithreading​and multiprocessing​(multiple processes). What are the advantages and disadvantages of each?
+
+
+4. Provide an explanation of mutual exclusion​, what is a critical section?
+
+
+5. Research the functions used to perform mutual exclusion​with pthreads and explain the purpose of each function.
