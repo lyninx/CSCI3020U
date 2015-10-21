@@ -6,6 +6,13 @@
 
 int main(void)
 {
-	printf("Enter %d student names: ", NUM_STUDENTS);
+	char *students[NUM_STUDENTS];	
+	printf("Enter %d student names:\n", NUM_STUDENTS);
+
+	for(int i=0; i < NUM_STUDENTS; i++){
+		scanf("%s", &students[i]);	
+	}
+	
+
 	return 0;
 }
