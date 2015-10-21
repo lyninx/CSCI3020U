@@ -32,4 +32,4 @@ q2: question2.c
 	$(CC) $(CFLAGS) question2.c -o q2.exe $(LIBS)
 
 clean:
-	$(RM) $(LIST)
+	$(RM) *.exe
