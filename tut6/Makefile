@@ -25,10 +25,10 @@ LIST = basic_locking basic_thread locking fork_example semaphore notify n_notify
 
 all: $(LIST)
 
-q1: basic_locking.c
-	$(CC) $(CFLAGS) quesstion1.c -o q1 $(LIBS)
+q1: question1.c
+	$(CC) $(CFLAGS) question1.c -o q1 $(LIBS)
 
-q2: basic_thread.c
+q2: question2.c
 	$(CC) $(CFLAGS) question2.c -o q2 $(LIBS)
 
 clean:
