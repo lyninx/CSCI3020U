@@ -21,7 +21,7 @@ LFLAGS =
 #   option, something like (this will link in libmylib.so and libm.so:
 LIBS = -lpthread
 
-LIST = basic_locking basic_thread locking fork_example semaphore notify n_notify bounded_notify semaphore_buffer
+LIST = q1 q2
 
 all: $(LIST)
 
