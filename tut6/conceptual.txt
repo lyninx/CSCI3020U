@@ -7,10 +7,10 @@ pthread_exit: Terminates the calling thread and makes the value value_ptr availa
 2. Explain how the memory of threads work in comparison to processes, do threads share the same memory, can threads access the memory of other threads?
 
 
-3. Name the differences between multithreading​and multiprocessing​(multiple processes). What are the advantages and disadvantages of each?
+3. Name the differences between multithreading​ and multiprocessing​(multiple processes). What are the advantages and disadvantages of each?
 
 
 4. Provide an explanation of mutual exclusion​, what is a critical section?
 
 
-5. Research the functions used to perform mutual exclusion​with pthreads and explain the purpose of each function.
+5. Research the functions used to perform mutual exclusion​ with pthreads and explain the purpose of each function.
