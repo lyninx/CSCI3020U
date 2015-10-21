@@ -1,5 +1,8 @@
 1. Read the pthread documentation and explain the following three functions: pthread_create, pthread_join, pthread_exit
 
+pthread_create: Creates a new thread using four arguements.The first arguement is the thread object, the second arguement are attributes that can be applied to the thread, the third arguement is a function but can only take one parameter, the fourth is the paramater for the function in the third arguement.
+pthread_join: Suspends the calling thread to wait for successful termination of the thread specified as the first argument.
+pthread_exit: Terminates the calling thread and makes the value value_ptr available to any successful join with the terminating thread.
 
 2. Explain how the memory of threads work in comparison to processes, do threads share the same memory, can threads access the memory of other threads?
 
