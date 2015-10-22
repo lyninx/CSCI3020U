@@ -39,5 +39,6 @@ q4: question4.c
 
 q5: question5.c
 	$(CC) $(CFLAGS) question5.c -o q5.exe $(LIBS)
+
 clean:
 	$(RM) *.exe
