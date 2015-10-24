@@ -6,15 +6,25 @@
 // total_grade
 static double total_grade = 0.0;
 static double total_bellcurve = 0.0;
-// barrier
-pthread_barrier_t read_grades_barr;
-pthread_barrier_t total_grade_barr;
-pthread_barrier_t total_bellcurve_barr;
-pthread_barrier_t bellcurve_file_barr;
-pthread_barrier_t save_bellcurve_barr;
+
+// barriers
+pthread_barrier_t grades_read_barr;
+pthread_barrier_t grades_sum_barr;
+pthread_barrier_t bellcurve_sum_barr;
+pthread_barrier_t bellcurve_saved_barr;
+
+// mutual exclusion
+pthread_mutex_t bellcurve_lock;
+pthread_mutex_t total_grade_lock;
+pthread_mutex_t total_bellcurve_lock;
+pthread_mutex_t grades_sum_barr_lock;
+pthread_mutex_t bellcurve_sum_barr_lock;
 
 // number of grades to process
 #define Q5_N_GRADES 10
+
+// ceiling on how good you can do
+#define Q5_MAX_GRADE 100.0f
 
 // file paths
 #define FPATH_GRADES "grades.txt"
@@ -57,7 +67,7 @@ int read_grades(double* dest)
 	
 
 	// signal
-	int barrier_status = pthread_barrier_wait(&read_grades_barr);
+	int barrier_status = pthread_barrier_wait(&grades_read_barr);
 
 	
 	// check for file errors
@@ -83,23 +93,52 @@ int read_grades(double* dest)
 
 void save_bellcurve(double* grade)
 {
+	// save grade before bellcurve
+	double grade_val = *grade;
 
 	// record grade
-	//total_grade += grade;
-	
-	printf("print grade %lf\n", *grade);
-	//sleep(50);
+	printf("1[%lf] waiting to add grade\n", grade_val);
+	pthread_mutex_lock(&total_grade_lock);
+	printf("1[%lf] acquired grade lock\n", grade_val);
+	total_grade += grade_val;
+	printf("1[%lf] releasing grade lock\n", grade_val);
+	pthread_mutex_unlock(&total_grade_lock);
 
+
+	// wait around until the main thread recognizes what you did
+	printf("2[%lf] 1 What would he think?....\n", grade_val);
+	pthread_mutex_lock(&grades_sum_barr_lock);
+	printf("2[%lf] 2 Tell me the truth\n", grade_val);
+	pthread_barrier_wait(&grades_sum_barr);
+	printf("2[%lf] 3 I don't need you anyways\n", grade_val);
+	pthread_mutex_unlock(&grades_sum_barr_lock);
+
+	// apply bellcurve
+	double bellcurve_val = (bellcurve_val = grade_val*1.50f) > Q5_MAX_GRADE ? Q5_MAX_GRADE : bellcurve_val;
 
 	//do bellcurve
-	*grade = *grade *1.50;
-	//total_bellcurve += grade*1.50;
+	printf("3[%lf] waiting to add bellcurve\n", grade_val);
+	pthread_mutex_lock(&total_bellcurve_lock);
+	printf("3[%lf] acquired bellcurve lock\n", grade_val);
+	total_bellcurve += bellcurve_val;
+	printf("3[%lf] releasing bellcurve lock\n", grade_val);
+	pthread_mutex_unlock(&total_bellcurve_lock);
+
+	// wait around until the main thread recognizes what you did x2
+	printf("4[%lf] 1 I can't live in the past?....\n", grade_val);
+	pthread_mutex_lock(&bellcurve_sum_barr_lock);
+	printf("4[%lf] 2 You'll disappoint me again\n", grade_val);
+	pthread_barrier_wait(&bellcurve_sum_barr);
+	printf("4[%lf] 3 Where do we go from here?\n", grade_val);
+	pthread_mutex_unlock(&bellcurve_sum_barr_lock);
 
 	// print bellcurve
 
 
 	// setup join
-	pthread_barrier_wait(&save_bellcurve_barr);
+	printf("6[%lf] My work here is done\n", grade_val);
+	pthread_barrier_wait(&bellcurve_saved_barr);
+	printf("passed barrier\n");
 
 }
 
@@ -110,29 +149,86 @@ int main(int argc, char* argv[])
 	double grades[Q5_N_GRADES] = { 1.0 };
 	pthread_t save_bellcurve_thrs[Q5_N_GRADES];
 
+	// averages
+	double grades_average = 0.0f;
+	double bellcurve_average = 0.0f;
+
 	// init barriers
-	pthread_barrier_init(&read_grades_barr, NULL, 2);
-	pthread_barrier_init(&save_bellcurve_barr, NULL, 11);
+	pthread_barrier_init(&grades_read_barr, NULL, 2);
+	pthread_barrier_init(&grades_sum_barr, NULL, 2);
+	pthread_barrier_init(&bellcurve_sum_barr, NULL, 2);
+	pthread_barrier_init(&bellcurve_saved_barr, NULL, Q5_N_GRADES + 1);
+
+	// init mutual exclusion
+	pthread_mutex_init(&bellcurve_lock, NULL);
+	pthread_mutex_init(&total_bellcurve_lock, NULL);
+	pthread_mutex_init(&total_grade_lock, NULL);
+	pthread_mutex_init(&grades_sum_barr_lock, NULL);
+	pthread_mutex_init(&bellcurve_sum_barr_lock, NULL);
 
 	// read grades
-	pthread_t thr;
-	pthread_create(&thr, 0, read_grades, (void *)grades);
-	
-	// wait for read grades to finish
-	int barrier = pthread_barrier_wait(&read_grades_barr);
+	pthread_t readgrades_thr;
+	pthread_create(&readgrades_thr, 0, read_grades, (void *)grades);
+	int barrier = pthread_barrier_wait(&grades_read_barr);
 	if (barrier != PTHREAD_BARRIER_SERIAL_THREAD && barrier != 0)
 		return 1;
 
-	// apply bellcurve
+	// create sum/bellcurve threads
 	for (int i = 0; i < Q5_N_GRADES; i++)
 	{
 		pthread_create(&save_bellcurve_thrs[i], 0, save_bellcurve, (void *)&grades[i]);
 	}
 
+	// wait for grades
+	for (int i = 0; i < Q5_N_GRADES; i++)
+	{
+		printf("[main]waiting for grades from %d\n", i);
+		barrier = pthread_barrier_wait(&grades_sum_barr);
+		if (barrier != PTHREAD_BARRIER_SERIAL_THREAD && barrier != 0)
+			return 1;
+	}
+
+	// get average for grades (humoring the mutex lock respectfully)
+	printf("[main] calculating grade average...\n");
+	pthread_mutex_lock(&total_grade_lock);
+	grades_average = total_grade / (double)Q5_N_GRADES;
+	pthread_mutex_unlock(&total_grade_lock);
+
 	// wait for bellcurve
-	barrier = pthread_barrier_wait(&save_bellcurve_barr);
+	for (int i = 0; i < Q5_N_GRADES; i++)
+	{
+		printf("[main]waiting for bellcurve from %d\n", i);
+		barrier = pthread_barrier_wait(&bellcurve_sum_barr);
+		if (barrier != PTHREAD_BARRIER_SERIAL_THREAD && barrier != 0)
+			return 1;
+	}
+	
+	// get average for grades (humoring the mutex lock respectfully)
+	printf("[main] calculating bellcurved average...\n");
+	pthread_mutex_lock(&total_bellcurve_lock);
+	bellcurve_average = total_bellcurve / (double)Q5_N_GRADES;
+	pthread_mutex_unlock(&total_bellcurve_lock);
+
+	// wait for bellcurve to be saved to file
+	printf("[main] waiting to output results...\n");
+	barrier = pthread_barrier_wait(&bellcurve_saved_barr);
 	if (barrier != PTHREAD_BARRIER_SERIAL_THREAD && barrier != 0)
 		return 1;
+
+
+	// join all threads
+	printf("[main] waiting for threads to terminate...\n");
+	pthread_join(readgrades_thr, 0);
+	for (int i = 0; i < Q5_N_GRADES; i++)
+	{
+		pthread_join(save_bellcurve_thrs[i], 0);
+	}
+
+
+	// display stats
+	printf("[main] gonna put out the results...\n");
+	printf("Average before bellcurve: %lf\n", grades_average);
+	printf("Average after bellcurve: %lf\n", bellcurve_average);
 
 	
     // return
