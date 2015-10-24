@@ -106,11 +106,11 @@ void save_bellcurve(double* grade)
 
 
 	// wait around until the main thread recognizes what you did
-	printf("2[%lf] 1 What would he think?....\n", grade_val);
+	printf("2[%lf] ready to report total_grade\n", grade_val);
 	pthread_mutex_lock(&grades_sum_barr_lock);
-	printf("2[%lf] 2 Tell me the truth\n", grade_val);
+	printf("2[%lf] reporting total_grade\n", grade_val);
 	pthread_barrier_wait(&grades_sum_barr);
-	printf("2[%lf] 3 I don't need you anyways\n", grade_val);
+	printf("2[%lf] move on from total_grade\n", grade_val);
 	pthread_mutex_unlock(&grades_sum_barr_lock);
 
 	// apply bellcurve
@@ -125,11 +125,11 @@ void save_bellcurve(double* grade)
 	pthread_mutex_unlock(&total_bellcurve_lock);
 
 	// wait around until the main thread recognizes what you did x2
-	printf("4[%lf] 1 I can't live in the past?....\n", grade_val);
+	printf("4[%lf] bellcurve report ready to\n", grade_val);
 	pthread_mutex_lock(&bellcurve_sum_barr_lock);
-	printf("4[%lf] 2 You'll disappoint me again\n", grade_val);
+	printf("4[%lf] bellcurve report doing it\n", grade_val);
 	pthread_barrier_wait(&bellcurve_sum_barr);
-	printf("4[%lf] 3 Where do we go from here?\n", grade_val);
+	printf("4[%lf] bellcurve report passing baton\n", grade_val);
 	pthread_mutex_unlock(&bellcurve_sum_barr_lock);
 
 	// print bellcurve
