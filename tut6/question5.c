@@ -14,7 +14,7 @@ pthread_barrier_t bellcurve_sum_barr;
 pthread_barrier_t bellcurve_saved_barr;
 
 // mutual exclusion
-pthread_mutex_t bellcurve_lock;
+pthread_mutex_t bellcurve_file_lock;
 pthread_mutex_t total_grade_lock;
 pthread_mutex_t total_bellcurve_lock;
 pthread_mutex_t grades_sum_barr_lock;
@@ -133,6 +133,21 @@ void save_bellcurve(double* grade)
 	pthread_mutex_unlock(&bellcurve_sum_barr_lock);
 
 	// print bellcurve
+	printf("5[%lf] save bellcurve: ready to write to file\n", grade_val);
+	pthread_mutex_lock(&bellcurve_file_lock);
+	printf("5[%lf] save bellcurve: opening up file for writing\n", grade_val);
+	FILE* bellcurvef = fopen(FPATH_BELLCURVE, "a");
+	if (!bellcurvef)
+	{
+		fprintf(stderr, "Error: could not open '%s' for writing\n", FPATH_BELLCURVE);
+	}
+	else
+	{
+		fprintf(bellcurvef, "%lf\n", bellcurve_val);
+	}
+	fclose(bellcurvef);
+	printf("5[%lf] save bellcurve: finished saving bellcurve\n", grade_val);
+	pthread_mutex_unlock(&bellcurve_file_lock);
 
 
 	// setup join
@@ -160,7 +175,7 @@ int main(int argc, char* argv[])
 	pthread_barrier_init(&bellcurve_saved_barr, NULL, Q5_N_GRADES + 1);
 
 	// init mutual exclusion
-	pthread_mutex_init(&bellcurve_lock, NULL);
+	pthread_mutex_init(&bellcurve_file_lock, NULL);
 	pthread_mutex_init(&total_bellcurve_lock, NULL);
 	pthread_mutex_init(&total_grade_lock, NULL);
 	pthread_mutex_init(&grades_sum_barr_lock, NULL);
