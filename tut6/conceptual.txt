@@ -1,28 +1,29 @@
 1. Read the pthread documentation and explain the following three functions: pthread_create, pthread_join, pthread_exit
 
-	pthread_create: Creates a new thread using four arguements.The first arguement is the thread object, the second arguement are attributes that can be applied to the thread, the third arguement is a function but can only take one parameter, the fourth is the paramater for the function in the third arguement.
+	pthread_create: Creates a new thread using four arguments. The first argument is the thread object, the second argument is the attributes that can be applied to the thread, the third argument is a function but can only take one parameter, the fourth is the parameter for the function in the third argument.
 
 	pthread_join: Suspends the calling thread to wait for successful termination of the thread specified as the first argument.
+    
 	pthread_exit: Terminates the calling thread and makes the value value_ptr available to any successful join with the terminating thread.
 
 2. Explain how the memory of threads work in comparison to processes, do threads share the same memory, can threads access the memory of other threads?
 
-	The memory of threads work as they each have their own unique local data. Processes do not share memory with other processes unless they have shared memory segments. A thread shares the memory of its parent process. Threads share memory of other threads that are within the same process.
+    Threads share memory of other threads that are within the same process. However, they have separate stacks and local data; only global variables and the heap are shared. In contrast, processes do not share any  memory with other processes unless they have shared memory segments. 
 
 3. Name the differences between multithreading​ and multiprocessing​(multiple processes). What are the advantages and disadvantages of each?
 
-	The difference between multithreading and mutliprocessing is that multithreading is multiple threads under a single core in a multi-core processor that allows the execution of multiple processes and/or multiple threads. Mutliprocessing is where there is multiple processes that can allocated tasks between them.
+	The difference between multithreading and multiprocessing lie in their relative weight and their treatment by the OS. Threads are lighter than processes in terms of how easily they can be created/acquired, ease of context switching, as well as the amount of memory they consume. Threads are bound to their processes and can access more memory than between two processes, as they always share certain resources such as global variables and heap space. However, threads are much more dependent on each other than two processes are. Cooperating processes have the freedom to belong to different user and take up their own memory space. Errors inside of processes are also much more isolated than between threads.
 
 4. Provide an explanation of mutual exclusion​, what is a critical section?
 
-	Mutual exclusion is when a process is executing their critical section, no other processes can be executing their critical sections at the same time. A critical section is a part of the code that multiple processes might need to access at the same time.
+	Mutual exclusion expects that when a process is executing their critical section, no other processes can be executing their critical sections at the same time. A critical section is a part of the code that requires the manipulation of a resource that multiple threads might need to access at the same time. By enforcing mutual exclusion, the state of that resource is ensured.
 
 5. Research the functions used to perform mutual exclusion​ with pthreads and explain the purpose of each function.
 
-	Functions used to perform mutual exclusion with pthreads are barriers, mutexes and semaphores. Barriers force threads that are working together to wait at a specific point until all threads have reached that point, then they will continue. Mutexes act like locks when a thread is using the shared data, it locks it until it is done with the shared data, then it will unlock it. A semaphore is like mutexes as they lock the shared data until the thread is done with the shared data, then will unlock the shared data.
+	Functions used to perform mutual exclusion with pthreads are barriers, mutexes and semaphores. Barriers force threads that are working together to wait at a specific point until all threads have reached that point, then they will continue. Mutexes act like locks when a thread is using the shared data, it locks it until it is done with the shared data, then it will unlock it. Semaphores are like mutexes, but keep track of how many callers are waiting on the lock using an integer instead of a binary value. They may be extended to block waiting processes into a queue.
 
 	Mutex has:
-	pthread_mutex_init(mutex,attr)---> Initilizes the mutex with attributes.
+	pthread_mutex_init(mutex,attr)---> Initializes the mutex with attributes.
 	pthread_mutex_destroy(mutex)-----> Used to free a mutex object.
 	pthread_mutexattr_init(attr)-----> Creates the mutex attribute objects.
 	pthread_mutexattr_destroy(attr)--> Destroys the mutex attribute objects.
