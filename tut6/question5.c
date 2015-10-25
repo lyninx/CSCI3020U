@@ -1,7 +1,6 @@
+#define _XOPEN_SOURCE 600
 #include <stdio.h>
 #include <pthread.h>
-
-#define XOPEN_HEADER 600
 
 // total_grade
 static double total_grade = 0.0;
