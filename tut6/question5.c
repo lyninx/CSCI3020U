@@ -32,10 +32,10 @@ pthread_mutex_t bellcurve_sum_barr_lock;
 // read in grades from file
 // @param dest values from the grades are put here
 // @return 0 if no error has occured
-int read_grades(double* dest)
+void *read_grades(void* dest_v)
 {
-	// this stores the status of certain operations
-	int status = 0;
+	double* dest = (double*)dest_v;
+
 
 	// open file
 	FILE* grades = fopen(FPATH_GRADES, "r");
@@ -44,7 +44,6 @@ int read_grades(double* dest)
 	if (!grades || ferror(grades))
 	{
 		fprintf(stderr, "Error: error opening %s\n", FPATH_GRADES);
-		status = 1;
 	}
 	else
 	{
@@ -55,7 +54,6 @@ int read_grades(double* dest)
 			if (fscanf(grades, "%lf", &dest[i]) != 1)
 			{
 				// failure to achieve a grade
-				status = 2;
 				break;
 			}
 		}
@@ -70,30 +68,25 @@ int read_grades(double* dest)
 
 	
 	// check for file errors
-	if (status != 1 && ferror(grades)) {
+	if (ferror(grades)) {
 		fprintf(stderr, "Error: error reading %s\n", FPATH_GRADES);
-		status = 1;
 	}
 
 
-	// close file
-	status = fclose(grades) == 0 ? status : 3;
 
 	// check barrier errors
 	if (barrier_status != PTHREAD_BARRIER_SERIAL_THREAD && barrier_status != 0)
 	{
 		fprintf(stderr, "Error: barrier failed somehow\n");
-		status = 4;
 	}
 
-	// return success of barrier & file operations
-	return status;
+	return NULL;
 }
 
-void save_bellcurve(double* grade)
+void *save_bellcurve(void* grade)
 {
 	// save grade before bellcurve
-	double grade_val = *grade;
+	double grade_val = *(double*)grade;
 
 	// record grade
 	pthread_mutex_lock(&total_grade_lock);
@@ -137,6 +130,8 @@ void save_bellcurve(double* grade)
 	// setup join
 	pthread_barrier_wait(&bellcurve_saved_barr);
 
+	return NULL;
+
 }
 
 
@@ -165,7 +160,7 @@ int main(int argc, char* argv[])
 
 	// read grades
 	pthread_t readgrades_thr;
-	pthread_create(&readgrades_thr, 0, read_grades, (void *)grades);
+	pthread_create(&readgrades_thr, 0, read_grades, (void *) grades);
 	int barrier = pthread_barrier_wait(&grades_read_barr);
 	if (barrier != PTHREAD_BARRIER_SERIAL_THREAD && barrier != 0)
 		return 1;
@@ -173,7 +168,7 @@ int main(int argc, char* argv[])
 	// create sum/bellcurve threads
 	for (int i = 0; i < Q5_N_GRADES; i++)
 	{
-		pthread_create(&save_bellcurve_thrs[i], 0, save_bellcurve, (void *)&grades[i]);
+		pthread_create(&save_bellcurve_thrs[i], 0, save_bellcurve, (void *) &grades[i]);
 	}
 
 	// wait for grades
