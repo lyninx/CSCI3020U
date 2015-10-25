@@ -25,6 +25,9 @@ int main(void)
 	int grades[NUM_STUDENTS];	
 	pthread_t pth[NUM_STUDENTS];
 
+	// initialize lock
+	pthread_mutex_init(&lock, 0);
+
 	printf("Enter %d student grades:\n", NUM_STUDENTS);
 
 	for(int i=0; i < NUM_STUDENTS; i++){
