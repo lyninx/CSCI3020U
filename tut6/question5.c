@@ -1,9 +1,10 @@
-#include "tutorial6.h"
+//#include "tutorial6.h"
 
-//todo
+// ...
 int main(int argc, char*  argv[])
 
 {
-	int val = factorial(5);
+	//return factorial(2);
+
 	return 0;
 }

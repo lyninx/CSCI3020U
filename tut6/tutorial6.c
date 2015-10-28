@@ -2,6 +2,10 @@
 
 int factorial(int val)
 {
-    //todo
-    return 1;
+	if (val == 0)
+	{
+		return 1;
+	} else {
+		return val * factorial(val - 1);
+	}
 }
