@@ -28,13 +28,14 @@ int calculate_factorial(int val);
 void* factorial(void* pargs);
 
 // sum output function
-void print_sum(const char* fpath);
+int print_sum(const char* fpath);
 
 /// sum factorial function (action of the child process)
 /// @param fpath_src	filepath to number source file
+/// @param count		number of values to read
 /// @param fpath_dest	filepath to sum destination file
 /// @return 0, on success
-int do_sum_factorial(const char* fpath_src, const char* fpath_dest);
+int print_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest);
 
 
 // args struct for factorial
@@ -60,7 +61,7 @@ int main(int argc, char*  argv[])
 	{
 	// child process
 	case 0:
-		return do_sum_factorial(FPATH_NUMBERS, FPATH_SUM);
+		return print_factorial_sum(FPATH_NUMBERS, Q5_NVALUES, FPATH_SUM);
 		break;
 
 	// it is neither the parent nor the child.
@@ -83,21 +84,7 @@ int main(int argc, char*  argv[])
 
 
 	// print the content of the text file given by the child
-	print_sum(FPATH_SUM);
-
-	// stuff
-	/*printf("%d\n", calculate_factorial(2));
-
-	factorial_args args;
-	int val;
-	args.n = 5;
-	args.dest = &val;
-	pthread_t thr;
-	pthread_create(&thr, NULL, factorial, (void*)&args);
-	pthread_join(thr, NULL);
-	printf("%d\n", val);*/
-
-	return 0;
+	return print_sum(FPATH_SUM);
 }
 
 
@@ -144,13 +131,49 @@ void* factorial(void* pargs)
 	return NULL;
 }
 
-int do_sum_factorial(const char* fpath_src, const char* fpath_dest)
+int print_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest)
 {
+	// factorial threads
+	pthread_t factorial_thrs[count];
+
+	// open input file
+	FILE* fin = fopen(fpath_src, "r");
+	if(fin == NULL)
+	{
+		fprintf(stderr, "Error: file '%s' could not be opened for reading", fpath_src);
+		return 1;
+	}
+
+	// browse through input file
+	int currval = 0;
+	for(int i = 0; i < count; i++)
+	{
+		fscanf(fin, "%d", &currval);
+
+		//todo
+		printf("%d\n", currval);
+	}
+
+	// close input file
+	fclose(fin);
+
 	//todo
 	return 0;
 }
 
-void print_sum(const char* fpath)
+int print_sum(const char* fpath)
 {
-	//todo
+	// open file for reading
+	FILE* fin = fopen(fpath, "r");
+	if(fin == NULL)
+	{
+		fprintf(stderr, "Error: file '%s' could not be opened for reading\n", fpath);
+		return 1;
+	}
+
+	// do stuff
+	
+	// close file
+	fclose(fin);
+	return 0;
 }
