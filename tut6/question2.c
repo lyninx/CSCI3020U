@@ -32,7 +32,7 @@ int main(){
 		if(WIFEXITED(status)){
 			
 			printf("Parent Process\n");
-			printf("The return status of the child is %d\n", WEXITSTATUS(status));
+			printf("The return status of the child is %d.\n", WEXITSTATUS(status));
 		}
 	}
 }
