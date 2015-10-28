@@ -20,4 +20,19 @@ int factorial(int val)
 	}
 }
 
+// factorial function for threading
+typedef struct 
+{
+	int n;
+	int* dest;
+} factorial_thr_args;
+
+void* factorial_thr(void* pargs)
+{
+	factorial_thr_args* args = (factorial_thr_args*)pargs;
+	*(args->dest) = factorial(args->n);
+
+	return NULL;
+}
+
 #endif //TUTORIAL6_H
