@@ -27,6 +27,7 @@ all: $(LIST)
 
 q1: question1.c
 	$(CC) $(CFLAGS) question1.c -o q1.exe $(LIBS)
+    
 
 q2: question2.c
 	$(CC) $(CFLAGS) question2.c -o q2.exe $(LIBS)
@@ -39,6 +40,6 @@ q4: question4.c
 
 q5: question5.c
 	$(CC) $(CFLAGS) question5.c -o q5.exe $(LIBS)
-
+    
 clean:
 	$(RM) *.exe
