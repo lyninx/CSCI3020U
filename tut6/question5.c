@@ -22,7 +22,7 @@ int main (int argc, char* argv[]);
 void prompt_for_numbers(const int nvals, const char* fpath);
 
 // factorial function
-int calculate_factorial(int val);
+int get_factorial(int val);
 
 // factorial function solutionb
 // @param value 	integer value
@@ -37,11 +37,17 @@ int print_sum(const char* fpath);
 /// @param count		number of values to read
 /// @param fpath_dest	filepath to sum destination file
 /// @return 0, on success
-int print_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest);
+int calculate_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest);
 
 /// barrier that is used to sync the reassignment of the factorial input
 /// todo: this is probably better to represent as a semaphore, probably.
 pthread_barrier_t acquire_currval_barr;
+
+// sum of factorials
+int total_sum = 0;
+
+// semaphore over total_sum
+sem_t toal_sum_lock;
 
 /*----------------------------------
 *	Definitions
@@ -58,7 +64,7 @@ int main(int argc, char*  argv[])
 	{
 	// child process
 	case 0:
-		return print_factorial_sum(FPATH_NUMBERS, Q5_NVALUES, FPATH_SUM);
+		return calculate_factorial_sum(FPATH_NUMBERS, Q5_NVALUES, FPATH_SUM);
 		break;
 
 	// it is neither the parent nor the child.
@@ -110,13 +116,13 @@ void prompt_for_numbers(const int nvals, const char* fpath)
 }
 
 // factorial function
-int calculate_factorial(int val)
+int get_factorial(int val)
 {
 	if (val == 0)
 	{
 		return 1;
 	} else {
-		return val * calculate_factorial(val - 1);
+		return val * get_factorial(val - 1);
 	}
 }
 
@@ -130,7 +136,7 @@ void* factorial(void* value)
 
 	// print out n
 	printf("%d\n", n);
-	n = calculate_factorial(n);
+	n = get_factorial(n);
 	printf("-->\t%d\n", n);
 
 	//todo
@@ -141,7 +147,7 @@ void* factorial(void* value)
 	return NULL;
 }
 
-int print_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest)
+int calculate_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest)
 {
 	// factorial threads
 	pthread_t factorial_thrs[count];
