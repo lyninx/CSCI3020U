@@ -15,22 +15,25 @@
 // format for number prompt
 #define PROMPT_FOR_NUMBERS_FMT(d) "Enter %d numbers: ", d
 
-// solution to question 5
+/// solution to question 5
 int main (int argc, char* argv[]);
 
-// prompts user for nvals numbers and prints to file
+/// prompts user for nvals numbers and prints to file
 void prompt_for_numbers(const int nvals, const char* fpath);
 
-// factorial function
+/// factorial function
 int get_factorial(int val);
 
-// factorial function solutionb
-// @param value 	integer value
-// @return void
+/// factorial function solutionb
+/// @param value 	integer value
+/// @return void
 void* factorial(void* value);
 
-// sum output function
-int print_sum(const char* fpath);
+/// output sum to console
+int read_result(const char* fpath);
+
+// write sum to file
+int write_result(const char* fpath, int value);
 
 /// sum factorial function (action of the child process)
 /// @param fpath_src	filepath to number source file
@@ -77,7 +80,7 @@ int main(int argc, char*  argv[])
 	}
 
 	// wait for child to finish their business
-	int  status;
+	int status = 0;
 	if(wait(&status) == -1)
 	{
 		fprintf(stderr, "%s\n", "Error: error waiting for child process");
@@ -86,7 +89,7 @@ int main(int argc, char*  argv[])
 
 
 	// print the content of the text file given by the child
-	return print_sum(FPATH_SUM);
+	return read_result(FPATH_SUM);
 }
 
 
@@ -194,10 +197,10 @@ int calculate_factorial_sum(const char* fpath_src, const int count, const char* 
 	}
 
 	// succexxy
-	return 0;
+	return write_result(fpath_dest, total_sum);
 }
 
-int print_sum(const char* fpath)
+int read_result(const char* fpath)
 {
 	// open file for reading
 	FILE* fin = fopen(fpath, "r");
@@ -206,10 +209,36 @@ int print_sum(const char* fpath)
 		fprintf(stderr, "Error: file '%s' could not be opened for reading\n", fpath);
 		return 1;
 	}
-
-	// do stuff
 	
+	// read sum
+	int sum = 0;
+	fscanf(fin, "%d", &sum);
+
 	// close file
 	fclose(fin);
+
+
+	// print sum
+	printf("Total sum: %d\n", sum);
+
+	// success
+	return 0;
+}
+
+int write_result(const char* fpath, int sum)
+{
+	// open file for writing
+	FILE* fout = fopen(fpath, "w");
+	if(fout == NULL)
+	{
+		fprintf(stderr, "Error: file '%s' could not be opened for reading\n", fpath);
+		return 1;
+	}
+
+	// write to file
+	fprintf(fout, "%d\n", sum);
+
+	// close file
+	fclose(fout);
 	return 0;
 }
