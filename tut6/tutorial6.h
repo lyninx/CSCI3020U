@@ -10,6 +10,14 @@
 
 
 // factorial function
-extern int factorial(int val);
+int factorial(int val)
+{
+	if (val == 0)
+	{
+		return 1;
+	} else {
+		return val * factorial(val - 1);
+	}
+}
 
 #endif //TUTORIAL6_H
