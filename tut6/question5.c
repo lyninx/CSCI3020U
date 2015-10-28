@@ -40,7 +40,6 @@ int print_sum(const char* fpath);
 int calculate_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest);
 
 /// barrier that is used to sync the reassignment of the factorial input
-/// todo: this is probably better to represent as a semaphore, probably.
 pthread_barrier_t acquire_currval_barr;
 
 // sum of factorials
@@ -140,15 +139,8 @@ void* factorial(void* value)
 	printf("-->\t%d\n", n);
 
 	//todo
-	printf("%d trying to acquire lock\n", n);
 	sem_wait(&total_sum_lock);
-	printf("%d acquired lock\n", n);
-
-
 	total_sum += n;
-
-	printf("%d releasing lock\n", n);
-
 	sem_post(&total_sum_lock);
 
 
@@ -200,11 +192,6 @@ int calculate_factorial_sum(const char* fpath_src, const int count, const char* 
 	{
 		pthread_join(factorial_thrs[i], NULL);
 	}
-
-
-	// todo
-	printf("total sum (child process): %d\n", total_sum);
-
 
 	// succexxy
 	return 0;
