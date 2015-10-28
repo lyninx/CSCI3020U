@@ -47,7 +47,7 @@ pthread_barrier_t acquire_currval_barr;
 int total_sum = 0;
 
 // semaphore over total_sum
-sem_t toal_sum_lock;
+sem_t total_sum_lock;
 
 /*----------------------------------
 *	Definitions
@@ -140,7 +140,16 @@ void* factorial(void* value)
 	printf("-->\t%d\n", n);
 
 	//todo
-	// update total_sum
+	printf("%d trying to acquire lock\n", n);
+	sem_wait(&total_sum_lock);
+	printf("%d acquired lock\n", n);
+
+
+	total_sum += n;
+
+	printf("%d releasing lock\n", n);
+
+	sem_post(&total_sum_lock);
 
 
 	// done
@@ -149,6 +158,9 @@ void* factorial(void* value)
 
 int calculate_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest)
 {
+	// initialize semaphore
+	sem_init(&total_sum_lock, 0, 1);
+
 	// factorial threads
 	pthread_t factorial_thrs[count];
 
@@ -159,8 +171,6 @@ int calculate_factorial_sum(const char* fpath_src, const int count, const char* 
 		fprintf(stderr, "Error: file '%s' could not be opened for reading", fpath_src);
 		return 1;
 	}
-
-
 
 	// the next int to calculate the factorial of
 	int currval = 0;
@@ -191,7 +201,12 @@ int calculate_factorial_sum(const char* fpath_src, const int count, const char* 
 		pthread_join(factorial_thrs[i], NULL);
 	}
 
-	//todo
+
+	// todo
+	printf("total sum (child process): %d\n", total_sum);
+
+
+	// succexxy
 	return 0;
 }
 
