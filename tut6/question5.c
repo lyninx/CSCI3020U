@@ -24,8 +24,10 @@ void prompt_for_numbers(const int nvals, const char* fpath);
 // factorial function
 int calculate_factorial(int val);
 
-// factorial function solution
-void* factorial(void* pargs);
+// factorial function solutionb
+// @param value 	integer value
+// @return void
+void* factorial(void* value);
 
 // sum output function
 int print_sum(const char* fpath);
@@ -37,14 +39,9 @@ int print_sum(const char* fpath);
 /// @return 0, on success
 int print_factorial_sum(const char* fpath_src, const int count, const char* fpath_dest);
 
-
-// args struct for factorial
-typedef struct 
-{
-	int n;
-	int* dest;
-} factorial_args;
-
+/// barrier that is used to sync the reassignment of the factorial input
+/// todo: this is probably better to represent as a semaphore, probably.
+pthread_barrier_t acquire_currval_barr;
 
 /*----------------------------------
 *	Definitions
@@ -123,11 +120,24 @@ int calculate_factorial(int val)
 	}
 }
 
-void* factorial(void* pargs)
+void* factorial(void* value)
 {
-	factorial_args* args = (factorial_args*)pargs;
-	*(args->dest) = calculate_factorial(args->n);
+	// copy n
+	int n = *(int*)value;
 
+	// indicate that n has been copied
+	pthread_barrier_wait(&acquire_currval_barr);
+
+	// print out n
+	printf("%d\n", n);
+	n = calculate_factorial(n);
+	printf("-->\t%d\n", n);
+
+	//todo
+	// update total_sum
+
+
+	// done
 	return NULL;
 }
 
@@ -144,18 +154,36 @@ int print_factorial_sum(const char* fpath_src, const int count, const char* fpat
 		return 1;
 	}
 
-	// browse through input file
+
+
+	// the next int to calculate the factorial of
 	int currval = 0;
+
+	// initialize barrier that gives threads a chance to copy currval
+	pthread_barrier_init(&acquire_currval_barr, NULL, 2);
+
+	// launch threads for input value
 	for(int i = 0; i < count; i++)
 	{
+		// get value
 		fscanf(fin, "%d", &currval);
 
-		//todo
-		printf("%d\n", currval);
+		// give value to factorial calculator
+		pthread_create(&factorial_thrs[i], NULL, factorial, (void*)&currval);
+
+		// wait politely to get current value back
+		pthread_barrier_wait(&acquire_currval_barr);
+
 	}
 
 	// close input file
 	fclose(fin);
+
+	// join threads
+	for(int i = 0; i < count; i++)
+	{
+		pthread_join(factorial_thrs[i], NULL);
+	}
 
 	//todo
 	return 0;
