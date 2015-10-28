@@ -9,6 +9,9 @@
 // file path to numbers for IPC
 #define FPATH_NUMBERS "numbers.txt"
 
+// file path for sum for IPC
+#define FPATH_SUM "sum.txt"
+
 // format for number prompt
 #define PROMPT_FOR_NUMBERS_FMT(d) "Enter %d numbers: ", d
 
@@ -24,6 +27,15 @@ int calculate_factorial(int val);
 // factorial function solution
 void* factorial(void* pargs);
 
+// sum output function
+void print_sum(const char* fpath);
+
+/// sum factorial function (action of the child process)
+/// @param fpath_src	filepath to number source file
+/// @param fpath_dest	filepath to sum destination file
+/// @return 0, on success
+int do_sum_factorial(const char* fpath_src, const char* fpath_dest);
+
 
 // args struct for factorial
 typedef struct 
@@ -32,6 +44,10 @@ typedef struct
 	int* dest;
 } factorial_args;
 
+
+/*----------------------------------
+*	Definitions
+*---------------------------------*/
 
 int main(int argc, char*  argv[])
 {
@@ -42,18 +58,35 @@ int main(int argc, char*  argv[])
 	pid_t PID = fork();
 	switch(PID)
 	{
+	// child process
+	case 0:
+		return do_sum_factorial(FPATH_NUMBERS, FPATH_SUM);
+		break;
 
-
+	// it is neither the parent nor the child.
 	case -1:
-	default:
 		return 0;
+		break;
+
+	// it's the parent process.
+	default:
 		break;
 	}
 
+	// wait for child to finish their business
+	int  status;
+	if(wait(&status) == -1)
+	{
+		fprintf(stderr, "%s\n", "Error: error waiting for child process");
+		return 1;
+	}
 
+
+	// print the content of the text file given by the child
+	print_sum(FPATH_SUM);
 
 	// stuff
-	printf("%d\n", calculate_factorial(2));
+	/*printf("%d\n", calculate_factorial(2));
 
 	factorial_args args;
 	int val;
@@ -62,7 +95,7 @@ int main(int argc, char*  argv[])
 	pthread_t thr;
 	pthread_create(&thr, NULL, factorial, (void*)&args);
 	pthread_join(thr, NULL);
-	printf("%d\n", val);
+	printf("%d\n", val);*/
 
 	return 0;
 }
@@ -109,4 +142,15 @@ void* factorial(void* pargs)
 	*(args->dest) = calculate_factorial(args->n);
 
 	return NULL;
+}
+
+int do_sum_factorial(const char* fpath_src, const char* fpath_dest)
+{
+	//todo
+	return 0;
+}
+
+void print_sum(const char* fpath)
+{
+	//todo
 }
