@@ -11,30 +11,5 @@
 
 
 
-// factorial function
-int factorial(int val)
-{
-	if (val == 0)
-	{
-		return 1;
-	} else {
-		return val * factorial(val - 1);
-	}
-}
-
-// factorial function for threading
-typedef struct 
-{
-	int n;
-	int* dest;
-} factorial_thr_args;
-
-void* factorial_thr(void* pargs)
-{
-	factorial_thr_args* args = (factorial_thr_args*)pargs;
-	*(args->dest) = factorial(args->n);
-
-	return NULL;
-}
 
 #endif //TUTORIAL6_H

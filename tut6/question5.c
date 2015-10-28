@@ -12,10 +12,62 @@
 // format for number prompt
 #define PROMPT_FOR_NUMBERS_FMT(d) "Enter %d numbers: ", d
 
-
-void prompt_for_numbers(const int nvals, const char* fpath);
+// solution to question 5
+int main (int argc, char* argv[]);
 
 // prompts user for nvals numbers and prints to file
+void prompt_for_numbers(const int nvals, const char* fpath);
+
+// factorial function
+int calculate_factorial(int val);
+
+// factorial function solution
+void* factorial(void* pargs);
+
+
+// args struct for factorial
+typedef struct 
+{
+	int n;
+	int* dest;
+} factorial_args;
+
+
+int main(int argc, char*  argv[])
+{
+	// get the numbers file
+	prompt_for_numbers(Q5_NVALUES, FPATH_NUMBERS);
+
+	// start doing stuff with the numbers
+	pid_t PID = fork();
+	switch(PID)
+	{
+
+
+	case -1:
+	default:
+		return 0;
+		break;
+	}
+
+
+
+	// stuff
+	printf("%d\n", calculate_factorial(2));
+
+	factorial_args args;
+	int val;
+	args.n = 5;
+	args.dest = &val;
+	pthread_t thr;
+	pthread_create(&thr, NULL, factorial, (void*)&args);
+	pthread_join(thr, NULL);
+	printf("%d\n", val);
+
+	return 0;
+}
+
+
 void prompt_for_numbers(const int nvals, const char* fpath)
 {
 	// current value
@@ -39,25 +91,22 @@ void prompt_for_numbers(const int nvals, const char* fpath)
 	// close output file
 	fclose(fout);
 }
-// ...
-int main(int argc, char*  argv[])
+
+// factorial function
+int calculate_factorial(int val)
 {
-	// get the numbers file
-	prompt_for_numbers(Q5_NVALUES, FPATH_NUMBERS);
+	if (val == 0)
+	{
+		return 1;
+	} else {
+		return val * calculate_factorial(val - 1);
+	}
+}
 
-	//
+void* factorial(void* pargs)
+{
+	factorial_args* args = (factorial_args*)pargs;
+	*(args->dest) = calculate_factorial(args->n);
 
-	// stuff
-	printf("%d\n", factorial(2));
-
-	factorial_thr_args args;
-	int val;
-	args.n = 5;
-	args.dest = &val;
-	pthread_t thr;
-	pthread_create(&thr, NULL, factorial_thr, (void*)&args);
-	pthread_join(thr, NULL);
-	printf("%d\n", val);
-
-	return 0;
+	return NULL;
 }
