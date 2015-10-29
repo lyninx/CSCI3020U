@@ -21,11 +21,11 @@ int main(){
 
 		sleep(1);
 		printf("Child Process\n");
-		exit(1);
+		exit(0);
 
 	} else{ //Parent Process
 
-		int status = 0;
+		int status = 1;
 
 		wait(&status);
 
@@ -33,6 +33,7 @@ int main(){
 			
 			printf("Parent Process\n");
 			printf("The return status of the child is %d.\n", WEXITSTATUS(status));
+			// Status = 0 if return successful, otherwise error
 		}
 	}
 }
