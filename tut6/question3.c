@@ -49,6 +49,8 @@ int main(){
 
 	thread_data t_data[NUMVALS];
 
+	printf("Enter %d numbers:\n", NUMVALS);
+
 	for(int i = 0; i < NUMVALS; i++){
 	scanf("%d", &t_data[i].value);
 	t_data[i].index = i;
