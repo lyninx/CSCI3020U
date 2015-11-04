@@ -46,7 +46,19 @@ terminate a process and wait until it has ended before continuing?
 4. Explain what a linked-list?(queue) is, what does FIFO ?mean? What are the
 common operations that a linked-list must have?
 
-    FIFO is short for First-In-First-Out.
+    A linked list is a structure of ordered objects. Each node in the list 
+    has a pointer to it's neighboring element(s). The last element has a null
+    value for it's next pointer. Common operations for a linked list include
+    push(), which inserts a new node at the end of the list, and pop(), which
+    remove the element at the front of the list for FIFO lists.
+
+    FIFO is short for First-In-First-Out, and refers to the queue structure.
+    Elements are inserted at the back of the list and popped from the front,
+    so that the element that is removed is the oldest existing in the list.
+    
+    
 
 5. Explain the structure of a linked-list as implemented in C, explain how would you
 implement the operations to add and remove values from the queue?
+
+    
