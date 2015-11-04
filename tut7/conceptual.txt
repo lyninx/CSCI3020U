@@ -1,0 +1,89 @@
+1. What are signals, what is their purpose?
+
+    Signals are software interrupts that are sent to be handled by a process. 
+    Each signal is distinguished by a number referred to by some macro such as
+    SIGINT, SIGTSTP, etc. These can be used to facilitate communications
+    between processes during runtime.
+
+2. Explain the following signals: SIGINT, SIGTSTP, SIGCONT ?how can they be
+used to suspend, resume, and terminate a program?
+    
+    SIGINT is the program interrupt signal. It is generated when the user at
+    the console triggers it with Control C or whatever their INTR interrupt
+    character may be.
+    
+    SIGTSTP is an interrupt requesting the program to stop; It is triggered by
+    the user entering control-Z. This signal allows the program to handle or
+    even ignore the signal, giving it a chance to clean up what it is doing
+    or otherwise respond appropriately before ending.
+    
+    SIGCONT is a signal that tells the process to resume it's operation. It is
+    possible to set a handler for this signal but doing so is not nessecary for
+    the process to continue, in other words the process will continue
+    regardless if a handler is set.
+    
+    In terms of default behaviour, SIGINT and SIGTSTP both indicate that a
+    program should be terminated. However, a handler could be set for SIGINT
+    to make the process suspend itself instead of just terminating, possibly
+    to wait for SIGCONT. If the handler does busy waiting on accepting SIGINT
+    and waits for SIGCONT, then it would terminate it's busy waiting on
+    recieving SIGCONT allowing it to pause without terminating the process.
+    
+
+3. Explain the following functions: kill(), waitpid()?how can they be used to
+terminate a process and wait until it has ended before continuing?
+    kill is a function that sends some signal to a process with a particular
+    pid. It can be used to send signals other than those that would cause
+    termination, despite its name. 
+    
+    waidpid waits for a process to complete.
+    
+    Together, kill can send a code like SIGTSTP to the process that needs terminaitng.
+    This could be self-referencing using getpid(), and can terminate itself. waitpid()
+    would be invoked in the waiting process.
+    
+
+4. Explain what a linked-list?(queue) is, what does FIFO ?mean? What are the
+common operations that a linked-list must have?
+
+    A linked list is a structure of ordered objects. Each node in the list 
+    has a pointer to it's neighboring element(s). The last element has a null
+    value for it's next pointer. Common operations for a linked list include
+    push(), which inserts a new node at the end of the list, and pop(), which
+    remove the element at the front of the list for FIFO lists.
+
+    FIFO is short for First-In-First-Out, and refers to the queue structure.
+    Elements are inserted at the back of the list and popped from the front,
+    so that the element that is removed is the oldest existing in the list.
+    
+    
+
+5. Explain the structure of a linked-list as implemented in C, explain how would you
+implement the operations to add and remove values from the queue?
+
+    In C, we would represent a node as a struct containing the value and a
+    pointer to another node. This pointer to the node would be initialized to
+    null, representing that it is the sole element in the list. In order to
+    represent the list, we would refer to the first node or head of the list
+    and use this node in list operations. 
+    
+    push() and pop() would be functions accepting the head node struct as a
+    parameter. push() would create a new node struct with the new value in it.
+    Then, it would iterate through each node by looking at the node
+    pointed to by each node's "next" attribute. When it finds a node with a
+    null "next" attribute, it would reassign that value to point to the newly
+    created node. pop() would work by setting the head of the list to the head's
+    next element, in effect shrinking the list. C is pass-by-value, so these
+    functions must take pointers as parameters. For example, push() needs a
+    pointer instead of a copy of head in order to push a value behind the head.
+    For this reason it should take a pointer as a parameter. pop() must go a
+    level higher to change the address used by head, and therefore needs a
+    pointer to a pointer.
+    
+    
+    
+    
+    
+    
+    
+    
