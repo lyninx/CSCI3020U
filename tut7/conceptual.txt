@@ -61,4 +61,29 @@ common operations that a linked-list must have?
 5. Explain the structure of a linked-list as implemented in C, explain how would you
 implement the operations to add and remove values from the queue?
 
+    In C, we would represent a node as a struct containing the value and a
+    pointer to another node. This pointer to the node would be initialized to
+    null, representing that it is the sole element in the list. In order to
+    represent the list, we would refer to the first node or head of the list
+    and use this node in list operations. 
+    
+    push() and pop() would be functions accepting the head node struct as a
+    parameter. push() would create a new node struct with the new value in it.
+    Then, it would iterate through each node by looking at the node
+    pointed to by each node's "next" attribute. When it finds a node with a
+    null "next" attribute, it would reassign that value to point to the newly
+    created node. pop() would work by setting the head of the list to the head's
+    next element, in effect shrinking the list. C is pass-by-value, so these
+    functions must take pointers as parameters. For example, push() needs a
+    pointer instead of a copy of head in order to push a value behind the head.
+    For this reason it should take a pointer as a parameter. pop() must go a
+    level higher to change the address used by head, and therefore needs a
+    pointer to a pointer.
+    
+    
+    
+    
+    
+    
+    
     
