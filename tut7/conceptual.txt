@@ -1,13 +1,52 @@
 1. What are signals, what is their purpose?
 
+    Signals are software interrupts that are sent to be handled by a process. 
+    Each signal is distinguished by a number referred to by some macro such as
+    SIGINT, SIGTSTP, etc. These can be used to facilitate communications
+    between processes during runtime.
+
 2. Explain the following signals: SIGINT, SIGTSTP, SIGCONT ?how can they be
 used to suspend, resume, and terminate a program?
+    
+    SIGINT is the program interrupt signal. It is generated when the user at
+    the console triggers it with Control C or whatever their INTR interrupt
+    character may be.
+    
+    SIGTSTP is an interrupt requesting the program to stop; It is triggered by
+    the user entering control-Z. This signal allows the program to handle or
+    even ignore the signal, giving it a chance to clean up what it is doing
+    or otherwise respond appropriately before ending.
+    
+    SIGCONT is a signal that tells the process to resume it's operation. It is
+    possible to set a handler for this signal but doing so is not nessecary for
+    the process to continue, in other words the process will continue
+    regardless if a handler is set.
+    
+    In terms of default behaviour, SIGINT and SIGTSTP both indicate that a
+    program should be terminated. However, a handler could be set for SIGINT
+    to make the process suspend itself instead of just terminating, possibly
+    to wait for SIGCONT. If the handler does busy waiting on accepting SIGINT
+    and waits for SIGCONT, then it would terminate it's busy waiting on
+    recieving SIGCONT allowing it to pause without terminating the process.
+    
 
 3. Explain the following functions: kill(), waitpid()?how can they be used to
 terminate a process and wait until it has ended before continuing?
+    kill is a function that sends some signal to a process with a particular
+    pid. It can be used to send signals other than those that would cause
+    termination, despite its name. 
+    
+    waidpid waits for a process to complete.
+    
+    Together, kill can send a code like SIGTSTP to the process that needs terminaitng.
+    This could be self-referencing using getpid(), and can terminate itself. waitpid()
+    would be invoked in the waiting process.
+    
 
 4. Explain what a linked-list?(queue) is, what does FIFO ?mean? What are the
 common operations that a linked-list must have?
+
+    FIFO is short for First-In-First-Out.
 
 5. Explain the structure of a linked-list as implemented in C, explain how would you
 implement the operations to add and remove values from the queue?
