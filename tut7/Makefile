@@ -5,7 +5,8 @@ CC = clang
 # compiler flags:
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
-CFLAGS  = -g -Wall -std=gnu99
+
+CFLAGS  = -g -Wall -Wextra -std=gnu99
 
 # define any directories containing header files other than /usr/include
 # -I/home/newhall/include  -I../include
