@@ -19,16 +19,16 @@ void push(node_t * head, proc p) {
     current->next->process = p;
     current->next->next = NULL;
 }
-int pop(node_t ** head) {
-    int retval = -1;
+proc* pop(node_t ** head) {
+    proc* retval = NULL;
     node_t * next_node = NULL;
 
     if (*head == NULL) {
-        return -1;
+        return NULL;
     }
 
     next_node = (*head)->next;
-    retval = (*head)->process;
+    retval = &(*head)->process;
     free(*head);
     *head = next_node;
 
@@ -38,11 +38,17 @@ void print_list(node_t * head) {
     node_t * current = head;
 
     while (current != NULL) {
-        printf("%d\n", current->process);
+        printf("%d\n", current->process.priority);
         current = current->next;
     }
 }
 int main(void) {
+
+	node_t * queue = NULL;
+	queue = malloc(sizeof(node_t));
+	if (queue == NULL) {
+	    return 1;
+	}
 
 	proc p;
 
@@ -51,13 +57,11 @@ int main(void) {
 	p.pid = 1;
 	p.runtime = 0;
 
-	node_t * head = NULL;
-	head = malloc(sizeof(node_t));
-	if (head == NULL) {
-	    return 1;
-	}
+	queue->process = p;
+	queue->next = NULL;
 
-	head->process = p;
-	head->next = NULL;
+	push(queue, p);
+	push(queue, p);
+	print_list(queue);
 	
 }
