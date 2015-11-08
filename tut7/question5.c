@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include "queue.h"
 
@@ -27,9 +28,16 @@ void load_processes(FILE* file/*,queue type*/)
     // get each process from file
     while(fgets(buff, BUFFER_LEN, file))
     {
+        const char* tok;
+        tok = strtok(buff, ", ");
+        sscanf(tok, "%s", name);
+        tok = strtok(NULL, ", ");
+        sscanf(tok, "%d", &priority);
+        tok = strtok(NULL, ", ");
+        sscanf(tok, "%d", &runtime);
 
         // extract info from string
-        sscanf(buff, "%s,%d,%d", name, &priority, &runtime);
+        //sscanf(buff, "%s, %d %d", name, &priority, &runtime);
 
         //todo
         printf("process name '%s' prio %d rt %d\n", name, priority, runtime);
