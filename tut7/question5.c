@@ -15,6 +15,22 @@
 // command length
 #define PROCESS_NAME_LEN 16
 
+proc new_proc(void)
+{
+    proc obj;
+    obj.name = calloc(PROCESS_NAME_LEN, sizeof(char));
+    obj.priority = 0;
+    obj.pid = 0;
+    obj.runtime = 0;
+
+    return obj;
+}
+
+void free_proc(proc* obj)
+{
+    free(obj->name);
+}
+
 // loads the processes in some file 
 void load_processes(FILE* file, node_t* head)
 {
@@ -22,23 +38,34 @@ void load_processes(FILE* file, node_t* head)
     char buff[BUFFER_LEN] = { 0 };
 
     // store process name
-    char* name2 = calloc(PROCESS_NAME_LEN, sizeof(char));
+    //char* name2 = calloc(PROCESS_NAME_LEN, sizeof(char));
 
 
+    //proc pobj;
+    //pobj.name = name2;
 
-    proc pobj;
-    pobj.name = name2;
+    int max_priority = 0;
 
     // get each process from file
     while(fgets(buff, BUFFER_LEN, file))
     {
+        // make new process object
+        proc pobj = new_proc();
+
         get_process_info_from_line_q5(buff, &pobj);
+
 
         //todo
         printf("process name '%s' prio %d rt %d\n", pobj.name, pobj.priority, pobj.runtime);
+
+        free_proc(&pobj);
     }
 
-    free(name2);
+    //free(name2);
+
+
+
+
 
 
     
