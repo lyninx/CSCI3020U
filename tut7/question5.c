@@ -199,25 +199,25 @@ int main(int argc, char* argv[])
     // read in stuff from processes
     node_t* head = NULL;
     load_processes(process_list, &head);
-
-
-    printf("print em once\n");
-    print_list_all(head);
     
     // close the process list
     fclose(process_list);
 
 
-    printf("print em again\n");
+    printf("before\n");
     print_list_all(head);
     
     // prioritize list
     sort_processes(&head);
 
+    
+    printf("after\n");
+    print_list_all(head);
+
     // run processes
     run_processes(&head);
-    
-    printf("print a last time\n");
+
+    printf("should be empty now:\n");
     print_list_all(head);
     
     
