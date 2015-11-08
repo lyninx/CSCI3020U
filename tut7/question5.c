@@ -130,9 +130,6 @@ void sort_processes(node_t** head)
         printf("Let's start iter %d\n", i);
         while(curr_node)
         {
-
-            //printf("\tcheck '%s' %d \n", curr_node->process.name, curr_node->process.priority);
-
             // if node matches current priority, send it to sorted side
             if(curr_node->process.priority == i)
             {
@@ -144,29 +141,18 @@ void sort_processes(node_t** head)
                     last_sorted_node = curr_node;
                     prev_node = curr_node;
                 } else {
-                    
-
-                    // float out node from list
-                    node_t* float_node = curr_node;
-                    if(prev_node)
-                    {
                         printf("\tremove (%s) %s (%s)\n", prev_node ? prev_node->process.name : "<begin>", curr_node->process.name, curr_node->next ? curr_node->next->process.name : "<end>");
 
                         // float out current node
-                        printf("\t\t'%s'--->'%s'\n", prev_node->process.name, float_node->next ? float_node->next->process.name : "<end>");
-                        prev_node->next = float_node->next;
-                    } else if(!last_sorted_node) {
-                        // head == curr_node == last_sorted_node
-                        last_sorted_node = *head;
-                    } else if (curr_node == *head) {
-                        printf("\t\thead is reset to '%s'\n", float_node->next ? float_node->next->process.name : "<empty>");
-                        *head = float_node->next;
-                    } 
+                        if(prev_node)
+                        {
+                            printf("\t\t'%s'--->'%s'\n", prev_node->process.name, curr_node->next ? curr_node->next->process.name : "<end>");
+                            prev_node->next = curr_node->next;
+                        }
+
                 }
 
-                
-
-
+            
 
             } else {
                 // curr_node was not floated.
