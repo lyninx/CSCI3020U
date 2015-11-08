@@ -12,6 +12,9 @@
 // buffer length
 #define BUFFER_LEN 256
 
+// command length
+#define PROCESS_NAME_LEN 16
+
 // loads the processes in some file 
 void load_processes(FILE* file, node_t* head)
 {
@@ -19,8 +22,7 @@ void load_processes(FILE* file, node_t* head)
     char buff[BUFFER_LEN] = { 0 };
 
     // store process name
-    char name[BUFFER_LEN] = { 0 };
-    char* name2 = calloc(BUFFER_LEN, sizeof(char));
+    char* name2 = calloc(PROCESS_NAME_LEN, sizeof(char));
 
 
 
