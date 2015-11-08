@@ -111,40 +111,49 @@ void sort_processes(node_t** head)
     int maxpri = get_highest_priority(*head);
 
     // pointer to current node
-    node_t* curr_node = *head;
+    node_t* curr_node = NULL;
 
     // pointer to previous node
     node_t* prev_node = NULL;
 
+    // list of sorted items
+    node_t* sorted_head = NULL;
+
+    // end of sorted list
+    node_t* sorted_end = NULL;
+
     // list of unsorted items
-    node_t* unsorted_head = NULL;
+    node_t* unsorted_head = *head;
 
     // perform countsort
     for(int i = 0; i <=maxpri; i++)
     {
+        prev_node = NULL;
+        curr_node = unsorted_head;
+
         // traverse over each unsorted item
         while(curr_node->next)
         {
-            if(curr_node->process.priority != i)
+            if(curr_node->process.priority == i)
             {
                 // remove it
                 if(!prev_node)
                 {
-                    *head = curr_node->next;
+                    unsorted_head = curr_node->next;
                 } else {
                     prev_node->next = curr_node->next;
                 }
 
                 // insert it
                 node_t* temp_next = curr_node->next;
-                if(!unsorted_head)
-                {
-                    unsorted_head = curr_node;
-                    curr_node->next = NULL;
-                } else {
-                    curr_node->next = unsorted_head;
-                    unsorted_head = curr_node;
-                }
+                if(!sorted_head)
+                    sorted_head = curr_node;
+                else
+                    sorted_end->next = curr_node;
+
+                // current node is now the end of the list
+                curr_node->next = NULL;
+                sorted_end = curr_node;
 
                 // determine next node
                 curr_node = temp_next;
@@ -156,15 +165,11 @@ void sort_processes(node_t** head)
             }
         }
 
-        // reattach unsorted values
-        curr_node->next = unsorted_head;
-        unsorted_head = NULL;
-
-        // continue
-        curr_node = curr_node->next;
-
 
     }
+
+    // give back the sorted list
+    *head = sorted_head;
 
 }
 
