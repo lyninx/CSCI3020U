@@ -4,25 +4,27 @@
 
 #define PTOKENS_DELIM ", "
 
-void get_next_token(char* str)
+void read_first_token_str(char* str, char* name)
 {
+	const char* tok = strtok(str, PTOKENS_DELIM);
+    sscanf(tok, "%s", name);
+}
 
+void read_next_token_int(char* str, int* val)
+{
+	const char* tok = strtok(NULL, PTOKENS_DELIM);
+	sscanf(tok, "%d", val);
 }
 
 void get_process_info_from_line(char* str, char* name, int* priority, int* pid, int* runtime)
 {
-	//todo
+
 }
 
 
 void get_process_info_from_line_q5(char* str, char* name, int* priority, int* runtime)
 {
-	
-        const char* tok;
-        tok = strtok(str, ", ");
-        sscanf(tok, "%s", name);
-        tok = strtok(NULL, ", ");
-        sscanf(tok, "%d", priority);
-        tok = strtok(NULL, ", ");
-        sscanf(tok, "%d", runtime);
+        read_first_token_str(str, name);
+        read_next_token_int(str, priority);
+        read_next_token_int(str, runtime);
 }
