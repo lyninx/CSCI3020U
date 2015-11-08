@@ -176,17 +176,19 @@ void sort_processes(node_t** head)
 
 }
 
-bool run_process(proc* process)
+
+
+bool launch_process_as_child(proc* process)
 {
     pid_t pid = fork();
     if(pid == 0)
     {
         //todo
-        return false;
+        return true;
     } else {
         process->pid = pid;
         wait(NULL);
-        return true;
+        return false;
     }
 }
 
@@ -213,7 +215,7 @@ bool run_processes(node_t** head)
 
 
         // run it
-        if(!run_process(currproc))
+        if(launch_process_as_child(currproc))
         {
             // child shouldn't spawn more children
             consume_queue(head);
