@@ -20,7 +20,7 @@ LFLAGS =
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) I use the -llibname 
 #   option, something like (this will link in libmylib.so and libm.so:
-LIBS = -lpthread
+LIBS = -lpthread tut7ptokens.c
 
 LIST = question1 question2 question3 question4 question5
 
@@ -39,7 +39,7 @@ question4: question4.c
 	$(CC) $(CFLAGS) $(LIBS) question4.c -o question4.exe
 
 question5: question5.c
-	$(CC) $(CFLAGS) $(LIBS) tut7ptokens.c question5.c -o question5.exe
+	$(CC) $(CFLAGS) $(LIBS) question5.c -o question5.exe
     
 clean:
 	$(RM) *.exe
