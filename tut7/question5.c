@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <pthread.h>
 #include "queue.h"
 
 
@@ -5,15 +7,34 @@
 #define FPATH_PROCESSES_Q5 "processes_q5.txt"
 
 // buffer length
+#define BUFFER_LEN 256
 
 // loads the processes in some file 
 void load_processes(FILE* file/*,queue type*/)
 {
-    
-    
-    //
-    
-    while(
+    // command buffer
+    char buff[BUFFER_LEN] = { 0 };
+
+    // store process name
+    char name[BUFFER_LEN] = { 0 };
+
+    // store process priority
+    int priority = 0;
+
+    // store process runtime
+    int runtime = 0;
+
+    // get each process from file
+    while(fgets(buff, BUFFER_LEN, file))
+    {
+
+        // extract info from string
+        sscanf(buff, "%s,%d,%d", name, &priority, &runtime);
+
+        //todo
+        printf("process name '%s' prio %d rt %d\n", name, priority, runtime);
+    }
+
     
     
 }
