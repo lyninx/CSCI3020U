@@ -116,14 +116,13 @@ void sort_processes(node_t** head)
     // pointer to previous node
     node_t* prev_node = NULL;
 
+    // list of unsorted items
     node_t* unsorted_head = NULL;
 
     // perform countsort
-    printf("\tlet's go\n");
     for(int i = 0; i <=maxpri; i++)
     {
         // traverse over each unsorted item
-        printf("\titer %d\n", i);
         while(curr_node->next)
         {
             if(curr_node->process.priority != i)
@@ -155,15 +154,6 @@ void sort_processes(node_t** head)
                 prev_node = curr_node;
                 curr_node = curr_node->next;
             }
-
-
-            printf("\n\t%d\tworking list:\n", i);
-            print_list_all(*head);
-            printf("\t%d\tunsorted list:\n", i);
-            print_list_all(unsorted_head);
-
-
-            
         }
 
         // reattach unsorted values
