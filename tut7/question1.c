@@ -82,7 +82,7 @@ proc* pop(node_t ** head) {
 }
 void print_list(node_t * head) {
     node_t * current = head->next;
-    printf("\n \n");
+    printf("\n");
     while (current != NULL) {
         printf("| %s ", current->process.name);
         printf("%d ", current->process.priority);
