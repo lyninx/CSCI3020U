@@ -2,6 +2,7 @@
 #include <string.h>
 #include <pthread.h>
 #include "queue.h"
+#include "tut7ptokens.h"
 
 
 // filepath to the process list
@@ -28,13 +29,9 @@ void load_processes(FILE* file/*,queue type*/)
     // get each process from file
     while(fgets(buff, BUFFER_LEN, file))
     {
-        const char* tok;
-        tok = strtok(buff, ", ");
-        sscanf(tok, "%s", name);
-        tok = strtok(NULL, ", ");
-        sscanf(tok, "%d", &priority);
-        tok = strtok(NULL, ", ");
-        sscanf(tok, "%d", &runtime);
+        get_process_info_from_line_q5(buff, name, &priority, &runtime);
+
+
 
         // extract info from string
         //sscanf(buff, "%s, %d %d", name, &priority, &runtime);

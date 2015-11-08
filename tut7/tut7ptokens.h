@@ -12,7 +12,7 @@
 * @param runtime	Runtime destination.
 *
 **/
-extern void get_process_info_from_line(const char* str, char* name, int* priority, int* pid, int* runtime);
+extern void get_process_info_from_line(char* str, char* name, int* priority, int* pid, int* runtime);
 
 
 /**
@@ -24,7 +24,7 @@ extern void get_process_info_from_line(const char* str, char* name, int* priorit
 * @param runtime	Runtime destination.
 *
 **/
-extern void get_process_info_from_line_q5(const char* str, char* name, int* priority, int* runtime);
+extern void get_process_info_from_line_q5(char* str, char* name, int* priority, int* runtime);
 
 
 

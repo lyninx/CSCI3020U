@@ -1,12 +1,28 @@
+#include <string.h>
+#include <stdio.h>
 #include "tut7ptokens.h"
 
-void get_process_info_from_line(const char* str, char* name, int* priority, int* pid, int* runtime)
+#define PTOKENS_DELIM ", "
+
+void get_next_token(char* str)
+{
+
+}
+
+void get_process_info_from_line(char* str, char* name, int* priority, int* pid, int* runtime)
 {
 	//todo
 }
 
 
-void get_process_info_from_line_q5(const char* str, char* name, int* priority, int* runtime)
+void get_process_info_from_line_q5(char* str, char* name, int* priority, int* runtime)
 {
-	//todo
+	
+        const char* tok;
+        tok = strtok(str, ", ");
+        sscanf(tok, "%s", name);
+        tok = strtok(NULL, ", ");
+        sscanf(tok, "%d", priority);
+        tok = strtok(NULL, ", ");
+        sscanf(tok, "%d", runtime);
 }

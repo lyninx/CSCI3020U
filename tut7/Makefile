@@ -39,7 +39,7 @@ question4: question4.c
 	$(CC) $(CFLAGS) $(LIBS) question4.c -o question4.exe
 
 question5: question5.c
-	$(CC) $(CFLAGS) $(LIBS) question5.c -o question5.exe
+	$(CC) $(CFLAGS) $(LIBS) tut7ptokens.c question5.c -o question5.exe
     
 clean:
 	$(RM) *.exe
