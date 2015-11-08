@@ -1,3 +1,6 @@
+#ifndef QUEUE_H
+#define QUEUE_H
+
 /* QUEUE */
 
 typedef struct{
@@ -15,3 +18,5 @@ typedef struct node {
 
 extern void push(node_t *, proc);
 extern proc* pop(node_t **);
+
+#endif //QUEUE_H

@@ -1,6 +1,7 @@
 #ifndef TUT7PTOKENS_H
 #define TUT7PTOKENS_H
 
+#include "queue.h"
 
 /**
 * tokenize values from string into process values
@@ -12,7 +13,7 @@
 * @param runtime	Runtime destination.
 *
 **/
-extern void get_process_info_from_line(char* str, char* name, int* priority, int* pid, int* runtime);
+extern void get_process_info_from_line(char* str, proc* pobj);
 
 
 /**
@@ -24,8 +25,7 @@ extern void get_process_info_from_line(char* str, char* name, int* priority, int
 * @param runtime	Runtime destination.
 *
 **/
-extern void get_process_info_from_line_q5(char* str, char* name, int* priority, int* runtime);
-
+extern void get_process_info_from_line_q5(char* str, proc* pobj);
 
 
 

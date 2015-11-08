@@ -20,24 +20,18 @@ void load_processes(FILE* file/*,queue type*/)
     // store process name
     char name[BUFFER_LEN] = { 0 };
 
-    // store process priority
-    int priority = 0;
 
-    // store process runtime
-    int runtime = 0;
+
+    proc pobj;
+    pobj.name = name;
 
     // get each process from file
     while(fgets(buff, BUFFER_LEN, file))
     {
-        get_process_info_from_line_q5(buff, name, &priority, &runtime);
-
-
-
-        // extract info from string
-        //sscanf(buff, "%s, %d %d", name, &priority, &runtime);
+        get_process_info_from_line_q5(buff, &pobj);
 
         //todo
-        printf("process name '%s' prio %d rt %d\n", name, priority, runtime);
+        printf("process name '%s' prio %d rt %d\n", pobj.name, pobj.priority, pobj.runtime);
     }
 
     
