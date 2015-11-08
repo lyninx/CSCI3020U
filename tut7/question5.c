@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
+#include <stdlib.h>
 #include "queue.h"
 #include "tut7ptokens.h"
 
@@ -12,18 +13,19 @@
 #define BUFFER_LEN 256
 
 // loads the processes in some file 
-void load_processes(FILE* file/*,queue type*/)
+void load_processes(FILE* file, node_t* head)
 {
     // command buffer
     char buff[BUFFER_LEN] = { 0 };
 
     // store process name
     char name[BUFFER_LEN] = { 0 };
+    char* name2 = calloc(BUFFER_LEN, sizeof(char));
 
 
 
     proc pobj;
-    pobj.name = name;
+    pobj.name = name2;
 
     // get each process from file
     while(fgets(buff, BUFFER_LEN, file))
@@ -33,6 +35,9 @@ void load_processes(FILE* file/*,queue type*/)
         //todo
         printf("process name '%s' prio %d rt %d\n", pobj.name, pobj.priority, pobj.runtime);
     }
+
+    free(name2);
+
 
     
     
@@ -50,7 +55,8 @@ int main(int argc, char* argv[])
     }
     
     // read in stuff from processes
-    load_processes(process_list);
+    node_t head;
+    load_processes(process_list, &head);
     
     // close the process list
     fclose(process_list);
