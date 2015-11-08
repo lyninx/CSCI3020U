@@ -18,5 +18,7 @@ typedef struct node {
 
 extern void push(node_t *, proc);
 extern proc* pop(node_t **);
+extern void print_list(node_t* head);
+
 
 #endif //QUEUE_H
