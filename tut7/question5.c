@@ -170,7 +170,7 @@ bool run_processes(node_t** head, int priority)
 
 
 
-int main(int argc, char* argv[])
+int main()
 {
     // try load up 'processes_q5.txt'
     FILE* process_list =  fopen(FPATH_PROCESSES_Q5, "r");
