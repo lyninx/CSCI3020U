@@ -86,100 +86,6 @@ void load_processes(FILE* file, node_t** head)
     
 }
 
-
-// gonna be deleted. oh no
-int max_val(const int x, const int y)
-{
-    return x > y ? x : y;
-}
-
-
-// slated to go. that's sad.
-int get_highest_priority(node_t* head)
-{
-    int maxpri = 0;
-    while(head)
-    {
-        // compare priority to max
-        maxpri = max_val(head->process.priority, maxpri);
-
-        // step to next node
-        head = head->next;
-    }
-
-    return maxpri;
-}
-
-// slated to go, how foolish of me
-void sort_processes(node_t** head)
-{
-    // scan for highest/lowest priority
-    int maxpri = get_highest_priority(*head);
-
-    // pointer to current node
-    node_t* curr_node = NULL;
-
-    // pointer to previous node
-    node_t* prev_node = NULL;
-
-    // list of sorted items
-    node_t* sorted_head = NULL;
-
-    // end of sorted list
-    node_t* sorted_end = NULL;
-
-    // list of unsorted items
-    node_t* unsorted_head = *head;
-
-    // perform countsort
-    for(int i = 0; i <=maxpri; i++)
-    {
-        prev_node = NULL;
-        curr_node = unsorted_head;
-
-        // traverse over each unsorted item
-        while(curr_node->next)
-        {
-            if(curr_node->process.priority == i)
-            {
-                // remove it
-                if(!prev_node)
-                {
-                    unsorted_head = curr_node->next;
-                } else {
-                    prev_node->next = curr_node->next;
-                }
-
-                // insert it
-                node_t* temp_next = curr_node->next;
-                if(!sorted_head)
-                    sorted_head = curr_node;
-                else
-                    sorted_end->next = curr_node;
-
-                // current node is now the end of the list
-                curr_node->next = NULL;
-                sorted_end = curr_node;
-
-                // determine next node
-                curr_node = temp_next;
-
-            } else {
-                // traverse normally
-                prev_node = curr_node;
-                curr_node = curr_node->next;
-            }
-        }
-
-
-    }
-
-    // give back the sorted list
-    *head = sorted_head;
-
-}
-
-
 bool launch_process_as_child(proc* process)
 {
     pid_t pid = fork();
@@ -280,24 +186,17 @@ int main(int argc, char* argv[])
     
     // close the process list
     fclose(process_list);
-    
-    // prioritize list
-    //sort_processes(&head);
 
-    // run processes
-    print_list_all(head);
+    // run hi priority then lower-priority processes
     run_processes(&head, 0);
-    print_list_all(head);
     run_processes(&head, -1);
 
-    print_list_all(head);
 
+    // pop any remaining nodes
     while(head)
     {
         pop(&head);
     }
-
-    print_list_all(head);
 
     // run; now you're done.
     return 0;
