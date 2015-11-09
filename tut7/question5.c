@@ -87,12 +87,14 @@ void load_processes(FILE* file, node_t** head)
 }
 
 
-
+// gonna be deleted. oh no
 int max_val(const int x, const int y)
 {
     return x > y ? x : y;
 }
 
+
+// slated to go. that's sad.
 int get_highest_priority(node_t* head)
 {
     int maxpri = 0;
@@ -108,7 +110,7 @@ int get_highest_priority(node_t* head)
     return maxpri;
 }
 
-// prioritizes processes in queue
+// slated to go, how foolish of me
 void sort_processes(node_t** head)
 {
     // scan for highest/lowest priority
@@ -208,32 +210,40 @@ bool launch_process_as_child(proc* process)
 }
 
 // runs processes in queue
-bool run_processes(node_t** head)
+bool run_processes(node_t** head, int priority)
 {
+
+    bool check_priority = priority < 0;
+    node_t* curr_node = *head;
     proc* currproc;
-    while(*head)
+    while(curr_node)
     {
-        // get it
-        currproc = &(*head)->process;
-
-
-
-        // run it
-        if(launch_process_as_child(currproc))
+        if(!check_priority || curr_node->process.priority == priority)
         {
-            // child shouldn't spawn more children
-            fprintf(stderr, "Error: pid %d reached this pointfor some reason\n", getpid());
-            return false;
-        }
+            // get it
+            currproc = &curr_node->process;
 
 
-        printf("[%d]process name '%s' priority %d pid %d runtime %d\n", getpid(), currproc->name, currproc->priority, currproc->pid, currproc->runtime);
-        
+
+            // run it
+            if(launch_process_as_child(currproc))
+            {
+                // child shouldn't spawn more children
+                fprintf(stderr, "Error: pid %d reached this pointfor some reason\n", getpid());
+                return false;
+            }
 
 
-        // be rid of it
-        free_proc(currproc);
-        pop(head);
+            printf("[%d]process name '%s' priority %d pid %d runtime %d\n", getpid(), currproc->name, currproc->priority, currproc->pid, currproc->runtime);
+            
+
+
+            // be rid of it
+            free_proc(currproc);
+            //todopop(head);
+        } 
+        if(curr_node)
+            curr_node = curr_node->next;
 
     }
 
@@ -264,10 +274,22 @@ int main(int argc, char* argv[])
     fclose(process_list);
     
     // prioritize list
-    sort_processes(&head);
+    //sort_processes(&head);
 
     // run processes
-    run_processes(&head);
+    print_list_all(head);
+    run_processes(&head, 0);
+    print_list_all(head);
+    run_processes(&head, -1);
+
+    print_list_all(head);
+
+    while(head)
+    {
+        pop(&head);
+    }
+
+    print_list_all(head);
 
     // run; now you're done.
     return 0;
