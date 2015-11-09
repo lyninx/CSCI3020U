@@ -181,13 +181,28 @@ void sort_processes(node_t** head)
 bool launch_process_as_child(proc* process)
 {
     pid_t pid = fork();
+    char* argv[] = {0};
     if(pid == 0)
-    {
-        //todo
+    {  
+        execv("./process", argv);
         return true;
+    } else if (pid < 0){
+        fprintf(stderr, "Error occured during fork.\n");
+        return false;
     } else {
+        // update pid of process
         process->pid = pid;
-        wait(NULL);
+
+        // wait for process runtime to complete
+        sleep(process->runtime);
+
+        // now you're killing it. Stop it.
+        kill(pid, SIGINT);
+
+        // wait for it.
+        waitpid(pid, 0, 0);
+
+        // return.
         return false;
     }
 }
