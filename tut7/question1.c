@@ -120,9 +120,10 @@ int main(void) {
             proc_tokens = str_split(line, ',');
             p.name = *proc_tokens;
             //p.priority = *proc_tokens + 1;
-            p.priority = 1;
-            p.pid = 1;
-            p.runtime = 0;
+            //printf("%s\n", *(proc_tokens + 1));
+            p.priority = strtol(*(proc_tokens + 1), NULL, 10);
+            p.pid = strtol(*(proc_tokens + 2), NULL, 10);;
+            p.runtime = strtol(*(proc_tokens + 3), NULL, 10);;
             push(queue, p);
         }
 
