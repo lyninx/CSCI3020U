@@ -27,10 +27,10 @@ LIST = question1 question2 question3 question4 question5
 all: $(LIST)
 
 question1: question1.c
-	$(CC) $(CFLAGS)  question1.c -o question1.exe
+	$(CC) $(CFLAGS) question1.c -o question1.exe
 
 question2: question2.c
-	$(CC) $(CFLAGS) $(LIBS) question2.c -o question2.exe
+	$(CC) $(CFLAGS) question2.c -o question2.exe
 
 question3: question3.c
 	$(CC) $(CFLAGS) $(LIBS) question3.c -o question3.exe
