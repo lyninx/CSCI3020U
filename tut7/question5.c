@@ -213,7 +213,7 @@ bool launch_process_as_child(proc* process)
 bool run_processes(node_t** head, int priority)
 {
 
-    bool check_priority = priority < 0;
+    bool check_priority = priority >= 0;
     node_t* curr_node = *head;
     proc* currproc;
     while(curr_node)
@@ -240,10 +240,18 @@ bool run_processes(node_t** head, int priority)
 
             // be rid of it
             free_proc(currproc);
-            //todopop(head);
-        } 
-        if(curr_node)
+            if(curr_node == *head)
+            {
+                curr_node = curr_node->next;
+                pop(head);
+            } else {
+                delete_pid(*head, currproc->pid);
+                if(curr_node)
+                    curr_node = curr_node->next;
+            }
+        } else {
             curr_node = curr_node->next;
+        }
 
     }
 
