@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "queue.h"
 #include "tut7ptokens.h"
+#include <signal.h>
 
 
 // filepath to the process list
@@ -177,15 +178,14 @@ void sort_processes(node_t** head)
 }
 
 
-
 bool launch_process_as_child(proc* process)
 {
     pid_t pid = fork();
-    char* argv[] = {0};
+    char* argv[] = {NULL};
     if(pid == 0)
-    {  
+    {
         execv("./process", argv);
-        return true;
+        return false;
     } else if (pid < 0){
         fprintf(stderr, "Error occured during fork.\n");
         return false;
@@ -207,20 +207,9 @@ bool launch_process_as_child(proc* process)
     }
 }
 
-
-void consume_queue(node_t** head)
-{
-    while(*head)
-    {
-        free_proc(&(*head)->process);
-        pop(head);
-    }
-}
-
 // runs processes in queue
 bool run_processes(node_t** head)
 {
-    printf("run processes\n");
     proc* currproc;
     while(*head)
     {
@@ -233,13 +222,12 @@ bool run_processes(node_t** head)
         if(launch_process_as_child(currproc))
         {
             // child shouldn't spawn more children
-            consume_queue(head);
-            printf("pid %d is terminating\n", getpid());
+            fprintf(stderr, "Error: pid %d reached this pointfor some reason\n", getpid());
             return false;
         }
 
 
-        printf("[%d]process name '%s' prio %d pid %d rt %d\n", getpid(), currproc->name, currproc->priority, currproc->pid, currproc->runtime);
+        printf("[%d]process name '%s' priority %d pid %d runtime %d\n", getpid(), currproc->name, currproc->priority, currproc->pid, currproc->runtime);
         
 
 
@@ -274,24 +262,13 @@ int main(int argc, char* argv[])
     
     // close the process list
     fclose(process_list);
-
-
-    printf("before\n");
-    print_list_all(head);
     
     // prioritize list
     sort_processes(&head);
 
-    
-    printf("after\n");
-    print_list_all(head);
-
     // run processes
-    if(run_processes(&head))
-    {
-        printf("should be empty now:\n");
-        print_list_all(head);
-    }
+    run_processes(&head);
 
+    // run; now you're done.
     return 0;
 }
