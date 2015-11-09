@@ -2,6 +2,9 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdbool.h>
 #include "queue.h"
 #include "tut7ptokens.h"
 
@@ -173,22 +176,86 @@ void sort_processes(node_t** head)
 
 }
 
+
+
+bool launch_process_as_child(proc* process)
+{
+    pid_t pid = fork();
+    char* argv[] = {0};
+    if(pid == 0)
+    {  
+        execv("./process", argv);
+        return true;
+    } else if (pid < 0){
+        fprintf(stderr, "Error occured during fork.\n");
+        return false;
+    } else {
+        // update pid of process
+        process->pid = pid;
+
+        // wait for process runtime to complete
+        sleep(process->runtime);
+
+        // now you're killing it. Stop it.
+        kill(pid, SIGINT);
+
+        // wait for it.
+        waitpid(pid, 0, 0);
+
+        // return.
+        return false;
+    }
+}
+
+
+void consume_queue(node_t** head)
+{
+    while(*head)
+    {
+        free_proc(&(*head)->process);
+        pop(head);
+    }
+}
+
 // runs processes in queue
-void run_processes(node_t** head)
+bool run_processes(node_t** head)
 {
     printf("run processes\n");
     proc* currproc;
     while(*head)
     {
+        // get it
         currproc = &(*head)->process;
-        printf("process name '%s' prio %d rt %d\n", currproc->name, currproc->priority, currproc->runtime);
+
+
+
+        // run it
+        if(launch_process_as_child(currproc))
+        {
+            // child shouldn't spawn more children
+            consume_queue(head);
+            printf("pid %d is terminating\n", getpid());
+            return false;
+        }
+
+
+        printf("[%d]process name '%s' prio %d pid %d rt %d\n", getpid(), currproc->name, currproc->priority, currproc->pid, currproc->runtime);
         
+
+
+        // be rid of it
         free_proc(currproc);
         pop(head);
-        //todo
 
     }
+
+
+
+    
+    // you never got to be the one in the tank
+    return true;
 }
+
 
 
 int main(int argc, char* argv[])
@@ -220,11 +287,11 @@ int main(int argc, char* argv[])
     print_list_all(head);
 
     // run processes
-    run_processes(&head);
+    if(run_processes(&head))
+    {
+        printf("should be empty now:\n");
+        print_list_all(head);
+    }
 
-    printf("should be empty now:\n");
-    print_list_all(head);
-    
-    
     return 0;
 }
