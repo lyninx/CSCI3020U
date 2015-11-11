@@ -12,10 +12,12 @@
 	enqueue()
 	Index: [0, 1, 2, 3]
 	Values: [oldVal, oldVal, oldVal, newVal]
-	
+		- Added newVal at the end
+
 	dequeue()
 	Index: [0, 1, 2]
 	Values: [oldVal, oldVal, newVal]
+		- Removed oldVal at the start
 
 	LIFO = Last In, First Out
 	As you add values to the stack, the new values are put on the top of the stack. As you remove them from the stack, they are taken off the top.
@@ -26,10 +28,12 @@
 	push()
 	Index: [0, 1, 2, 3]
 	Values: [newVal, oldVal, oldVal, oldVal]
+		- Added newVal at the start
 	
 	pop()
 	Index: [0, 1, 2]
 	Values: [oldVal, oldVal, oldVal]
+		- Removed newVal at the start
 
 3. Name and briefly explain three types of data structures.
 
