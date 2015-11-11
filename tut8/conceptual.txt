@@ -4,7 +4,7 @@
 
 2. Explain the difference between a queue (FIFO) and a stack (LIFO)
 	
-	The difference is that the way the values are added and removed from their respective data strucutre are different.
+	The difference is that the way the values are added and removed from their respective data structures is different.
 
 	FIFO = First In, First Out. 
 	As you add values to the queue, the new values are put at the end of the queue. And when you remove values from the queue, the values are taken from the front.
