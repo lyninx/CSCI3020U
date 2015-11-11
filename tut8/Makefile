@@ -30,7 +30,7 @@ question1: question1.c
 	$(CC) $(CFLAGS) $(LIBS) question1.c -o question1.exe
 
 question2: question2.c
-	$(CC) $(CFLAGS) $(LIBS) question2.c -o question2.exe
+	$(CC) $(CFLAGS) $(LIBS) queue.c question2.c -o question2.exe
 
 clean:
 	$(RM) *.exe
