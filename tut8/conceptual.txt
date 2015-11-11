@@ -1,6 +1,6 @@
 1. What is an Abstract Data Type (ADT)?
 
-	An abstract data type is a mathemetical model of 
+	An abstract data type is the set of data and the functions that operate on it. These are independent of any particular implementation.
 
 2. Explain the difference between a queue (FIFO) and a stack (LIFO)
 	
