@@ -13,10 +13,12 @@ typedef struct node
 {
 	struct node* left;
 	struct node* right;
-	proc* value;
+	proc value;
 } proc_tree;
 
 extern void dfs(proc_tree* tree);
+extern void add_node(proc_tree* tree, proc* value);
+extern void clear_tree(proc_tree** tree);
 
 
 
