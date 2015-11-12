@@ -2,11 +2,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #define MEMORY 1024
 #define FPATH_PROCESSES_Q5 "processes_q5.txt"
 #define BUFFER_LEN 256
 
+
+//
 
 // runtime
 int main(void);
@@ -20,8 +23,20 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary);
 // outputs error messages for allocation failures.
 void run_processes(node_t** list, int* avail_mem, int size);
 
+// auxillary; perfoms allocation of memory.
+// returns index of memory segment, or 'memsize' if no memory is available.
+// @param memory       size of memory block
+// @param avail_mem    memory array
+// @param memsize	   memory size
+int q2_alloc(int memory, int* avail_mem, int memsize, pthread_mutex_t* lock);
+
+// auxillary, deallocates memory block.
+// returns true if successful, false if error.
+// prints error messages.
+bool q2_free(int address, int memory, int* avail_mem, int memsize, pthread_mutex_t* lock);
+
 // auxillary; creates a child process.
-void launch_process(proc* process);
+void launch_process(proc* process, int* avail_mem, int size, pthread_mutex_t* lock);
 
 // convenience; initializes a process
 proc init_proc(void);
@@ -41,7 +56,7 @@ proc init_proc(void)
 	// initialize values
 	p.priority = 0;
 	p.pid = 0;
-	p.address = 0;
+	p.address = MEMORY;
 	p.memory = 0;
 	p.runtime = 0;
 	p.suspended = true;
@@ -73,8 +88,10 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary)
     }
 }
 
-void launch_process(proc* process)
+void launch_process(proc* process, int* avail_mem, int size, pthread_mutex_t* lock)
 {
+	// alloc
+	q2_alloc(process->memory, avail_mem, size, lock);
 
 	// print it
 	printf("[%d]process name '%s' priority %d pid %d memory %d runtime %d\n", getpid(), process->name, process->priority, process->pid, process->memory, process->runtime);
@@ -82,14 +99,69 @@ void launch_process(proc* process)
 
     // execute it
     //todo
+
+    // dealloc
+    q2_free(process->address, process->memory, avail_mem, size, lock);
+}
+
+int q2_alloc(int memory, int* avail_mem, int memsize, pthread_mutex_t* lock)
+{
+
+	printf("Waiting to allocate %d bits\n", memory);
+	// acquire lock
+	pthread_mutex_lock(lock);
+
+	printf("allocating %d bits\n", memory);
+
+	// search array
+	int index = 0;
+	index = memsize;
+
+	// change array
+
+	// release lock
+	printf("done allocating %d bits at %d\n", memory, index);
+	pthread_mutex_unlock(lock);
+
+	
+
+	// return the index
+	return index;
+}
+
+
+bool q2_free(int address, int memory, int* avail_mem, int memsize, pthread_mutex_t* lock)
+{
+	printf("Waiting to free %d bits at %d\n", memory, address);
+	// acquire lock
+	pthread_mutex_lock(lock);
+
+	printf("freeing %d bits at %d\n", memory, address);
+
+	// search array
+
+
+	// change array
+
+	// release lock
+	printf("done freeing %d bits at %d\n", memory, address);
+	pthread_mutex_unlock(lock);
+
+	//todo
+	return false;
 }
 
 void run_processes(node_t** list, int* avail_mem, int size)
 {
+	// lock for avail_mem
+	pthread_mutex_t lock;
+	pthread_mutex_init(&lock, NULL);
+
+	// go through each list element
     while(*list)
     {
         // run it
-        launch_process(&(*list)->process);
+        launch_process(&(*list)->process, avail_mem, size, &lock);
 
         // pop it
         pop(list);
@@ -134,6 +206,11 @@ int main(void)
     run_processes(&priority, avail_mem, MEMORY);
     run_processes(&secondary, avail_mem, MEMORY);
 
+    printf("\nCONSUMED:\nPRIORITY:\n");
+    print_list(priority);
+    printf("SECONDARY:\n");
+    print_list(secondary);
+
     //....
     while(priority)
     {
@@ -141,7 +218,7 @@ int main(void)
     }
     while(secondary)
     	pop(&secondary);
-    printf("\nPRIORITY:\n");
+    printf("\nCLEANED:\nPRIORITY:\n");
     print_list(priority);
     printf("SECONDARY:\n");
     print_list(secondary);
