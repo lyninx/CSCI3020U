@@ -51,11 +51,6 @@ void tokenize(const char *input, proc *newProc){
 	    // Tokenize for the rest of the values
 	   	token = strtok(NULL, delimiter);
 	}
-	// Checks if tokenize worked properly
-	// printf("%s ", newProc->parent);
-	// printf("%s ", newProc->name);
-	// printf("%i ", newProc->priority);
-	// printf("%i\n", newProc->memory);
 }
 
 proc createProc(void)
@@ -75,8 +70,6 @@ proc createProc(void)
 
 void addNode(proc_tree **tree, proc_tree *newNode)
 {
-	
-	//printf("%s\n", newNode->val.name);
 	// If there is no elements in tree, the first element becomes the root
 	if(strcmp(newNode->val.parent, "NULL") == 0){
 		*tree = newNode;
