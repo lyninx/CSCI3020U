@@ -83,11 +83,11 @@ void addNode(proc_tree **tree, proc_tree *newNode)
 		(*tree)->right = newNode;
 	}
 
-	// Recursively moves left down the tree
+	// Recursively moves down the left branch
 	if((*tree)->left != NULL){
 		addNode(&(*tree)->left, newNode);
 	}
-	// Recursively moves right down the tree
+	// Recursively moves down the right branch
 	if((*tree)->right != NULL){
 		addNode(&(*tree)->right, newNode);
 	}
@@ -111,11 +111,11 @@ void printTree(proc_tree *tree){
 			printf("Parent: %s --> Children: NULL, NULL\n", tree->val.name);
 		}
 		
-		// Recursively moves left down the tree
+		// Recursively moves down the left branch
 		if(tree->left != NULL){
 			printTree(tree->left);
 		}
-		// Recursively moves right down the tree
+		// Recursively moves down the right branch
 		if(tree->right != NULL){
 			printTree(tree->right);
 		}
@@ -126,11 +126,11 @@ void freeTree(proc_tree **tree){
 
 	// Frees the memory as long as there is an element in the root
 	if(*tree != NULL){
-		// Recursively moves down the left tree
+		// Recursively moves down the left branch
 		if((*tree)->left != NULL){
 			freeTree(&(*tree)->left);
 		}
-		// Recursively moves right down the tree
+		// Recursively moves down the right branch
 		if((*tree)->right != NULL){
 			freeTree(&(*tree)->right);
 		}
