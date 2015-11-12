@@ -124,16 +124,19 @@ void printTree(proc_tree *tree){
 
 void freeTree(proc_tree **tree){
 
-	// Recursively moves down the left tree
-	if((*tree)->left != NULL){
-		freeTree(&(*tree)->left);
+	// Frees the memory as long as there is an element in the root
+	if(*tree != NULL){
+		// Recursively moves down the left tree
+		if((*tree)->left != NULL){
+			freeTree(&(*tree)->left);
+		}
+		// Recursively moves right down the tree
+		if((*tree)->right != NULL){
+			freeTree(&(*tree)->right);
+		}
+		// Free the node
+		free(*tree);
 	}
-	// Recursively moves right down the tree
-	if((*tree)->right != NULL){
-		freeTree(&(*tree)->right);
-	}
-	// Free the node
-	free(*tree);
 }
 
 int main(void)
