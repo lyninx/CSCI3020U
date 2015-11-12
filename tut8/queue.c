@@ -3,6 +3,15 @@
 #include <string.h>
 #include "queue.h"
 
+node_t* init_head(proc process)
+{
+    node_t* head = malloc(sizeof(node_t));
+    head->next = NULL;
+    head->process = process;
+
+    return head;
+}
+
 void push(node_t * head, proc p) {
     node_t * current = head;
     while (current->next != NULL) {
