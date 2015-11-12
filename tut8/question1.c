@@ -71,16 +71,25 @@ proc createProc(void)
 void addNode(proc_tree **tree, proc_tree *newNode)
 {
 	// If there is no elements in tree, the first element becomes the root
-	if(*tree == NULL){
+	if(strcmp(newNode->val.parent, "NULL")){
 		*tree = newNode;
 		return;
 	}
 
-	// This doesn't work. Need to fix insertion. Right now it just inserts the children of the root
+	// Insert child left or right if they are NULL and the parent is correct
 	if(((*tree)->val.name == newNode->val.name) && (*tree)->left == NULL){
 		(*tree)->left = newNode;
 	} else if(((*tree)->val.name == newNode->val.name) && (*tree)->right == NULL){
 		(*tree)->right = newNode;
+	}
+
+	// Recursively moves left down the tree
+	if((*tree)->right != NULL){
+		addNode(&(*tree)->left, newNode);
+	}
+	// Recursively moves right down the tree
+	if((*tree)->left != NULL){
+		addNode(&(*tree)->right, newNode);
 	}
 }
 
