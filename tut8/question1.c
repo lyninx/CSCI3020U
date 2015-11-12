@@ -27,7 +27,7 @@ void tokenize(const char *input, proc *newProc){
 	// The individual tokens(type string)			
 	char *token;					
 	// strtok looks for a ", "			
-	const char delimiter[2] = ", ";	
+	const char delimiter[3] = ", ";	
 
 	// Perform copy so the original isn't touched
 	strcpy(inputcpy, input);
@@ -51,6 +51,11 @@ void tokenize(const char *input, proc *newProc){
 	    // Tokenize for the rest of the values
 	   	token = strtok(NULL, delimiter);
 	}
+	// Checks if tokenize worked properly
+	// printf("%s ", newProc->parent);
+	// printf("%s ", newProc->name);
+	// printf("%i ", newProc->priority);
+	// printf("%i\n", newProc->memory);
 }
 
 proc createProc(void)
@@ -70,16 +75,18 @@ proc createProc(void)
 
 void addNode(proc_tree **tree, proc_tree *newNode)
 {
+	
+	//printf("%s\n", newNode->val.name);
 	// If there is no elements in tree, the first element becomes the root
-	if(strcmp(newNode->val.parent, "NULL")){
+	if(strcmp(newNode->val.parent, "NULL") == 0){
 		*tree = newNode;
 		return;
 	}
 
 	// Insert child left or right if they are NULL and the parent is correct
-	if(((*tree)->val.name == newNode->val.name) && (*tree)->left == NULL){
+	if((strcmp((*tree)->val.name, newNode->val.parent) == 0) && (*tree)->left == NULL){
 		(*tree)->left = newNode;
-	} else if(((*tree)->val.name == newNode->val.name) && (*tree)->right == NULL){
+	} else if((strcmp((*tree)->val.name, newNode->val.parent) == 0) && (*tree)->right == NULL){
 		(*tree)->right = newNode;
 	}
 
@@ -147,7 +154,7 @@ int main(void)
 		addNode(&tree, currNode);
 	}
 
-	printTree(tree);
+	//printTree(tree);
 
 	return 0;
 }
