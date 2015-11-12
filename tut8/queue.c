@@ -3,26 +3,34 @@
 #include <string.h>
 #include "queue.h"
 
+node_t* init_node(const proc* p)
+{
+    // initialize values
+    node_t* node = malloc(sizeof(node_t));
+    node->process = *p;
+    node->next = NULL;
+
+    // return new node
+    return node;
+
+}
+
 void push(node_t** head, proc p)
 {
-    // current element
-    node_t** curr = head;
-
-    // iterate to the end of the list
-    if(*head != NULL)
+    // create a node at the end position
+    if(!*head)
     {
-        // iterate until the last element is found
-        while (*curr != NULL) {
-            *curr = (*curr)->next;
-        }
+        // initialize head
+        *head = init_node(&p);
+    } else {
+        // browse through nodes
+        node_t* currnode = *head;
+        while(currnode->next != NULL)
+            currnode = currnode->next;
 
+        // initialize next
+        currnode->next = init_node(&p);
     }
-
-    // allocate the node
-    (*curr) = malloc(sizeof(node_t));
-    (*curr)->process = p;
-    (*curr)->next = NULL;
-    
 }
 
 proc* pop(node_t ** head) {
@@ -42,10 +50,19 @@ proc* pop(node_t ** head) {
 }
 
 void print_list(node_t * head) {
+
+    // check for empty list
+    if(!head)
+    {
+        printf("<empty list>\n");
+        return;
+    }
+
+    // else
     node_t * current = head;
 
     while (current != NULL) {
-        printf("%d\n", current->process.priority);
+        printf("%s %d\n", current->process.name, current->process.priority);
         current = current->next;
     }
 }
