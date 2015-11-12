@@ -95,9 +95,25 @@ void addNode(proc_tree **tree, proc_tree *newNode)
 
 void printTree(proc_tree *tree){
 
-
-
-	return;
+	// Print based on if the children are NULL
+	if(tree->left != NULL && tree->right != NULL){
+		printf("Parent: %s, Children: %s and %s\n", tree->val.name, tree->left->val.name, tree->right->val.name);
+	}
+	else if(tree->left != NULL){
+		printf("Parent: %s, Children: %s and NULL\n", tree->val.name, tree->left->val.name);
+	}
+	else if(tree->right != NULL){
+		printf("Parent: %s, Children: NULL and %s\n", tree->val.name, tree->right->val.name);
+	}
+	
+	// Recursively moves left down the tree
+	if(tree->left != NULL){
+		printTree(tree->left);
+	}
+	// Recursively moves right down the tree
+	if(tree->right != NULL){
+		printTree(tree->right);
+	}
 }
 
 int main(void)
