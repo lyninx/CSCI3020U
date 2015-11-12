@@ -36,6 +36,7 @@ void tokenize(const char *input, proc *newProc){
 	// Tokenize input for the first value
     token = strtok(inputcpy, delimiter);
 
+    // Loops until the string being tokenized is fully tokenized
     while(token != NULL){
     	if(k == 0){
    			strcpy(newProc->parent, token);
@@ -55,13 +56,16 @@ void tokenize(const char *input, proc *newProc){
 
 proc createProc(void)
 {
+	// Creates a new instance of proc
     proc newProc;
 
+    // Gives newProc default values of nothing
     strcpy(newProc.parent, "");
     strcpy(newProc.name, "");
     newProc.priority = 0;
     newProc.memory = 0;
 
+    // Returns newProc to the call with the default values now
     return newProc;
 }
 
@@ -73,7 +77,7 @@ void addNode(proc_tree **tree, proc_tree *newNode)
 		return;
 	}
 
-	// This doesn't work. Need to fix insertion
+	// This doesn't work. Need to fix insertion. Right now it just inserts the children of the root
 	if(((*tree)->val.name == newNode->val.name) && (*tree)->left == NULL){
 		(*tree)->left = newNode;
 	} else if(((*tree)->val.name == newNode->val.name) && (*tree)->right == NULL){
@@ -83,22 +87,26 @@ void addNode(proc_tree **tree, proc_tree *newNode)
 
 int main(void)
 {
+	// rootNode is the first node that the tree is built from
 	proc_tree *rootNode;
+	// currNode is the node that is created for each process
 	proc_tree *currNode;
 
+	// Initialize the rootNode to NULL (will be filled during first iteration)
 	rootNode = NULL;
 
 	// Line stores the lines of the file
     char line[BUFFER_LEN] = { 0 };
-    // File is the file to be opened
+    // file is the file to be opened
 	FILE* file =  fopen("process_tree.txt", "r");
+	// Loops until end of file
 	while(fgets(line, BUFFER_LEN, file)){
 
-		// Create a new process and input the data from file
+		// Create a newProc struct and inputs the data from file into it. This uses tokenize to parse the data 
 		proc newProc = createProc();
 		tokenize(line, &newProc);
 
-		// Allocate memory for the current node
+		// Allocate memory for the current node and gives the node default values(left/right) and the data parsed from the file
 		currNode = (proc_tree*)malloc(sizeof(proc_tree));
 		currNode->left = NULL;
 		currNode->right = NULL;
