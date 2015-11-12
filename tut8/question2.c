@@ -24,23 +24,24 @@ void run_processes(node_t** list, int* avail_mem, int size);
 void launch_process(proc* process);
 
 // convenience; initializes a process
-proc init_proc(void);
+proc init_proc(const char* name, int priority, int memory, int runtime);
 
 
-proc init_proc(void)
+proc init_proc(const char* name, int priority, int memory, int runtime)
 {
 	// initialize
 	proc p;
 
 	// initialize name
 	p.name[0] = 0;
+	strcpy(p.name, name);
 
 	// initialize values
-	p.priority = 0;
+	p.priority = priority;
 	p.pid = 0;
 	p.address = 0;
-	p.memory = 0;
-	p.runtime = 0;
+	p.memory = memory;
+	p.runtime = runtime;
 	p.suspended = true;
 
 	// return process
@@ -55,21 +56,14 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary)
     // get each process from file
     while(fgets(buff, BUFFER_LEN, in))
     {
+    	// tokenize
+    	//todo
+
         // make new process object
-        proc pobj = init_proc();
-        // do tokenize
-        // todo
-
-
-        // initialize head or push new value
-        /*if(!*head)
-        {
-            *head = malloc(sizeof(node_t));
-            (*head)->next = NULL;
-            (*head)->process = pobj;
-        } else {
-            push(*head, pobj);
-        }*/
+        proc pobj = init_proc("", 0, 0, 0);
+        
+        // insert into appropriate queue
+        push(pobj.priority == 0 ? priority : secondary, pobj);
     }
 }
 
@@ -120,6 +114,12 @@ int main(void)
     
     // read in stuff from processes
     load_processes(fin, &priority, &secondary);
+
+    // ...
+    printf("PRIORITY:\n");
+    print_list(priority);
+    printf("SECONDARY:\n");
+    print_list(secondary);
     
     // close the process list
     fclose(fin);
@@ -127,6 +127,19 @@ int main(void)
     // execute high priority then low priority
     run_processes(&priority, avail_mem, MEMORY);
     run_processes(&secondary, avail_mem, MEMORY);
+
+    //....
+    while(priority)
+    {
+    	pop(&priority);
+    }
+    while(secondary)
+    	pop(&secondary);
+    printf("PRIORITY:\n");
+    print_list(priority);
+    printf("SECONDARY:\n");
+    print_list(secondary);
+
 
 	// return successful
 	return 0;
