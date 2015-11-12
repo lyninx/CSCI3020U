@@ -84,24 +84,31 @@ void addNode(proc_tree **tree, proc_tree *newNode)
 	}
 
 	// Recursively moves left down the tree
-	if((*tree)->right != NULL){
+	if((*tree)->left != NULL){
 		addNode(&(*tree)->left, newNode);
 	}
 	// Recursively moves right down the tree
-	if((*tree)->left != NULL){
+	if((*tree)->right != NULL){
 		addNode(&(*tree)->right, newNode);
 	}
 }
 
+void printTree(proc_tree *tree){
+
+
+
+	return;
+}
+
 int main(void)
 {
-	// rootNode is the first node that the tree is built from
-	proc_tree *rootNode;
+	// tree is the first node that the tree is built from
+	proc_tree *tree;
 	// currNode is the node that is created for each process
 	proc_tree *currNode;
 
 	// Initialize the rootNode to NULL (will be filled during first iteration)
-	rootNode = NULL;
+	tree = NULL;
 
 	// Line stores the lines of the file
     char line[BUFFER_LEN] = { 0 };
@@ -121,7 +128,10 @@ int main(void)
 		currNode->val = newProc;
 
 		// Add the new node to the tree
-		addNode(&rootNode, currNode);
+		addNode(&tree, currNode);
 	}
+
+	printTree(tree);
+
 	return 0;
 }
