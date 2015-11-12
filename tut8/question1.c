@@ -3,7 +3,6 @@
 #include <string.h>
 
 #define BUFFER_LEN 256
-#define PTOKENS_DELIM ", "
 
 typedef struct{
 	char parent[256];
