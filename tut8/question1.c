@@ -135,6 +135,8 @@ void freeTree(proc_tree **tree){
 			freeTree(&(*tree)->right);
 		}
 		// Free the node
+		(*tree)->left = NULL;
+		(*tree)->right = NULL;
 		free(*tree);
 	}
 }
