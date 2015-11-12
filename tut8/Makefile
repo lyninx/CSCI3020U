@@ -22,7 +22,7 @@ LFLAGS =
 #   option, something like (this will link in libmylib.so and libm.so:
 LIBS = -lpthread
 
-LIST = question1 question2 question3 question4 question5
+LIST = question1 question2
 
 all: $(LIST)
 
