@@ -1,9 +1,11 @@
 #include "queue.h"
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define MEMORY 1024
 #define FPATH_PROCESSES_Q5 "processes_q5.txt"
+#define BUFFER_LEN 256
 
 
 // runtime
@@ -13,8 +15,17 @@ int main(void);
 // processes with priority of 0 go into 'priority', all others 'secondary'.
 void load_processes(FILE* in, node_t** priority, node_t** secondary);
 
+
+// auxillary; runs each process in queue.
+// outputs error messages for allocation failures.
+void run_processes(node_t** list, int* avail_mem, int size);
+
+// auxillary; creates a child process.
+void launch_process(proc* process);
+
 // convenience; initializes a process
 proc init_proc(void);
+
 
 proc init_proc(void)
 {
@@ -38,9 +49,55 @@ proc init_proc(void)
 
 void load_processes(FILE* in, node_t** priority, node_t** secondary)
 {
+	// command buffer
+    char buff[BUFFER_LEN] = { 0 };
 
-	//todo
+    // get each process from file
+    while(fgets(buff, BUFFER_LEN, in))
+    {
+        // make new process object
+        proc pobj = init_proc();
+        // do tokenize
+        // todo
+
+
+        // initialize head or push new value
+        /*if(!*head)
+        {
+            *head = malloc(sizeof(node_t));
+            (*head)->next = NULL;
+            (*head)->process = pobj;
+        } else {
+            push(*head, pobj);
+        }*/
+    }
 }
+
+void launch_process(proc* process)
+{
+
+	// print it
+	printf("[%d]process name '%s' priority %d pid %d runtime %d\n", getpid(), process->name, process->priority, process->pid, process->runtime);
+    
+
+    // execute it
+    //todo
+}
+
+void run_processes(node_t** list, int* avail_mem, int size)
+{
+    while(*list)
+    {
+        // run it
+        launch_process(&(*list)->process);
+
+        // pop it
+        pop(list);
+
+    }
+
+}
+
 
 int main(void)
 {
@@ -66,6 +123,10 @@ int main(void)
     
     // close the process list
     fclose(fin);
+
+    // execute high priority then low priority
+    run_processes(&priority, avail_mem, MEMORY);
+    run_processes(&secondary, avail_mem, MEMORY);
 
 	// return successful
 	return 0;
