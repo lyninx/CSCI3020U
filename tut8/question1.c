@@ -12,7 +12,7 @@ typedef struct{
 	int memory;
 } proc;
 
-typedef struct{
+typedef struct node{
 
 	struct node* left;
 	struct node* right;
@@ -36,7 +36,7 @@ void tokenize(const char *input, proc *newProc){
 	// tokenize input for the first value
     token = strtok(inputcpy, delimiter);
 
-    while( token != NULL ){
+    while(token != NULL){
     	if(k == 0){
    			strcpy(newProc->parent, token);
     	} else if(k == 1){
@@ -70,22 +70,39 @@ proc createProc(void)
     return newProc;
 }
 
+void addNode(proc_tree **tree, proc_tree *newNode)
+{
+	if(*tree == NULL){
+		*tree = newNode;
+		return;
+	}
+}
+
 int main(void)
 {
-	proc_tree* tree;
-	proc_tree* root;
+	proc_tree *rootNode;
+	proc_tree *currNode;
 
-	root = NULL;
+	rootNode = NULL;
 
-    char buff[BUFFER_LEN] = { 0 };
+	// Line stores the lines of the file
+    char line[BUFFER_LEN] = { 0 };
+    // File is the file to be opened
 	FILE* file =  fopen("process_tree.txt", "r");
-	while(fgets(buff, BUFFER_LEN, file)){
+	while(fgets(line, BUFFER_LEN, file)){
 
+		// Create a new process and input the data from file
 		proc newProc = createProc();
-		tokenize(buff, &newProc);
+		tokenize(line, &newProc);
 
+		// Allocate memory for the current node
+		currNode = (proc_tree*)malloc(sizeof(proc_tree));
+		currNode->left = NULL;
+		currNode->right = NULL;
+		currNode->val = newProc;
+
+		// Add the new node to the tree
+		addNode(&rootNode, currNode);
 	}
-	//tokenize input
-
 	return 0;
 }
