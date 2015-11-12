@@ -21,19 +21,19 @@ typedef struct node{
 } proc_tree;
 
 void tokenize(const char *input, proc *newProc){
-	// initialize values
+	// Initialize values
 	int k = 0;	
-	// input copy
+	// Input copy
 	char inputcpy[BUFFER_LEN] = { 0 }; 
-	// the individual tokens(type string)			
+	// The individual tokens(type string)			
 	char *token;					
 	// strtok looks for a ", "			
 	const char delimiter[2] = ", ";	
 
-	// perform copy so the original isn't touched
+	// Perform copy so the original isn't touched
 	strcpy(inputcpy, input);
 
-	// tokenize input for the first value
+	// Tokenize input for the first value
     token = strtok(inputcpy, delimiter);
 
     while(token != NULL){
@@ -48,7 +48,7 @@ void tokenize(const char *input, proc *newProc){
     	}
 
 	    k++;
-	    //tokenize for the rest of the values
+	    // Tokenize for the rest of the values
 	   	token = strtok(NULL, delimiter);
 	}
 	// Checks if tokenize worked properly
