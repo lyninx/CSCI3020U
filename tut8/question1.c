@@ -51,11 +51,6 @@ void tokenize(const char *input, proc *newProc){
 	    // Tokenize for the rest of the values
 	   	token = strtok(NULL, delimiter);
 	}
-	// Checks if tokenize worked properly
-	// printf("%s ", newProc->parent);
-	// printf("%s ", newProc->name);
-	// printf("%i ", newProc->priority);
-	// printf("%i\n", newProc->memory);
 }
 
 proc createProc(void)
