@@ -54,7 +54,7 @@ void print_list(node_t * head) {
     // check for empty list
     if(!head)
     {
-        printf("<empty list>\n");
+        printf("<empty list>\n\n");
         return;
     }
 
@@ -65,6 +65,7 @@ void print_list(node_t * head) {
         printf("%s %d\n", current->process.name, current->process.priority);
         current = current->next;
     }
+    printf("\n");
 }
 
 proc* remove_by_index(node_t ** head, int n) {

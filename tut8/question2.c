@@ -24,29 +24,32 @@ void run_processes(node_t** list, int* avail_mem, int size);
 void launch_process(proc* process);
 
 // convenience; initializes a process
-proc init_proc(const char* name, int priority, int memory, int runtime);
+proc init_proc(void);
 
 
-proc init_proc(const char* name, int priority, int memory, int runtime)
+
+
+
+proc init_proc(void)
 {
 	// initialize
 	proc p;
 
 	// initialize name
 	p.name[0] = 0;
-	strcpy(p.name, name);
 
 	// initialize values
-	p.priority = priority;
+	p.priority = 0;
 	p.pid = 0;
 	p.address = 0;
-	p.memory = memory;
-	p.runtime = runtime;
+	p.memory = 0;
+	p.runtime = 0;
 	p.suspended = true;
 
 	// return process
 	return p;
 }
+
 
 void load_processes(FILE* in, node_t** priority, node_t** secondary)
 {
@@ -56,11 +59,14 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary)
     // get each process from file
     while(fgets(buff, BUFFER_LEN, in))
     {
-    	// tokenize
-    	//todo
-
         // make new process object
-        proc pobj = init_proc("", 0, 0, 0);
+        proc pobj = init_proc();
+
+    	// parse name
+    	strcpy(pobj.name, strtok(buff, ", "));
+
+    	// parse remaining values
+    	sscanf(strtok(NULL, "\n"), "%d, %d, %d", &pobj.priority, &pobj.memory, &pobj.runtime);
         
         // insert into appropriate queue
         push(pobj.priority == 0 ? priority : secondary, pobj);
@@ -71,7 +77,7 @@ void launch_process(proc* process)
 {
 
 	// print it
-	printf("[%d]process name '%s' priority %d pid %d runtime %d\n", getpid(), process->name, process->priority, process->pid, process->runtime);
+	printf("[%d]process name '%s' priority %d pid %d memory %d runtime %d\n", getpid(), process->name, process->priority, process->pid, process->memory, process->runtime);
     
 
     // execute it
@@ -116,7 +122,7 @@ int main(void)
     load_processes(fin, &priority, &secondary);
 
     // ...
-    printf("PRIORITY:\n");
+    printf("\nPRIORITY:\n");
     print_list(priority);
     printf("SECONDARY:\n");
     print_list(secondary);
@@ -135,7 +141,7 @@ int main(void)
     }
     while(secondary)
     	pop(&secondary);
-    printf("PRIORITY:\n");
+    printf("\nPRIORITY:\n");
     print_list(priority);
     printf("SECONDARY:\n");
     print_list(secondary);
