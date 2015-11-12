@@ -20,7 +20,7 @@ typedef struct node{
 } proc_tree;
 
 void tokenize(const char *input, proc *newProc){
-	// Initialize values
+	// k is used to identify what token will be inserted into the struct values
 	int k = 0;	
 	// Input copy
 	char inputcpy[BUFFER_LEN] = { 0 }; 
@@ -46,7 +46,7 @@ void tokenize(const char *input, proc *newProc){
     	} else if(k == 3){
     		newProc->memory = atoi(token);
     	}
-
+    	// Increment k after every insertion
 	    k++;
 	    // Tokenize for the rest of the values
 	   	token = strtok(NULL, delimiter);
