@@ -21,8 +21,7 @@ typedef struct _node {
     struct _node * next;
 } node_t;
 
-extern node_t* init_head(proc process);
-extern void push(node_t *, proc);
+extern void push(node_t**, proc);
 extern proc* pop(node_t **);
 extern void print_list(node_t* head);
 extern proc* delete_name(node_t * head, char* name);

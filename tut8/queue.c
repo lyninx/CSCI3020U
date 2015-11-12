@@ -3,25 +3,26 @@
 #include <string.h>
 #include "queue.h"
 
-node_t* init_head(proc process)
+void push(node_t** head, proc p)
 {
-    node_t* head = malloc(sizeof(node_t));
-    head->next = NULL;
-    head->process = process;
+    // current element
+    node_t** curr = head;
 
-    return head;
-}
+    // iterate to the end of the list
+    if(*head != NULL)
+    {
+        // iterate until the last element is found
+        while (*curr != NULL) {
+            *curr = (*curr)->next;
+        }
 
-void push(node_t * head, proc p) {
-    node_t * current = head;
-    while (current->next != NULL) {
-        current = current->next;
     }
 
-    /* now we can add a new variable */
-    current->next = malloc(sizeof(node_t));
-    current->next->process = p;
-    current->next->next = NULL;
+    // allocate the node
+    (*curr) = malloc(sizeof(node_t));
+    (*curr)->process = p;
+    (*curr)->next = NULL;
+    
 }
 
 proc* pop(node_t ** head) {
