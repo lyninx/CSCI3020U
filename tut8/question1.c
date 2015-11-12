@@ -104,13 +104,13 @@ void printTree(proc_tree *tree){
 
 	// Print based on if the children are NULL
 	if(tree->left != NULL && tree->right != NULL){
-		printf("Parent: %s, Children: %s and %s\n", tree->val.name, tree->left->val.name, tree->right->val.name);
+		printf("Parent: %s --> Children: %s, %s\n", tree->val.name, tree->left->val.name, tree->right->val.name);
 	}
 	else if(tree->left != NULL){
-		printf("Parent: %s, Children: %s and NULL\n", tree->val.name, tree->left->val.name);
+		printf("Parent: %s --> Children: %s, NULL\n", tree->val.name, tree->left->val.name);
 	}
 	else if(tree->right != NULL){
-		printf("Parent: %s, Children: NULL and %s\n", tree->val.name, tree->right->val.name);
+		printf("Parent: %s --> Children: NULL, %s\n", tree->val.name, tree->right->val.name);
 	}
 	
 	// Recursively moves left down the tree
