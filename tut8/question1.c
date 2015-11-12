@@ -116,6 +116,19 @@ void printTree(proc_tree *tree){
 	}
 }
 
+void freeTree(proc_tree **tree){
+
+	// Recursively moves down the left tree
+	if((*tree)->left != NULL){
+		freeTree(&(*tree)->left);
+	}
+	// Recursively moves right down the tree
+	if((*tree)->right != NULL){
+		freeTree(&(*tree)->right);
+	}
+	free(*tree);
+}
+
 int main(void)
 {
 	// tree is the first node that the tree is built from
@@ -148,6 +161,7 @@ int main(void)
 	}
 
 	printTree(tree);
+	freeTree(&tree);
 
 	return 0;
 }
