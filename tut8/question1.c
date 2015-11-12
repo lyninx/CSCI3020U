@@ -27,8 +27,8 @@ void tokenize(const char *input, proc *newProc){
 	char inputcpy[BUFFER_LEN] = { 0 }; 
 	// the individual tokens(type string)			
 	char *token;					
-	// strtok looks for a ,				
-	const char delimiter[2] = ",";	
+	// strtok looks for a ", "			
+	const char delimiter[2] = ", ";	
 
 	// perform copy so the original isn't touched
 	strcpy(inputcpy, input);
@@ -72,9 +72,17 @@ proc createProc(void)
 
 void addNode(proc_tree **tree, proc_tree *newNode)
 {
+	// If there is no elements in tree, the first element becomes the root
 	if(*tree == NULL){
 		*tree = newNode;
 		return;
+	}
+
+	// This doesn't work. Need to fix insertion
+	if(((*tree)->val.name == newNode->val.name) && (*tree)->left == NULL){
+		(*tree)->left = newNode;
+	} else if(((*tree)->val.name == newNode->val.name) && (*tree)->right == NULL){
+		(*tree)->right = newNode;
 	}
 }
 
