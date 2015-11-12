@@ -154,7 +154,7 @@ int main(void)
 		addNode(&tree, currNode);
 	}
 
-	//printTree(tree);
+	printTree(tree);
 
 	return 0;
 }
