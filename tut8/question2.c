@@ -101,37 +101,6 @@ void run_processes(node_t** list, int* avail_mem, int size)
 
 int main(void)
 {
-
-	// test queue
-	node_t* testlist = NULL;
-	proc process;
-	printf("before\n");
-	printf("pushing first\n");
-	strcpy(process.name, "one");
-	push(&testlist, process);
-	printf("pushing rest\n");
-	strcpy(process.name, "two");
-	push(&testlist, process);
-	strcpy(process.name, "three");
-	push(&testlist, process);
-	strcpy(process.name, "four");
-	push(&testlist, process);
-	strcpy(process.name, "five");
-	push(&testlist, process);
-	strcpy(process.name, "six");
-	push(&testlist, process);
-
-	print_list(testlist);
-
-	// pop off test queue
-	while(testlist)
-	{
-		pop(&testlist);
-	}
-
-	printf("after\n");
-	print_list(testlist);
-
 	// available memory
 	int avail_mem[MEMORY] = { 0 };
 
