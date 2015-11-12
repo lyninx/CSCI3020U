@@ -36,6 +36,7 @@ void tokenize(const char *input, proc *newProc){
     token = strtok(inputcpy, delimiter);
 
     // Loops until the string being tokenized is fully tokenized
+    // token is a string so needs to be converted to an integer using atoi for priority/memory
     while(token != NULL){
     	if(k == 0){
    			strcpy(newProc->parent, token);
