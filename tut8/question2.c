@@ -121,31 +121,51 @@ void* launch_process(void* _process)
     return NULL;
 }
 
+bool q2_alloc_isfree(int k, int count)
+{
+	// check for any non-null bits
+	for(int i = 0; i < count; i++)
+		if(avail_mem[i+k] != 0)
+			return false;
+
+    // all bits are null
+	return true;
+}
+
 int q2_alloc(int memory)
 {
 
-	printf("Waiting to allocate %d bits\n", memory);
+	printf("\n[q2_alloc]Waiting to allocate %d bits\n", memory);
 	// acquire lock
 	pthread_mutex_lock(&avail_mem_lock);
 
-	printf("allocating %d bits\n", memory);
+	printf("[q2_alloc]allocating %d bits\n", memory);
 
 	// search array
 	int index = 0;
-	while(index < MEMORY)
+	while(index+memory <= MEMORY)
 	{
-		if(avail_mem[index] == 0)
-		{
-			//todo
-		}
+		// stop if you've found a free segment
+		if(q2_alloc_isfree(index, memory))
+			break;
 
+		// iterate
 		index++;
 	}
 
-	// change array
+	// change array if a block was found
+	if(index + memory <= MEMORY)
+	{
+		// fill with ones (replace with memset or something? Is that a thing?)
+		for(int i = 0; i < memory; i++)
+			avail_mem[i+index] = 1; 
+	} else {
+		// signal an error condition
+		index = MEMORY;
+	}
 
 	// release lock
-	printf("done allocating %d bits at %d\n", memory, index);
+	printf("[q2_alloc]done allocating %d bits at %d\n", memory, index);
 	pthread_mutex_unlock(&avail_mem_lock);
 
 	
@@ -157,11 +177,11 @@ int q2_alloc(int memory)
 
 bool q2_free(int address, int memory)
 {
-	printf("Waiting to free %d bits at %d\n", memory, address);
+	printf("[q2_free]Waiting to free %d bits at %d\n", memory, address);
 	// acquire lock
 	pthread_mutex_lock(&avail_mem_lock);
 
-	printf("freeing %d bits at %d\n", memory, address);
+	printf("[q2_free]freeing %d bits at %d\n", memory, address);
 
 	// search array
 	int index = 0;
@@ -182,7 +202,7 @@ bool q2_free(int address, int memory)
 	// change array
 
 	// release lock
-	printf("done freeing %d bits at %d\n", memory, address);
+	printf("[q2_free]done freeing %d bits at %d\n", memory, address);
 	pthread_mutex_unlock(&avail_mem_lock);
 
 	//todo
@@ -202,6 +222,7 @@ void run_processes(node_t** list)
 
         // pop it
         pop(list);
+
 
     }
 
