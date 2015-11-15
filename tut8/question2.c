@@ -218,7 +218,7 @@ void* launch_process(void* _process)
 		printf("process name '%s' priority %d pid %d memory %d runtime %d\n", process.name, process.priority, process.pid, process.memory, process.runtime);
     	
     	// do the thing
-		printf("[%d][launch_process] I'm child for '%s' rt %d\n", getpid(), process.name, process.runtime);
+		printf("[%d] I'm child for '%s' rt %d\n", getpid(), process.name, process.runtime);
 		//todo
 
 		// done
@@ -231,8 +231,10 @@ void* launch_process(void* _process)
 		// wait for process runtime to complete
         sleep(process.runtime);
 
+        printf("killing process %d\n", pid);
+
         // now you're killing it. Stop it.
-        kill(pid, SIGINT);
+        kill(pid, SIGTSTP);
 
     	// wait for child
     	waitpid(pid, 0, 0);
@@ -256,11 +258,11 @@ void* launch_process(void* _process)
 int q2_alloc(int memory)
 {
 
-	printf("[%d][q2_alloc]Waiting to allocate %d bits\n", getpid(), memory);
+	printf("Waiting to allocate %d bits\n", memory);
 	// acquire lock
 	pthread_mutex_lock(&avail_mem_lock);
 
-	printf("[%d][q2_alloc]allocating %d bits\n", getpid(), memory);
+	printf("allocating %d bits\n", memory);
 
 	// search array
 	int index = 0;
@@ -282,14 +284,13 @@ int q2_alloc(int memory)
 			avail_mem[i+index] = 1; 
 	} else {
 		// signal an error condition
-		printf("[%d][q2_alloc]no index was found\n", getpid());
 		index = MEMORY;
 	}
 
 	print_avail_mem();
 
 	// release lock
-	printf("[%d][q2_alloc]done allocating %d bits at %d\n", getpid(), memory, index);
+	printf("done allocating %d bits at %d\n", memory, index);
 	pthread_mutex_unlock(&avail_mem_lock);
 
 	
@@ -301,11 +302,11 @@ int q2_alloc(int memory)
 // function that frees elements of avail_mem
 bool q2_free(int address, int memory)
 {
-	printf("[%d][q2_free]Waiting to free %d bits at %d\n", getpid(), memory, address);
+	printf("Waiting to free %d bits at %d\n", memory, address);
 	// acquire lock
 	pthread_mutex_lock(&avail_mem_lock);
 
-	printf("[%d][q2_free]freeing %d bits at %d\n", getpid(), memory, address);
+	printf("freeing %d bits at %d\n", memory, address);
 
 	// erase portion of array
 	int index = 0;
@@ -323,7 +324,7 @@ bool q2_free(int address, int memory)
 	print_avail_mem();
 
 	// release lock
-	printf("[%d][q2_free]done freeing %d bits at %d\n", getpid(), memory, address);
+	printf("done freeing %d bits at %d\n", memory, address);
 	pthread_mutex_unlock(&avail_mem_lock);
 
 	// check if all items were erased
@@ -381,7 +382,7 @@ void print_avail_mem(void)
 	int curr_block_size = 0;
 	int curr_block_val = -1;
 
-	printf("[%d][avail_mem]:\n", getpid());
+	printf("avail_mem:\n");
 	for(int i = 0; i <= MEMORY; i++)
 	{
 		if(i < MEMORY && avail_mem[i]==curr_block_val)
