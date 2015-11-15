@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include <pthread.h>
 #include <stdlib.h>
 
@@ -205,16 +206,36 @@ void* launch_process(void* _process)
 		return NULL;
 	}
 
-	// print it
-	printf("[%d]process name '%s' priority %d pid %d memory %d runtime %d\n", getpid(), process.name, process.priority, process.pid, process.memory, process.runtime);
+	// do a fork
+	//todo
+	int pid = fork();
+	if(pid == 0)
+	{
+		//todo
+		printf("[%d] I'm child for '%s' rt %d\n", getpid(), process.name, process.runtime);
+		exit(1);
+	} else if (pid < 0) {
+		fprintf(stderr, "Error occured during fork\n");
+		exit(1);
+	} else {
+		// update pid
+		process.pid = pid; 
+
+		// print it
+		printf("[%d]process name '%s' priority %d pid %d memory %d runtime %d\n", getpid(), process.name, process.priority, process.pid, process.memory, process.runtime);
+    	
+
+
+    	// wait for child
+    	waitpid(pid, 0, 0);
+
+		
+    	// dealloc
+	    if(!q2_free(process.address, process.memory))
+	    	return NULL; //todo
+	}
+
     
-
-    // execute it
-    //todo
-
-    // dealloc
-    if(!q2_free(process.address, process.memory))
-    	return NULL; //todo
 
 
     // done
