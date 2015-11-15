@@ -317,17 +317,18 @@ proc init_proc(void)
 // print avail_mem array to console
 void print_avail_mem(void)
 {
-	int curr_block_size = 1;
-	int curr_block_val = 0;
+	int curr_block_size = 0;
+	int curr_block_val = -1;
 
 	printf("[avail_mem]:\n");
-	for(int i = 0; i < MEMORY; i++)
+	for(int i = 0; i <= MEMORY; i++)
 	{
-		if(avail_mem[i]==curr_block_val && i != MEMORY-1)
+		if(i < MEMORY && avail_mem[i]==curr_block_val)
 		{
 			curr_block_size++;
 		} else {
-			printf("%d\t%ds\n", curr_block_size, curr_block_val);
+			if(curr_block_size > 0)
+				printf("%d\t%ds\n", curr_block_size, curr_block_val);
 			curr_block_val = avail_mem[i];
 			curr_block_size = 1;
 
