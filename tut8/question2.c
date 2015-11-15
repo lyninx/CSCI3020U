@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE 600
 #include "queue.h"
 #include <string.h>
 #include <stdio.h>
@@ -15,6 +16,12 @@ static int avail_mem[MEMORY] = { 0 };
 
 // memory lock
 static pthread_mutex_t avail_mem_lock;
+
+// barrier that is reached when an element in the queue has been copied
+static pthread_barrier_t proc_list_copy_barr;
+
+// flag indicating whether there was an allocation failure
+bool q2_alloc_failed = false;
 
 // runtime
 int main(void);
@@ -35,7 +42,8 @@ void run_processes(node_t** list);
 /// @param memsize	   memory size
 int q2_alloc(int memory);
 
-/// auxillary; checks if a memory segment is unused.
+/// convenience; checks if a memory segment is unused.
+/// assumes it has ownership of the mutex 'avail_mem_lock'... so yeah, watch out
 bool q2_alloc_isfree(int address, int memory);
 
 /// auxillary, deallocates memory block.
@@ -147,6 +155,9 @@ void run_processes(node_t** list)
 	// lock for avail_mem
 	pthread_mutex_init(&avail_mem_lock, NULL);
 
+	// lock for 'list'
+	pthread_barrier_init(&proc_list_copy_barr, NULL,2);
+
 	// array of threads
 	const int nthrs = get_queue_size(*list);
 	pthread_t thrs[nthrs];
@@ -155,10 +166,14 @@ void run_processes(node_t** list)
 	int currproc = 0;
     while(*list)
     {
+
         // run it
         pthread_create(&thrs[currproc], NULL, launch_process, (void*)&(*list)->process);
 
-        // pop it
+        // wait for process to copy
+        pthread_barrier_wait(&proc_list_copy_barr);
+        
+        // pop process
         pop(list);
 
         // iterate
@@ -175,28 +190,30 @@ void run_processes(node_t** list)
 // forks into a new process based on the process object
 void* launch_process(void* _process)
 {
-	// cast process
-	proc* process = (proc*)_process;
+	// copy process
+	proc process = *(proc*)_process;
 
-	// alloc
-	int addr = q2_alloc(process->memory);
-	if(addr == MEMORY)
+	// signal to the main that the copy was done
+	pthread_barrier_wait(&proc_list_copy_barr);
+
+	// try to allocate memory
+	process.address = q2_alloc(process.memory);
+	if(process.address == MEMORY)
 	{
 		printf("Error: unable to allocate memory\n");
-		//...todo
-	} else {
-		process->address = addr;
+		q2_alloc_failed = true;
+		return NULL;
 	}
 
 	// print it
-	printf("[%d]process name '%s' priority %d pid %d memory %d runtime %d\n", getpid(), process->name, process->priority, process->pid, process->memory, process->runtime);
+	printf("[%d]process name '%s' priority %d pid %d memory %d runtime %d\n", getpid(), process.name, process.priority, process.pid, process.memory, process.runtime);
     
 
     // execute it
     //todo
 
     // dealloc
-    if(!q2_free(process->address, process->memory))
+    if(!q2_free(process.address, process.memory))
     	return NULL; //todo
 
 
@@ -204,17 +221,6 @@ void* launch_process(void* _process)
     return NULL;
 }
 
-// checks if a memory segment is free
-bool q2_alloc_isfree(int k, int count)
-{
-	// check for any non-null bits
-	for(int i = 0; i < count; i++)
-		if(avail_mem[i+k] != 0)
-			return false;
-
-    // all bits are null
-	return true;
-}
 
 
 // function that frees elements of avail_mem
@@ -321,9 +327,24 @@ proc init_proc(void)
 	return p;
 }
 
+
+// checks if a memory segment is free
+bool q2_alloc_isfree(int k, int count)
+{
+	// check for any non-null bits
+	for(int i = 0; i < count; i++)
+		if(avail_mem[i+k] != 0)
+			return false;
+
+    // all bits are null
+	return true;
+}
+
 // -----
 // --- development only functions
 // -----
+
+
 
 // print avail_mem array to console
 void print_avail_mem(void)
