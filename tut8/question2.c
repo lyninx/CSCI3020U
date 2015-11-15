@@ -21,6 +21,9 @@ static pthread_mutex_t avail_mem_lock;
 // barrier that is reached when an element in the queue has been copied
 static pthread_barrier_t proc_list_copy_barr;
 
+// represents the allocation check
+static pthread_barrier_t q2_alloc_check_barr;
+
 // flag indicating whether there was an allocation failure
 bool q2_alloc_failed = false;
 
@@ -34,7 +37,14 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary);
 
 /// auxillary; runs each process in queue.
 /// outputs error messages for allocation failures.
+/// todo : run priority with secondary
 void run_processes(node_t** list);
+
+/// auxillary; runs each process in queue.
+/// outputs error messages for allocation failures.
+/// this one has special considerations due to being for the secondary list.
+/// todo: might be combined with priority one in future.
+void run_processes_secondary(node_t** list);
 
 /// auxillary; perfoms allocation of memory.
 /// returns index of memory segment, or 'memsize' if no memory is available.
@@ -98,7 +108,7 @@ int main(void)
 
     // execute high priority then low priority
     run_processes(&priority);
-    run_processes(&secondary);
+    run_processes_secondary(&secondary);
 
     printf("\nCONSUMED:\nPRIORITY:\n");
     print_list(priority);
@@ -157,7 +167,10 @@ void run_processes(node_t** list)
 	pthread_mutex_init(&avail_mem_lock, NULL);
 
 	// lock for 'list'
-	pthread_barrier_init(&proc_list_copy_barr, NULL,2);
+	pthread_barrier_init(&proc_list_copy_barr, NULL, 2);
+
+	// lock for 'q2_alloc_check_barr'
+	pthread_barrier_init(&q2_alloc_check_barr, NULL, 2);
 
 	// array of threads
 	const int nthrs = get_queue_size(*list);
@@ -173,9 +186,79 @@ void run_processes(node_t** list)
 
         // wait for process to copy
         pthread_barrier_wait(&proc_list_copy_barr);
+
+        // copy process
+        proc process = (*list)->process;
         
         // pop process
         pop(list);
+
+        // wait for allocation 
+        pthread_barrier_wait(&q2_alloc_check_barr);
+
+        // check for allocation failure
+        if(q2_alloc_failed)
+        {
+			printf("Error: unable to allocate memory for '%s'\n", process.name);
+        	return;
+        }
+
+        // iterate
+        currproc++;
+
+    }
+
+    // join threads
+    for(int i = 0; i < nthrs; i++)
+    	pthread_join(thrs[i], NULL);
+
+}
+
+// function that launches each process
+void run_processes_secondary(node_t** list)
+{
+	// lock for avail_mem
+	pthread_mutex_init(&avail_mem_lock, NULL);
+
+	// lock for 'list'
+	pthread_barrier_init(&proc_list_copy_barr, NULL, 2);
+
+	// lock for 'q2_alloc_check_barr'
+	pthread_barrier_init(&q2_alloc_check_barr, NULL, 2);
+
+	// array of threads
+	const int nthrs = get_queue_size(*list);
+	pthread_t thrs[nthrs];
+
+	// go through each list element
+	int currproc = 0;
+    while(*list)
+    {
+
+        // run it
+        pthread_create(&thrs[currproc], NULL, launch_process, (void*)&(*list)->process);
+
+        // wait for process to copy
+        pthread_barrier_wait(&proc_list_copy_barr);
+
+        // copy process
+        proc process = (*list)->process;
+        
+        // pop process
+        pop(list);
+
+        // wait for allocation 
+        pthread_barrier_wait(&q2_alloc_check_barr);
+
+        // check for allocation failure
+        if(q2_alloc_failed)
+        {
+			printf("lol unable to allocate memory for '%s'\n", process.name);
+
+        	// reset flag
+        	q2_alloc_failed = false;
+        	//todo
+        }
 
         // iterate
         currproc++;
@@ -201,9 +284,12 @@ void* launch_process(void* _process)
 	process.address = q2_alloc(process.memory);
 	if(process.address == MEMORY)
 	{
-		printf("Error: unable to allocate memory for '%s'\n", process.name);
 		q2_alloc_failed = true;
+		pthread_barrier_wait(&q2_alloc_check_barr);
 		return NULL;
+	} else {
+		q2_alloc_failed = false;
+		pthread_barrier_wait(&q2_alloc_check_barr);
 	}
 
 	// do a fork
