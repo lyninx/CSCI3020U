@@ -211,33 +211,22 @@ void* launch_process(void* _process)
 	int pid = fork();
 	if(pid == 0)
 	{
+		// update pid
+		process.pid = getpid(); 
+
+		// print it
+		printf("process name '%s' priority %d pid %d memory %d runtime %d\n", process.name, process.priority, process.pid, process.memory, process.runtime);
+    	
+    	// do the thing
+		printf("[%d][launch_process] I'm child for '%s' rt %d\n", getpid(), process.name, process.runtime);
 		//todo
 
-
-		printf("[%d][launch_process] I'm child for '%s' rt %d\n", getpid(), process.name, process.runtime);
-
-		// suspend activity until given a continue signal
-		int status = SIGCONT;
-		waitpid(getpid(), &status, 0);
-
-
-		printf("[%d][launch_process] doing the thing\n", getpid());
+		// done
 		exit(1);
 	} else if (pid < 0) {
 		fprintf(stderr, "Error occured during fork\n");
 		exit(1);
 	} else {
-		// update pid
-		process.pid = pid; 
-
-		// print it
-		printf("[%d]process name '%s' priority %d pid %d memory %d runtime %d\n", getpid(), process.name, process.priority, process.pid, process.memory, process.runtime);
-    	
-    	printf("[%d][child: %d] sending continue signal to %d\n", getpid(), pid, pid);
-		// tell child that the thing was printed
-		kill(pid, SIGCONT);
-
-		printf("[%d][child: %d] just sent continue signal to %d\n", getpid(), pid, pid);
 
     	// wait for child
     	waitpid(pid, 0, 0);
