@@ -147,17 +147,28 @@ void run_processes(node_t** list)
 	// lock for avail_mem
 	pthread_mutex_init(&avail_mem_lock, NULL);
 
+	// array of threads
+	const int nthrs = get_queue_size(*list);
+	pthread_t thrs[nthrs];
+
 	// go through each list element
+	int currproc = 0;
     while(*list)
     {
         // run it
-        launch_process(&(*list)->process);
+        pthread_create(&thrs[currproc], NULL, launch_process, (void*)&(*list)->process);
 
         // pop it
         pop(list);
 
+        // iterate
+        currproc++;
 
     }
+
+    // join threads
+    for(int i = 0; i < nthrs; i++)
+    	pthread_join(thrs[i], NULL);
 
 }
 
