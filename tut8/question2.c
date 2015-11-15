@@ -140,6 +140,27 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary)
     }
 }
 
+
+// function that launches each process
+void run_processes(node_t** list)
+{
+	// lock for avail_mem
+	pthread_mutex_init(&avail_mem_lock, NULL);
+
+	// go through each list element
+    while(*list)
+    {
+        // run it
+        launch_process(&(*list)->process);
+
+        // pop it
+        pop(list);
+
+
+    }
+
+}
+
 // forks into a new process based on the process object
 void* launch_process(void* _process)
 {
@@ -263,25 +284,6 @@ bool q2_free(int address, int memory)
 	return index == memory;
 }
 
-// function that launches each process
-void run_processes(node_t** list)
-{
-	// lock for avail_mem
-	pthread_mutex_init(&avail_mem_lock, NULL);
-
-	// go through each list element
-    while(*list)
-    {
-        // run it
-        launch_process(&(*list)->process);
-
-        // pop it
-        pop(list);
-
-
-    }
-
-}
 
 // -----
 // --- convenience functions
