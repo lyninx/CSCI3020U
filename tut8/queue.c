@@ -65,7 +65,9 @@ void print_list(node_t * head) {
         printf("%s %d\n", current->process.name, current->process.priority);
         current = current->next;
     }
-    printf("\n");
+
+    // print size
+    printf("<size %d>\n\n", get_queue_size(head));
 }
 
 proc* remove_by_index(node_t ** head, int n) {
