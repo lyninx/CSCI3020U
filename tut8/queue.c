@@ -125,3 +125,19 @@ proc* delete_pid(node_t * head, int pid){
     return NULL;
 }
 
+int get_queue_size(const node_t* head)
+{
+    // queue size
+    int size = 0;
+
+    // iterate thru each node
+    while(head != NULL)
+    {
+        size++;
+        head = head->next;
+    }
+
+
+    // give back how many nodes were found
+    return size;
+}
