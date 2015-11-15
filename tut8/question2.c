@@ -228,6 +228,12 @@ void* launch_process(void* _process)
 		exit(1);
 	} else {
 
+		// wait for process runtime to complete
+        sleep(process.runtime);
+
+        // now you're killing it. Stop it.
+        kill(pid, SIGINT);
+
     	// wait for child
     	waitpid(pid, 0, 0);
 
