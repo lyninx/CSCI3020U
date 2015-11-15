@@ -99,10 +99,13 @@ void* launch_process(void* _process)
 	proc* process = (proc*)_process;
 
 	// alloc
-	if(q2_alloc(process->memory) == MEMORY)
+	int addr = q2_alloc(process->memory);
+	if(addr == MEMORY)
 	{
 		printf("Error: unable to allocate memory\n");
 		//...todo
+	} else {
+		process->address = addr;
 	}
 
 	// print it
@@ -143,7 +146,7 @@ int q2_alloc(int memory)
 
 	// search array
 	int index = 0;
-	while(index+memory <= MEMORY)
+	while(MEMORY - index >= memory)
 	{
 		// stop if you've found a free segment
 		if(q2_alloc_isfree(index, memory))
@@ -154,13 +157,14 @@ int q2_alloc(int memory)
 	}
 
 	// change array if a block was found
-	if(index + memory <= MEMORY)
+	if(MEMORY - index >= memory)
 	{
 		// fill with ones (replace with memset or something? Is that a thing?)
 		for(int i = 0; i < memory; i++)
 			avail_mem[i+index] = 1; 
 	} else {
 		// signal an error condition
+		printf("[q2_alloc]no index was found\n");
 		index = MEMORY;
 	}
 
@@ -183,9 +187,9 @@ bool q2_free(int address, int memory)
 
 	printf("[q2_free]freeing %d bits at %d\n", memory, address);
 
-	// search array
+	// erase portion of array
 	int index = 0;
-	while(index < memory)
+	for(index = 0; index < memory; index++)
 	{
 		if(avail_mem[address + index] == 0)
 		{
@@ -194,19 +198,14 @@ bool q2_free(int address, int memory)
 		} else {
 			avail_mem[address + index] = 0;
 		}
-
-		index++;
 	}
-
-
-	// change array
 
 	// release lock
 	printf("[q2_free]done freeing %d bits at %d\n", memory, address);
 	pthread_mutex_unlock(&avail_mem_lock);
 
-	//todo
-	return false;
+	// check if all items were erased
+	return index == memory;
 }
 
 void run_processes(node_t** list)
