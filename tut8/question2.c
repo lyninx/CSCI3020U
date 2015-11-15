@@ -317,16 +317,21 @@ proc init_proc(void)
 // print avail_mem array to console
 void print_avail_mem(void)
 {
-	printf("[avail_mem]:\n\t");
+	int curr_block_size = 1;
+	int curr_block_val = 0;
+
+	printf("[avail_mem]:\n");
 	for(int i = 0; i < MEMORY; i++)
 	{
-		// print a newline if i is some number, otherwise just the number and a space
-		if(i % 64 == 63)
-			printf("%d\n\t", avail_mem[i]);
-		else if(i % 8 == 7)
-			printf("%d ", avail_mem[i]);
-		else
-			printf("%d", avail_mem[i]);
+		if(avail_mem[i]==curr_block_val && i != MEMORY-1)
+		{
+			curr_block_size++;
+		} else {
+			printf("%d\t%ds\n", curr_block_size, curr_block_val);
+			curr_block_val = avail_mem[i];
+			curr_block_size = 1;
+
+		}
 	}
 
 	printf("\n");
