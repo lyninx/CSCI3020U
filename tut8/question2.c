@@ -185,8 +185,7 @@ void run_processes(node_t** priority, node_t** secondary)
         // copy process
         proc process = (*priority)->process;
         
-        // pop process
-        pop(priority);
+
 
         // wait for allocation 
         pthread_barrier_wait(&q2_alloc_check_barr);
@@ -194,9 +193,12 @@ void run_processes(node_t** priority, node_t** secondary)
         // check for allocation failure
         if(q2_alloc_failed)
         {
-			printf("Error: unable to allocate memory for '%s'\n", process.name);
+			fprintf(stderr, "Error: unable to allocate memory for '%s'\n", process.name);
         	return;
         }
+
+        // pop process
+        pop(priority);
 
         // iterate
         curr_thr++;
@@ -214,9 +216,6 @@ void run_processes(node_t** priority, node_t** secondary)
 
 	    // copy process
 	    proc process = (*secondary)->process;
-	    
-	    // pop process
-	    pop(secondary);
 
 	    // wait for allocation 
 	    pthread_barrier_wait(&q2_alloc_check_barr);
@@ -227,12 +226,17 @@ void run_processes(node_t** priority, node_t** secondary)
 			printf("lol unable to allocate memory for '%s'\n", process.name);
 
 			// push it back on
-			//push(list, process);
+			//push(secondary, process);
 			//todo
 
 	    	// reset flag
 	    	q2_alloc_failed = false;
 	    }
+
+
+	    
+	    // pop process
+	    pop(secondary);
 
 	    // iterate
 	    curr_thr++;
