@@ -171,6 +171,8 @@ void run_processes(node_t** priority, node_t** secondary)
 			// allocation failure
 			if(process.address == MEMORY)
 			{
+				print_avail_mem(avail_mem, MEMORY);
+				printf("repushing %s %d\n", process.name, process.memory);
 				//repush
 				push(secondary, process);
 
@@ -246,7 +248,7 @@ int q2_alloc(int memory, int* avail_mem, int memsize)
 
 	// search array
 	int index = 0;
-	while(memory - index >= memory)
+	while(memsize - index >= memory)
 	{
 		// stop if you've found a free segment
 		if(q2_alloc_isfree(index, memory, avail_mem))
@@ -257,7 +259,7 @@ int q2_alloc(int memory, int* avail_mem, int memsize)
 	}
 
 	// change array if a block was found
-	if(memory - index >= memory)
+	if(memsize - index >= memory)
 	{
 		// fill with ones (replace with memset or something? Is that a thing?)
 		for(int i = 0; i < memory; i++)
