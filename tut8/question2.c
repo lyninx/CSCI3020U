@@ -158,8 +158,112 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary)
 // function that launches each process
 void run_processes(node_t** priority, node_t** secondary)
 {
+	// initialize with null args
+    char* argv[] = {NULL};
+
+	// run priority processes
+	while(*priority)
+	{
+		// pop current process
+		proc process = (*priority)->process;
+		pop(priority);
+
+		// allocate memory
+		process.address = q2_alloc(process.memory);
+
+		// todo
+		// initialize process
+		process.pid = fork();
+		if(process.pid == 0)
+		{
+			execv("./process", argv);
+			exit(1);
+		} else if (process.pid < 0) {
+			fprintf(stderr, "Error: failed to fork\n");
+		} else {
+			// run process
+			//...
+			printf("running '%s'\n", process.name);
+
+			sleep(process.runtime);
+
+			kill(process.pid, SIGINT);
+
+			// todo
+			waitpid(process.pid, 0, 0);
+
+			// free memory
+			q2_free(process.address, process.memory);
+		}
+
+		printf("'%s'\n", process.name);
+	}
+
+	// run secondary processes
+	while(*secondary)
+	{
+		proc process = (*secondary)->process;
+		pop(secondary);
+
+
+		printf("'%s' %d\n", process.name, process.runtime);
+		if(process.pid == 0)
+		{
+			// initialize process
+			process.pid = fork();
+			if(process.pid == 0)
+			{
+				execv("./process", argv);
+				exit(1);
+			} else if (process.pid < 0) {
+				fprintf(stderr, "Error: failed to fork\n");
+			} else {
+				// do stuff
+				sleep(1);
+				process.runtime -=1;
+				kill(process.pid, SIGTSTP);
+				process.suspended = true;
+
+				//repush
+				printf("launched '%s'\n", process.name);
+				push(secondary, process);
+			}
+		}
+		else
+		{
+			// check if process is suspenders
+			if(process.suspended)
+			{
+				process.suspended = false;
+				kill(process.pid, SIGCONT);
+			}
+
+			// go for 1 tick
+			sleep(1);
+			process.runtime -= 1;
+
+			// suspend or terminate based on runtime
+			if(process.runtime > 0)
+			{
+				// suspend
+				kill(process.pid, SIGTSTP);
+				process.suspended = true;
+
+				//repush
+				push(secondary, process);
+			} else {
+				printf("'%s' has terminated\n", process.name);
+
+				// kill
+				kill(process.pid, SIGINT);
+				waitpid(process.pid, 0, 0);
+			}
+		}
+	}
+
+
 	// lock for avail_mem
-	pthread_mutex_init(&avail_mem_lock, NULL);
+	/*pthread_mutex_init(&avail_mem_lock, NULL);
 
 	// lock for 'list'
 	pthread_barrier_init(&proc_list_copy_barr, NULL, 2);
@@ -276,7 +380,7 @@ void run_processes(node_t** priority, node_t** secondary)
 
     // join threads
     for(int i = 0; i < nthrs; i++)
-    	pthread_join(thrs[i], NULL);
+    	pthread_join(thrs[i], NULL);*/
 
 }
 
