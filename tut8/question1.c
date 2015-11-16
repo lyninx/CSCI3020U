@@ -100,16 +100,16 @@ void printTree(proc_tree *tree){
 	if(tree != NULL){
 		// Print based on if the children are NULL
 		if(tree->left != NULL && tree->right != NULL){
-			printf("Parent: %s --> Children: %s, %s\n", tree->val.name, tree->left->val.name, tree->right->val.name);
+			printf("Parent: %s (Name: %s, Parent: %s, Priority: %d, Memory: %d) --> Children: %s, %s\n", tree->val.name, tree->val.name, tree->val.parent, tree->val.priority, tree->val.memory, tree->left->val.name, tree->right->val.name);
 		}
 		else if(tree->left != NULL){
-			printf("Parent: %s --> Children: %s, NULL\n", tree->val.name, tree->left->val.name);
+			printf("Parent: %s (Name: %s, Parent: %s, Priority: %d, Memory: %d) --> Children: %s, NULL\n", tree->val.name, tree->val.name, tree->val.parent, tree->val.priority, tree->val.memory, tree->left->val.name);
 		}
 		else if(tree->right != NULL){
-			printf("Parent: %s --> Children: NULL, %s\n", tree->val.name, tree->right->val.name);
+			printf("Parent: %s (Name: %s, Parent: %s, Priority: %d, Memory: %d) --> Children: NULL, %s\n", tree->val.name, tree->val.name, tree->val.parent, tree->val.priority, tree->val.memory, tree->right->val.name);
 		}
 		else if(tree->left == NULL && tree->right == NULL){
-			printf("Parent: %s --> Children: NULL, NULL\n", tree->val.name);
+			printf("Parent: %s (Name: %s, Parent: %s, Priority: %d, Memory: %d) --> Children: NULL, NULL\n", tree->val.name, tree->val.name, tree->val.parent, tree->val.priority, tree->val.memory);
 		}
 		
 		// Recursively moves down the left branch
