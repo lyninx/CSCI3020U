@@ -208,38 +208,70 @@ void run_processes(node_t** priority, node_t** secondary)
     // go through each secondary element.
     while(*secondary)
     {
-		// run it
-	    pthread_create(&thrs[curr_thr], NULL, launch_process_secondary, (void*)&(*secondary)->process);
+    	printf("iterating through secondary\n");
 
-	    // wait for process to copy
-	    pthread_barrier_wait(&proc_list_copy_barr);
+    	// todo
 
 	    // copy process
 	    proc process = (*secondary)->process;
-
-	    // wait for allocation 
-	    pthread_barrier_wait(&q2_alloc_check_barr);
-
-	    // check for allocation failure
-	    if(q2_alloc_failed)
-	    {
-			printf("lol unable to allocate memory for '%s'\n", process.name);
-
-			// push it back on
-			//push(secondary, process);
-			//todo
-
-	    	// reset flag
-	    	q2_alloc_failed = false;
-	    }
-
-
-	    
-	    // pop process
 	    pop(secondary);
 
-	    // iterate
-	    curr_thr++;
+	    // check pid
+    	if((*secondary)->process.pid == 0)
+    	{
+    		printf("trying to add process '%s'\n", process.name);
+    		// launch new process
+	        pthread_create(&thrs[curr_thr], NULL, launch_process_secondary, (void*)&(*priority)->process);
+
+	        // wait for process to copy
+	        pthread_barrier_wait(&proc_list_copy_barr);
+
+	        // copy process
+	        proc process = (*priority)->process;
+
+
+	        // wait for allocation 
+	        pthread_barrier_wait(&q2_alloc_check_barr);
+
+	        // check for allocation failure
+	        if(q2_alloc_failed)
+	        {
+				// repush process
+				push(secondary, process);
+				pthread_join(thrs[curr_thr], NULL);
+	        } else {
+
+	        	//todo
+
+	        	// iterate
+	        	curr_thr++;
+	        }
+
+    	} else if ((*secondary)->process.runtime <= 1) {
+    		printf("terminating process '%s'\n", process.name);
+    		// terminate process
+    		sleep(1);
+    		kill(process.pid, SIGINT);
+    		waitpid(process.pid, 0,0);
+    		q2_free(process.address, process.memory);
+    	} else {
+
+    		printf("running process '%s' for 1 second\n", process.name);
+    		// check if suspended
+    		if(process.suspended)
+    		{
+    			process.suspended = false;
+    			kill(process.pid, SIGCONT);
+    		}
+
+    		// run for 1 second
+    		sleep(1);
+    		kill(process.pid, SIGTSTP);
+
+    		// update process
+    		process.runtime -= 1;
+    		process.suspended = true; 
+    	}
     }
 
     // join threads
@@ -297,25 +329,9 @@ void* launch_process_secondary(void* _process)
 
 
 	// launch the process
-	int pid = do_launch_process(&process);
-	if(pid > 0)
-	{
-		// wait for process runtime to complete
-	    sleep(process.runtime);
+	process.pid = do_launch_process(&process);
 
-	    printf("killing process %d\n", pid);
-
-	    // now you're killing it. Stop it.
-	    kill(pid, SIGTSTP);
-
-		// wait for child
-		waitpid(pid, 0, 0);
-
-		
-		// dealloc
-	    q2_free(process.address, process.memory);
-	}
-
+	//todos
 
     // done
     return NULL;
