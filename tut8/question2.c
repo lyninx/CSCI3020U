@@ -67,12 +67,6 @@ int main(void)
     
     // read in stuff from processes
     load_processes(fin, &priority, &secondary);
-
-    // ...
-    printf("\nPRIORITY:\n");
-    print_list(priority);
-    printf("SECONDARY:\n");
-    print_list(secondary);
     
     // close the process list
     fclose(fin);
@@ -80,22 +74,11 @@ int main(void)
     // execute high priority then low priority
     run_processes(&priority, &secondary);
 
-    printf("\nCONSUMED:\nPRIORITY:\n");
-    print_list(priority);
-    printf("SECONDARY:\n");
-    print_list(secondary);
-
-    //....
+    // clear leftovers (just in case)
     while(priority)
-    {
     	pop(&priority);
-    }
     while(secondary)
     	pop(&secondary);
-    printf("\nCLEANED:\nPRIORITY:\n");
-    print_list(priority);
-    printf("SECONDARY:\n");
-    print_list(secondary);
 
 
 	// return successful
@@ -155,14 +138,13 @@ void run_processes(node_t** priority, node_t** secondary)
 		process.pid = fork();
 		if(process.pid == 0)
 		{
+			printf("%s, %d, %d, %d, %d\n", process.name, process.priority, getpid(), process.memory, process.runtime);
 			execv("./process", argv);
 			exit(1);
 		} else if (process.pid < 0) {
 			fprintf(stderr, "Error: failed to fork\n");
 		} else {
 			// run process
-			//...
-			printf("running '%s'\n", process.name);
 
 			sleep(process.runtime);
 
@@ -174,8 +156,6 @@ void run_processes(node_t** priority, node_t** secondary)
 			// free memory
 			q2_free(process.address, process.memory, avail_mem);
 		}
-
-		printf("'%s'\n", process.name);
 	}
 
 	// run secondary processes
@@ -183,9 +163,6 @@ void run_processes(node_t** priority, node_t** secondary)
 	{
 		proc process = (*secondary)->process;
 		pop(secondary);
-
-
-		printf("'%s' %d\n", process.name, process.runtime);
 		if(process.pid == 0)
 		{
 			// allocate memory
@@ -202,6 +179,7 @@ void run_processes(node_t** priority, node_t** secondary)
 				process.pid = fork();
 				if(process.pid == 0)
 				{
+					printf("%s, %d, %d, %d, %d\n", process.name, process.priority, getpid(), process.memory, process.runtime);
 					execv("./process", argv);
 					exit(1);
 				} else if (process.pid < 0) {
@@ -214,7 +192,6 @@ void run_processes(node_t** priority, node_t** secondary)
 					process.suspended = true;
 
 					//repush
-					printf("launched '%s' for %d seconds\n", process.name, process.runtime+1);
 					push(secondary, process);
 				}
 			}
@@ -226,6 +203,10 @@ void run_processes(node_t** priority, node_t** secondary)
 			// check if process is suspenders
 			if(process.suspended)
 			{
+				// wait a second for signals to catch up
+				sleep(1);
+
+				// unsuspend
 				process.suspended = false;
 				kill(process.pid, SIGCONT);
 			}
@@ -244,7 +225,6 @@ void run_processes(node_t** priority, node_t** secondary)
 				//repush
 				push(secondary, process);
 			} else {
-				printf("'%s' has terminated\n", process.name);
 
 				// kill
 				kill(process.pid, SIGINT);
@@ -287,10 +267,6 @@ int q2_alloc(int memory, int* avail_mem, int memsize)
 		index = memsize;
 	}
 
-	print_avail_mem(avail_mem, memsize);
-
-	
-
 	// return the index
 	return index;
 }
@@ -311,11 +287,6 @@ bool q2_free(int address, int memory, int* avail_mem)
 			avail_mem[address + index] = 0;
 		}
 	}
-
-	print_avail_mem(avail_mem, MEMORY);
-
-	// release lock
-	printf("done freeing %d bits at %d\n", memory, address);
 
 	// check if all items were erased
 	return index == memory;
