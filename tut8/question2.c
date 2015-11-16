@@ -19,7 +19,6 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary);
 
 
 /// auxillary; runs each process in priority and secondary queues.
-/// outputs error messages for allocation failures.
 void run_processes(node_t** priority, node_t** secondary);
 
 /// auxillary; perfoms allocation of memory.
@@ -33,9 +32,7 @@ int q2_alloc(int memory, int* avail_mem, int memsize);
 bool q2_alloc_isfree(int address, int memory, const int* avail_mem);
 
 /// auxillary, deallocates memory block.
-/// returns true if successful, false if error.
-/// prints error messages.
-bool q2_free(int address, int memory, int* avail_mem);
+void q2_free(int address, int memory, int* avail_mem);
 
 /// convenience; initializes a process
 proc init_proc(void);
@@ -133,7 +130,6 @@ void run_processes(node_t** priority, node_t** secondary)
 		// allocate memory
 		process.address = q2_alloc(process.memory, avail_mem, MEMORY);
 
-		// todo
 		// initialize process
 		process.pid = fork();
 		if(process.pid == 0)
@@ -161,8 +157,11 @@ void run_processes(node_t** priority, node_t** secondary)
 	// run secondary processes
 	while(*secondary)
 	{
+		// pop current process
 		proc process = (*secondary)->process;
 		pop(secondary);
+
+		//do stuff
 		if(process.pid == 0)
 		{
 			// allocate memory
@@ -171,8 +170,6 @@ void run_processes(node_t** priority, node_t** secondary)
 			// allocation failure
 			if(process.address == MEMORY)
 			{
-				print_avail_mem(avail_mem, MEMORY);
-				printf("repushing %s %d\n", process.name, process.memory);
 				//repush
 				push(secondary, process);
 
@@ -274,24 +271,15 @@ int q2_alloc(int memory, int* avail_mem, int memsize)
 }
 
 // function that frees elements of avail_mem
-bool q2_free(int address, int memory, int* avail_mem)
+void q2_free(int address, int memory, int* avail_mem)
 {
 
 	// erase portion of array
 	int index = 0;
 	for(index = 0; index < memory; index++)
 	{
-		if(avail_mem[address + index] == 0)
-		{
-			fprintf(stderr, "Error: q2 segmentation fault\n");
-			break;
-		} else {
-			avail_mem[address + index] = 0;
-		}
+		avail_mem[address + index] = 0;
 	}
-
-	// check if all items were erased
-	return index == memory;
 }
 
 
