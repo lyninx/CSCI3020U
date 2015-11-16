@@ -35,16 +35,9 @@ int main(void);
 void load_processes(FILE* in, node_t** priority, node_t** secondary);
 
 
-/// auxillary; runs each process in queue.
+/// auxillary; runs each process in priority and secondary queues.
 /// outputs error messages for allocation failures.
-/// todo : run priority with secondary
-void run_processes(node_t** list);
-
-/// auxillary; runs each process in queue.
-/// outputs error messages for allocation failures.
-/// this one has special considerations due to being for the secondary list.
-/// todo: might be combined with priority one in future.
-void run_processes_secondary(node_t** list);
+void run_processes(node_t** priority, node_t** secondary);
 
 /// auxillary; perfoms allocation of memory.
 /// returns index of memory segment, or 'memsize' if no memory is available.
@@ -63,7 +56,10 @@ bool q2_alloc_isfree(int address, int memory);
 bool q2_free(int address, int memory);
 
 /// auxillary; creates a child process.
-void* launch_process(void* process);
+void* launch_process_priority(void* process);
+
+/// auxillary; creates a child process & has additional secondary behaviour.
+void* launch_process_secondary(void* process);
 
 /// convenience; initializes a process
 proc init_proc(void);
@@ -107,8 +103,7 @@ int main(void)
     fclose(fin);
 
     // execute high priority then low priority
-    run_processes(&priority);
-    run_processes_secondary(&secondary);
+    run_processes(&priority, &secondary);
 
     printf("\nCONSUMED:\nPRIORITY:\n");
     print_list(priority);
@@ -161,7 +156,7 @@ void load_processes(FILE* in, node_t** priority, node_t** secondary)
 
 
 // function that launches each process
-void run_processes(node_t** list)
+void run_processes(node_t** priority, node_t** secondary)
 {
 	// lock for avail_mem
 	pthread_mutex_init(&avail_mem_lock, NULL);
@@ -173,25 +168,25 @@ void run_processes(node_t** list)
 	pthread_barrier_init(&q2_alloc_check_barr, NULL, 2);
 
 	// array of threads
-	const int nthrs = get_queue_size(*list);
+	const int nthrs = get_queue_size(*priority) + get_queue_size(*secondary);
 	pthread_t thrs[nthrs];
 
-	// go through each list element
-	int currproc = 0;
-    while(*list)
+	// go through each priority element.
+	int curr_thr = 0;
+    while(*priority)
     {
 
         // run it
-        pthread_create(&thrs[currproc], NULL, launch_process, (void*)&(*list)->process);
+        pthread_create(&thrs[curr_thr], NULL, launch_process_priority, (void*)&(*priority)->process);
 
         // wait for process to copy
         pthread_barrier_wait(&proc_list_copy_barr);
 
         // copy process
-        proc process = (*list)->process;
+        proc process = (*priority)->process;
         
         // pop process
-        pop(list);
+        pop(priority);
 
         // wait for allocation 
         pthread_barrier_wait(&q2_alloc_check_barr);
@@ -204,65 +199,43 @@ void run_processes(node_t** list)
         }
 
         // iterate
-        currproc++;
+        curr_thr++;
 
     }
 
-    // join threads
-    for(int i = 0; i < nthrs; i++)
-    	pthread_join(thrs[i], NULL);
-
-}
-
-// function that launches each process
-void run_processes_secondary(node_t** list)
-{
-	// lock for avail_mem
-	pthread_mutex_init(&avail_mem_lock, NULL);
-
-	// lock for 'list'
-	pthread_barrier_init(&proc_list_copy_barr, NULL, 2);
-
-	// lock for 'q2_alloc_check_barr'
-	pthread_barrier_init(&q2_alloc_check_barr, NULL, 2);
-
-	// array of threads
-	const int nthrs = get_queue_size(*list);
-	pthread_t thrs[nthrs];
-
-	// go through each list element
-	int currproc = 0;
-    while(*list)
+    // go through each secondary element.
+    while(*secondary)
     {
+		// run it
+	    pthread_create(&thrs[curr_thr], NULL, launch_process_secondary, (void*)&(*secondary)->process);
 
-        // run it
-        pthread_create(&thrs[currproc], NULL, launch_process, (void*)&(*list)->process);
+	    // wait for process to copy
+	    pthread_barrier_wait(&proc_list_copy_barr);
 
-        // wait for process to copy
-        pthread_barrier_wait(&proc_list_copy_barr);
+	    // copy process
+	    proc process = (*secondary)->process;
+	    
+	    // pop process
+	    pop(secondary);
 
-        // copy process
-        proc process = (*list)->process;
-        
-        // pop process
-        pop(list);
+	    // wait for allocation 
+	    pthread_barrier_wait(&q2_alloc_check_barr);
 
-        // wait for allocation 
-        pthread_barrier_wait(&q2_alloc_check_barr);
-
-        // check for allocation failure
-        if(q2_alloc_failed)
-        {
+	    // check for allocation failure
+	    if(q2_alloc_failed)
+	    {
 			printf("lol unable to allocate memory for '%s'\n", process.name);
 
-        	// reset flag
-        	q2_alloc_failed = false;
-        	//todo
-        }
+			// push it back on
+			//push(list, process);
+			//todo
 
-        // iterate
-        currproc++;
+	    	// reset flag
+	    	q2_alloc_failed = false;
+	    }
 
+	    // iterate
+	    curr_thr++;
     }
 
     // join threads
@@ -271,8 +244,12 @@ void run_processes_secondary(node_t** list)
 
 }
 
-// forks into a new process based on the process object
-void* launch_process(void* _process)
+// shhh
+// returns pid
+int do_launch_process(proc* process);
+
+
+void* launch_process_priority(void* _process)
 {
 	// copy process
 	proc process = *(proc*)_process;
@@ -280,13 +257,77 @@ void* launch_process(void* _process)
 	// signal to the main that the copy was done
 	pthread_barrier_wait(&proc_list_copy_barr);
 
+
+	// launch the process
+	int pid = do_launch_process(&process);
+	if(pid > 0)
+	{
+		// wait for process runtime to complete
+	    sleep(process.runtime);
+
+	    printf("killing process %d\n", pid);
+
+	    // now you're killing it. Stop it.
+	    kill(pid, SIGTSTP);
+
+		// wait for child
+		waitpid(pid, 0, 0);
+
+		
+		// dealloc
+	    q2_free(process.address, process.memory);
+	}
+
+
+    // done
+    return NULL;
+}
+
+void* launch_process_secondary(void* _process)
+{
+	// copy process
+	proc process = *(proc*)_process;
+
+	// signal to the main that the copy was done
+	pthread_barrier_wait(&proc_list_copy_barr);
+
+
+	// launch the process
+	int pid = do_launch_process(&process);
+	if(pid > 0)
+	{
+		// wait for process runtime to complete
+	    sleep(process.runtime);
+
+	    printf("killing process %d\n", pid);
+
+	    // now you're killing it. Stop it.
+	    kill(pid, SIGTSTP);
+
+		// wait for child
+		waitpid(pid, 0, 0);
+
+		
+		// dealloc
+	    q2_free(process.address, process.memory);
+	}
+
+
+    // done
+    return NULL;
+}
+
+// forks into a new process based on the process object
+int do_launch_process(proc* process)
+{
+
 	// try to allocate memory
-	process.address = q2_alloc(process.memory);
-	if(process.address == MEMORY)
+	process->address = q2_alloc(process->memory);
+	if(process->address == MEMORY)
 	{
 		q2_alloc_failed = true;
 		pthread_barrier_wait(&q2_alloc_check_barr);
-		return NULL;
+		return -1;
 	} else {
 		q2_alloc_failed = false;
 		pthread_barrier_wait(&q2_alloc_check_barr);
@@ -298,13 +339,13 @@ void* launch_process(void* _process)
 	if(pid == 0)
 	{
 		// update pid
-		process.pid = getpid(); 
+		process->pid = getpid(); 
 
 		// print it
-		printf("process name '%s' priority %d pid %d memory %d runtime %d\n", process.name, process.priority, process.pid, process.memory, process.runtime);
+		printf("process name '%s' priority %d pid %d memory %d runtime %d\n", process->name, process->priority, process->pid, process->memory, process->runtime);
     	
     	// do the thing
-		printf("[%d] I'm child for '%s' rt %d\n", getpid(), process.name, process.runtime);
+		printf("[%d] I'm child for '%s' rt %d\n", getpid(), process->name, process->runtime);
 		//todo
 
 		// done
@@ -312,30 +353,13 @@ void* launch_process(void* _process)
 	} else if (pid < 0) {
 		fprintf(stderr, "Error occured during fork\n");
 		exit(1);
-	} else {
-
-		// wait for process runtime to complete
-        sleep(process.runtime);
-
-        printf("killing process %d\n", pid);
-
-        // now you're killing it. Stop it.
-        kill(pid, SIGTSTP);
-
-    	// wait for child
-    	waitpid(pid, 0, 0);
-
-		
-    	// dealloc
-	    if(!q2_free(process.address, process.memory))
-	    	return NULL; //todo
 	}
 
     
 
 
     // done
-    return NULL;
+    return pid;
 }
 
 
