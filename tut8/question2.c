@@ -209,25 +209,38 @@ void run_processes(node_t** priority, node_t** secondary)
 		printf("'%s' %d\n", process.name, process.runtime);
 		if(process.pid == 0)
 		{
-			// initialize process
-			process.pid = fork();
-			if(process.pid == 0)
-			{
-				execv("./process", argv);
-				exit(1);
-			} else if (process.pid < 0) {
-				fprintf(stderr, "Error: failed to fork\n");
-			} else {
-				// do stuff
-				sleep(1);
-				process.runtime -=1;
-				kill(process.pid, SIGTSTP);
-				process.suspended = true;
+			// allocate memory
+			process.address = q2_alloc(process.memory);
 
+			// allocation failure
+			if(process.address == MEMORY)
+			{
 				//repush
-				printf("launched '%s'\n", process.name);
 				push(secondary, process);
+
+			} else {
+				// initialize process
+				process.pid = fork();
+				if(process.pid == 0)
+				{
+					execv("./process", argv);
+					exit(1);
+				} else if (process.pid < 0) {
+					fprintf(stderr, "Error: failed to fork\n");
+				} else {
+					// do stuff
+					sleep(1);
+					process.runtime -=1;
+					kill(process.pid, SIGTSTP);
+					process.suspended = true;
+
+					//repush
+					printf("launched '%s' for %d seconds\n", process.name, process.runtime+1);
+					push(secondary, process);
+				}
 			}
+
+			
 		}
 		else
 		{
@@ -257,6 +270,9 @@ void run_processes(node_t** priority, node_t** secondary)
 				// kill
 				kill(process.pid, SIGINT);
 				waitpid(process.pid, 0, 0);
+
+				// free memory
+				q2_free(process.address, process.memory);
 			}
 		}
 	}
