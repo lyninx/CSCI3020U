@@ -8,12 +8,16 @@
 	
 3. Write the OpenMP #pragma definition to execute a loop in parallel.
 	
-	
+	To execute a loop in parallel, by using:
+
+	#pragma omp for
+ 
+	The "for" directive states that a loop is going to happen. When the "for" directive is stated, a for loop may be used to execute a loop in parallel by all threads.
 	
 4. What does the reduction do in the #pragma definition in OpenMP?
 	
-	
+	What the reduction in the #pragma definition in OpenMP is that a private copy for each list variable is created for each thread. At the end of the reduction, the reduction variable is applied to all private copies of the shared variable, and the final result is written to the global shared variable.
 	
 5. Explain the critical and private() declarations used in OpenMP.
 	
-	
+	The critical declaration used in OpenMP is used for a block of code that can only be executed by one thread at a time. The private declaration used in OpenMP is used to make a new object of the same type declared in each thread in the team. All references to the original object are replaced with references to the new object.
