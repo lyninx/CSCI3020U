@@ -1,11 +1,11 @@
 1. Explain what OpenMP is, what are it's benefits?
 	
-	
+	OpenMP is an API that supports shard memory multiprocessing in a number of languages (C, C++, Fortran). It is made up of compiler directives, library routines, and environment variables.
 	
 2. What are the #pragma definitions, what do they do?
 	
-	
-	
+	#pragma defintions control how a program works.
+
 3. Write the OpenMP #pragma definition to execute a loop in parallel.
 	
 	To execute a loop in parallel, by using:
