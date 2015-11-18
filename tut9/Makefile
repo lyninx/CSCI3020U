@@ -22,9 +22,13 @@ LFLAGS =
 #   option, something like (this will link in libmylib.so and libm.so:
 LIBS = 
 
-LIST = question2 question3 question4 question5
+LIST = question1 question2 question3 question4 question5
 
 all: $(LIST)
+
+question1:
+	$(CC) $(CFLAGS) $(LIBS) demo_1.c -o demo_1.exe
+	$(CC) $(CFLAGS) $(LIBS) demo_2.c -o demo_2.exe
 
 question2: question2.c
 	$(CC) $(CFLAGS) $(LIBS) question2.c -o question2.exe
