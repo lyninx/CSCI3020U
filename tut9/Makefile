@@ -6,7 +6,7 @@ CC = gcc
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
 
-CFLAGS  = -Wall -Wextra -std=gnu99 -fopenmp -lm
+CFLAGS  = -Wall -Wextra -std=gnu99 -fopenmp
 
 # define any directories containing header files other than /usr/include
 # -I/home/newhall/include  -I../include
@@ -31,16 +31,16 @@ question1:
 	$(CC) $(CFLAGS) $(LIBS) demo_2.c -o demo_2.exe
 
 question2: question2.c
-	$(CC) $(CFLAGS) $(LIBS) question2.c -o question2.exe
+	$(CC) $(CFLAGS) $(LIBS) question2.c -o question2.exe -lm
 
 question3: question3.c
-	$(CC) $(CFLAGS) $(LIBS) question3.c -o question3.exe
+	$(CC) $(CFLAGS) $(LIBS) question3.c -o question3.exe -lm
 
 question4: question4.c
-	$(CC) $(CFLAGS) $(LIBS) question4.c -o question4.exe
+	$(CC) $(CFLAGS) $(LIBS) question4.c -o question4.exe -lm
 
 question5: question5.c
-	$(CC) $(CFLAGS) $(LIBS) question5.c -o question5.exe
+	$(CC) $(CFLAGS) $(LIBS) question5.c -o question5.exe -lm
 
 clean:
 	$(RM) *.exe
