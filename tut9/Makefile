@@ -29,13 +29,13 @@ all: $(LIST)
 question2: question2.c
 	$(CC) $(CFLAGS) $(LIBS) question2.c -o question2.exe
 
-question3: question1.c
+question3: question3.c
 	$(CC) $(CFLAGS) $(LIBS) question3.c -o question3.exe
 
-question4: question2.c
+question4: question4.c
 	$(CC) $(CFLAGS) $(LIBS) question4.c -o question4.exe
 
-question5: question1.c
+question5: question5.c
 	$(CC) $(CFLAGS) $(LIBS) question5.c -o question5.exe
 
 clean:
