@@ -16,27 +16,54 @@ void print_matrix(int m[M_SIDE][M_SIDE], int nleft, int nright, int ntop, int nb
 bool verify_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int sol[M_SIDE][M_SIDE])
 {
 	//todo
-	return false;
+
+	// get rid of unused warnings
+	bool bs = a[0][0] == b[0][0] && b[0][0] == sol[0][0] && a == NULL;
+
+	return bs;
 }
 
 // performs matrix multiplication
 void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SIDE][M_SIDE])
 {
 	int nthreads = 16;
-	int threadnum;
+	int threadnum = 0;
 	#ifdef _OPENMP
 	omp_set_num_threads(nthreads);
 	#endif
 
-	#pragma omp parallel
+	int i = 0;
+	int j = 0;
+	int k = 0;
+
+	int air = 0;
+	int bri = 0;
+	int abij = 0;
+
+	#pragma omp parallel for shared(a, b, dest) private(i, j, k, air, bri, abij, threadnum)
+	for(i = 0; i < M_SIDE; ++i)
 	{
-		#pragma omp critical
-		{
-			#ifdef _OPENMP
-			threadnum = omp_get_thread_num();
-			printf("[%d] it's me\n", threadnum);
-			#endif
-		}	
+		for(j = 0; j < M_SIDE; ++j)
+		{	
+			// calculate abij
+			abij = 0;
+			for(k = 0; k < M_SIDE; ++k)
+			{
+				#ifdef _OPENMP
+				threadnum = omp_get_thread_num();
+				#endif
+
+
+				air = a[i][k];
+				bri = b[k][j];
+				abij += air * bri;
+
+				//printf("[%d] I get iteration (%d, %d, %d) %d * %d\n", threadnum, i, j, k, air, bri);
+			}
+
+			// put in abij
+			dest[i][j] = abij;
+		}
 	}
 
 }
@@ -67,7 +94,7 @@ int main(void)
 
 	//print it
 	printf("Matrix AB:\n");
-	print_matrix(ab, 4, 4, 4, 4);
+	print_matrix(ab, 17, 2, 4, 4);
 
 
 	// verify solution somehow
@@ -95,10 +122,10 @@ void print_matrix(int m[M_SIDE][M_SIDE], int nleft, int nright, int ntop, int nb
 				// check if this row is in horizontal range
 				if(j < nleft || (M_SIDE - (j+1)) < nright)
 					// print cell
-					printf("%d\t", m[i][j]);
+					printf("%d, ", m[i][j]);
 				else if(j == nleft)
 					// show that there are intermediate values
-					printf("...\t");
+					printf("...");
 			}
 
 			// end line
