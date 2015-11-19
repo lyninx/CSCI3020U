@@ -1,23 +1,23 @@
 1. Explain what OpenMP is, what are it's benefits?
 	
-	OpenMP is an API that supports shard memory multiprocessing in a number of languages (C, C++, Fortran). It is made up of compiler directives, library routines, and environment variables.
+	OpenMP is an API that supports shared memory multiprocessing in a number of languages (C, C++, Fortran). It is made up of compiler directives, library routines, and environment variables. Through this implementation the simplification of multithreaded programming is enabled while OpenMP itself remains portable and scalable.
 	
 2. What are the #pragma definitions, what do they do?
 	
-	#pragma defintions control how a program works.
+	#pragma defintions control how a program works by providing additional information to the compiler. While some pragmas are standardized, most may be interpreted by the C compiler freely.
 
 3. Write the OpenMP #pragma definition to execute a loop in parallel.
 	
 	To execute a loop in parallel, by using:
 
-	#pragma omp for
+	#pragma omp parallel for
  
-	The "for" directive states that a loop is going to happen. When the "for" directive is stated, a for loop may be used to execute a loop in parallel by all threads.
+	The "parallel" directive indicates the beginning of a parallel block, while the "for" directive states that a loop is going to happen. When the "for" directive is stated, a for loop may be used to execute a loop in parallel by all threads.
 	
 4. What does the reduction do in the #pragma definition in OpenMP?
 	
-	What the reduction in the #pragma definition in OpenMP is that a private copy for each list variable is created for each thread. At the end of the reduction, the reduction variable is applied to all private copies of the shared variable, and the final result is written to the global shared variable.
+	The reduction clause is used to accumulate many operations (such as +) across many threads into a single 'list' value. Each thread is given an initialized, local, private variable with a value to work with that is ultimately combined into a final shared global list value; These disparate local values are reduced into a single one.
 	
 5. Explain the critical and private() declarations used in OpenMP.
 	
-	The critical declaration used in OpenMP is used for a block of code that can only be executed by one thread at a time. The private declaration used in OpenMP is used to make a new object of the same type declared in each thread in the team. All references to the original object are replaced with references to the new object.
+	The critical declaration used in OpenMP is used for a block of code so that can only be executed by one thread at a time. The private declaration creates a new object of the same type as each of its object parameters for each thread in the team. All references to the original object are replaced with references to the new object. These values are not initialized and not persistent.
