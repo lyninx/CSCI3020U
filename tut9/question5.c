@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-	remove("calculations.txt");
+	//remove("calculations.txt");
 	#ifdef _OPENMP
 	if(argc == 2){
 		int nthreads = atoi(argv[1]);
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     	{
 	    	x = i * dx;
 	    	y = exp(x)*cos(x)*sin(x)*sqrt(5*x+6.0);
-	    	if((i % MILLION) == 0){
+	    	if((i % MILLION) == 0 && i != 0){
 	    		#pragma omp critical
         		{
         			#ifdef _OPENMP
