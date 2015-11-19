@@ -13,14 +13,23 @@ int main(void);
 void print_matrix(int m[M_SIDE][M_SIDE], int nleft, int nright, int ntop, int nbot);
 
 // verification of matrice solution.
-bool verify_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int sol[M_SIDE][M_SIDE])
+bool verify_matrix(int sol1[M_SIDE][M_SIDE], int sol2[M_SIDE][M_SIDE])
 {
-	//todo
+	int i = 0;
+	int j = 0;
+	int nerrors = 0;
 
-	// get rid of unused warnings
-	bool bs = a[0][0] == b[0][0] && b[0][0] == sol[0][0] && a == NULL;
+	#pragma omp parallel for shared(sol1, sol2) private(i, j) collapse(2) reduction(+: nerrors)
+	for(i = 0; i < M_SIDE; ++i)
+	{
+		for(j = 0; j < M_SIDE; ++j)
+		{
+			if(sol1[i][j] != sol2[i][j])
+				nerrors += 1;
+		}
+	}
 
-	return bs;
+	return nerrors == 0;
 }
 
 // performs matrix multiplication
@@ -92,7 +101,7 @@ int main(void)
 
 
 	// verify solution somehow
-	if(!verify_matrix(a, b, ab))
+	if(!verify_matrix(a, ab))
 	{
 		fprintf(stderr, "Error: ab is bad\n");
 		return 1;
