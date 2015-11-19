@@ -36,7 +36,6 @@ bool verify_matrix(int sol1[M_SIDE][M_SIDE], int sol2[M_SIDE][M_SIDE])
 void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SIDE][M_SIDE])
 {
 	int nthreads = 16;
-	int threadnum = 0;
 	#ifdef _OPENMP
 	omp_set_num_threads(nthreads);
 	#endif
@@ -53,7 +52,7 @@ void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SI
 
 	// sum values
 	int prod = 0;
-	#pragma omp parallel for shared(a, b, dest) private(i, j, k, prod, threadnum) collapse(3) schedule(dynamic, M_SIDE)
+	#pragma omp parallel for shared(a, b, dest) private(i, j, k, prod) collapse(3) schedule(dynamic, M_SIDE)
 	for(i = 0; i < M_SIDE; ++i)
 	{
 		for(j = 0; j < M_SIDE; ++j)
@@ -64,16 +63,9 @@ void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SI
 
 				prod = a[i][k] * b[k][j];
 
-				// get thread number
-				#ifdef _OPENMP
-				threadnum = omp_get_thread_num();
-				#endif
-
 				#pragma omp critical
 				{
-					printf("[%d,%d,%d,%d]", threadnum, i, j, k);
 					dest[i][j] += prod;
-					printf("[%d] iter (%d, %d, %d)\n", threadnum, i, j, k);
 				}
 			}
 
