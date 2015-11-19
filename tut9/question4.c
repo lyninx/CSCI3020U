@@ -4,6 +4,8 @@
 
 #define M_SIDE 100
 
+#define M_FACTOR 1
+
 // runtime
 int main(void);
 
@@ -13,18 +15,18 @@ int main(void);
 void print_matrix(int m[M_SIDE][M_SIDE], int nleft, int nright, int ntop, int nbot);
 
 // verification of matrice solution.
-bool verify_matrix(int sol1[M_SIDE][M_SIDE], int sol2[M_SIDE][M_SIDE])
+bool verify_matrix(int orig[M_SIDE][M_SIDE], int trans[M_SIDE][M_SIDE])
 {
 	int i = 0;
 	int j = 0;
 	int nerrors = 0;
 
-	#pragma omp parallel for shared(sol1, sol2) private(i, j) collapse(2) reduction(+: nerrors)
+	#pragma omp parallel for shared(orig, trans) private(i, j) collapse(2) reduction(+: nerrors)
 	for(i = 0; i < M_SIDE; ++i)
 	{
 		for(j = 0; j < M_SIDE; ++j)
 		{
-			if(sol1[i][j] != sol2[i][j])
+			if(trans[i][j] != M_FACTOR*orig[i][M_SIDE - j - 1])
 				nerrors += 1;
 		}
 	}
@@ -77,31 +79,39 @@ void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SI
 
 int main(void)
 {
+	// print information
+	printf("TUTORIAL 9 QUESTION 4:\n");
+
 	// create matrices
 	int a[M_SIDE][M_SIDE], b[M_SIDE][M_SIDE], ab[M_SIDE][M_SIDE];
+
+	// explain what these arrays are gonna be.
+	printf("\t- Matrix A's cells will be initialized to the iteration number.\n");
+	printf("\t- Matrix B will be intialized to I*%d, inverted horizontally.\n", M_FACTOR);
+	printf("\t the product AB should therefore be equal to A*%d, inverted horizontally.\n", M_FACTOR);
 
 	//initialize matrices
 	for(int i = 0; i < M_SIDE; i++)
 	{
 		for(int j = 0; j < M_SIDE; j++)
 		{
-			a[i][j] = i+j;
-			b[i][j] = i == j ? 1 : 0;
+			a[i][j] = i*M_SIDE+j+1;
+			b[i][j] = (M_SIDE - 1 - i) == j ? M_FACTOR : 0;
 		}
 	}
 
 	// print em
-	printf("Matrix A:\n");
+	printf("Matrix A [%dx%d]):\n", M_SIDE, M_SIDE);
 	print_matrix(a, 4, 4, 4, 4);
-	printf("Matrix B:\n");
+	printf("Matrix B [%dx%d]:\n", M_SIDE, M_SIDE);
 	print_matrix(b, 4, 4, 4, 4);
 
 	// multiply them
 	multiply_matrix(a, b, ab);
 
 	//print it
-	printf("Matrix AB:\n");
-	print_matrix(ab, 17, 2, 4, 4);
+	printf("Matrix AB [%dx%d]:\n", M_SIDE, M_SIDE);
+	print_matrix(ab, 4, 4, 4, 4);
 
 
 	// verify solution somehow
@@ -109,6 +119,8 @@ int main(void)
 	{
 		fprintf(stderr, "Error: ab is bad\n");
 		return 1;
+	} else {
+		printf("AB was found to fit these parameters --> this product was accurate.\n");
 	}
 
 	//done
@@ -129,7 +141,7 @@ void print_matrix(int m[M_SIDE][M_SIDE], int nleft, int nright, int ntop, int nb
 				// check if this row is in horizontal range
 				if(j < nleft || (M_SIDE - (j+1)) < nright)
 					// print cell
-					printf("%d, ", m[i][j]);
+					printf("%d\t", m[i][j]);
 				else if(j == nleft)
 					// show that there are intermediate values
 					printf("...");
