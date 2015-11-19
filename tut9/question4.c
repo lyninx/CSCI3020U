@@ -53,7 +53,7 @@ void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SI
 
 	// sum values
 	int prod = 0;
-	#pragma omp parallel for shared(a, b, dest) private(i, j, k, prod, threadnum) collapse(3)
+	#pragma omp parallel for shared(a, b, dest) private(i, j, k, prod, threadnum) collapse(3) schedule(dynamic, M_SIDE)
 	for(i = 0; i < M_SIDE; ++i)
 	{
 		for(j = 0; j < M_SIDE; ++j)
