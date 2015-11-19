@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-	//remove("calculations.txt");
+	remove("calculations.txt");
 	#ifdef _OPENMP
 	if(argc == 2){
 		int nthreads = atoi(argv[1]);
