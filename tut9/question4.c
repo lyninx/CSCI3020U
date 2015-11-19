@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #define M_SIDE 100
 
@@ -10,12 +11,25 @@ int main(void);
 // are truncated
 void print_matrix(int m[M_SIDE][M_SIDE], int nleft, int nright, int ntop, int nbot);
 
+// verification of matrice solution.
+bool verify_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int sol[M_SIDE][M_SIDE])
+{
+	//todo
+	return false;
+}
 
+// performs matrix multiplication
+void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SIDE][M_SIDE])
+{
+	//todo
+	dest[0][0] = 1;
+	dest[0][1] = 2;
+}
 
 int main(void)
 {
 	// create matrices
-	int a[M_SIDE][M_SIDE], b[M_SIDE][M_SIDE];
+	int a[M_SIDE][M_SIDE], b[M_SIDE][M_SIDE], ab[M_SIDE][M_SIDE];
 
 	//initialize matrices
 	for(int i = 0; i < M_SIDE; i++)
@@ -34,8 +48,19 @@ int main(void)
 	print_matrix(b, 4, 4, 4, 4);
 
 	// multiply them
+	multiply_matrix(a, b, ab);
+
+	//print it
+	printf("Matrix AB:\n");
+	print_matrix(ab, 4, 4, 4, 4);
+
 
 	// verify solution somehow
+	if(!verify_matrix(a, b, ab))
+	{
+		fprintf(stderr, "Error: ab is bad\n");
+		return 1;
+	}
 
 	//done
 	return 0;
@@ -68,7 +93,7 @@ void print_matrix(int m[M_SIDE][M_SIDE], int nleft, int nright, int ntop, int nb
 			printf("...\n");
 		}
 	}
-	
+
 	// end list
 	printf("\n");
 }
