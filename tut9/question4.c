@@ -4,7 +4,7 @@
 
 #define M_SIDE 100
 
-#define M_FACTOR 1
+#define M_FACTOR 3
 
 // runtime
 int main(void);
@@ -79,17 +79,12 @@ void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SI
 
 int main(void)
 {
-	// print information
-	printf("TUTORIAL 9 QUESTION 4:\n");
 
 	// create matrices
 	int a[M_SIDE][M_SIDE], b[M_SIDE][M_SIDE], ab[M_SIDE][M_SIDE];
 
 	// explain what these arrays are gonna be.
-	printf("\t- Matrix A's cells will be initialized to the iteration number.\n");
-	printf("\t- Matrix B will be intialized to I*%d, inverted horizontally.\n", M_FACTOR);
-	printf("\t the product AB should therefore be equal to A*%d, inverted horizontally.\n", M_FACTOR);
-
+	
 	//initialize matrices
 	for(int i = 0; i < M_SIDE; i++)
 	{
@@ -114,9 +109,19 @@ int main(void)
 	print_matrix(ab, 4, 4, 4, 4);
 
 
+	
+
+
+	// print results
+	printf("TUTORIAL 9 QUESTION 4:\n");
+	printf("\t- Matrix A's cells are initialized to the iteration number.\n");
+	printf("\t- Matrix B is intialized to I*%d, inverted horizontally.\n", M_FACTOR);
+	printf("\t the product AB should therefore be equal to A*%d, inverted horizontally.\n", M_FACTOR);
+
 	// verify solution somehow
 	if(!verify_matrix(a, ab))
 	{
+		printf("\t However, This was not found to be true.\n");
 		fprintf(stderr, "Error: ab is bad\n");
 		return 1;
 	} else {
