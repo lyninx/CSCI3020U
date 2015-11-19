@@ -45,26 +45,38 @@ void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SI
 	int j = 0;
 	int k = 0;
 
+	// initialize to 0
+	#pragma omp parallel for shared(dest) private(i, j) collapse(2)
+	for(i = 0; i < M_SIDE; ++i)
+		for(j = 0; j < M_SIDE; ++j)
+			dest[i][j] = 0;
+
 	// sum values
-	int aij = 0;
-	#pragma omp parallel for shared(a, b, dest) private(i, j, k, aij, threadnum) collapse(2)
+	int prod = 0;
+	#pragma omp parallel for shared(a, b, dest) private(i, j, k, prod, threadnum) collapse(3)
 	for(i = 0; i < M_SIDE; ++i)
 	{
 		for(j = 0; j < M_SIDE; ++j)
 		{	
 			// calculate cell a(i, j)
-			aij = 0;
 			for(k = 0; k < M_SIDE; ++k)
-				aij += a[i][k] * b[k][j];
+			{
 
-			// get thread number
-			#ifdef _OPENMP
-			threadnum = omp_get_thread_num();
-			#endif
+				prod = a[i][k] * b[k][j];
 
-			// update cell
-			dest[i][j] = aij;
-			printf("[%d] I get cell (%d, %d)\n", threadnum, i, j);
+				// get thread number
+				#ifdef _OPENMP
+				threadnum = omp_get_thread_num();
+				#endif
+
+				#pragma omp critical
+				{
+					printf("[%d,%d,%d,%d]", threadnum, i, j, k);
+					dest[i][j] += prod;
+					printf("[%d] iter (%d, %d, %d)\n", threadnum, i, j, k);
+				}
+			}
+
 
 		}
 	}
