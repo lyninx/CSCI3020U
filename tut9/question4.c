@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <omp.h>
 
 #define M_SIDE 100
 
@@ -21,9 +22,23 @@ bool verify_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int sol[M_SIDE]
 // performs matrix multiplication
 void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SIDE][M_SIDE])
 {
-	//todo
-	dest[0][0] = 1;
-	dest[0][1] = 2;
+	int nthreads = 16;
+	int threadnum;
+	#ifdef _OPENMP
+	omp_set_num_threads(nthreads);
+	#endif
+
+	#pragma omp parallel
+	{
+		#pragma omp critical
+		{
+			#ifdef _OPENMP
+			threadnum = omp_get_thread_num();
+			printf("[%d] it's me\n", threadnum);
+			#endif
+		}	
+	}
+
 }
 
 int main(void)
