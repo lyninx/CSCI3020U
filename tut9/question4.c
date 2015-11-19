@@ -43,22 +43,32 @@ int main(void)
 
 void print_matrix(int m[M_SIDE][M_SIDE], int nleft, int nright, int ntop, int nbot)
 {
+	// go through each row
 	for(int i = 0; i < M_SIDE; i++)
 	{
+		// check if this row is in vertical range
 		if(i < ntop || (M_SIDE - (i + 1)) < nbot)
 		{
-
+			// print row
 			for(int j = 0; j < M_SIDE; j++)
 			{
+				// check if this row is in horizontal range
 				if(j < nleft || (M_SIDE - (j+1)) < nright)
+					// print cell
 					printf("%d\t", m[i][j]);
 				else if(j == nleft)
+					// show that there are intermediate values
 					printf("...\t");
 			}
+
+			// end line
 			printf("\n");
 		} else if (i == ntop) {
+			// show that there are unshown values
 			printf("...\n");
 		}
 	}
+	
+	// end list
 	printf("\n");
 }
