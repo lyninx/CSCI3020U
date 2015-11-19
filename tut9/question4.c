@@ -36,33 +36,27 @@ void multiply_matrix(int a[M_SIDE][M_SIDE], int b[M_SIDE][M_SIDE], int dest[M_SI
 	int j = 0;
 	int k = 0;
 
-	int air = 0;
-	int bri = 0;
-	int abij = 0;
-
-	#pragma omp parallel for shared(a, b, dest) private(i, j, k, air, bri, abij, threadnum)
+	// sum values
+	int aij = 0;
+	#pragma omp parallel for shared(a, b, dest) private(i, j, k, aij, threadnum) collapse(2)
 	for(i = 0; i < M_SIDE; ++i)
 	{
 		for(j = 0; j < M_SIDE; ++j)
 		{	
-			// calculate abij
-			abij = 0;
+			// calculate cell a(i, j)
+			aij = 0;
 			for(k = 0; k < M_SIDE; ++k)
-			{
-				#ifdef _OPENMP
-				threadnum = omp_get_thread_num();
-				#endif
+				aij += a[i][k] * b[k][j];
 
+			// get thread number
+			#ifdef _OPENMP
+			threadnum = omp_get_thread_num();
+			#endif
 
-				air = a[i][k];
-				bri = b[k][j];
-				abij += air * bri;
+			// update cell
+			dest[i][j] = aij;
+			printf("[%d] I get cell (%d, %d)\n", threadnum, i, j);
 
-				//printf("[%d] I get iteration (%d, %d, %d) %d * %d\n", threadnum, i, j, k, air, bri);
-			}
-
-			// put in abij
-			dest[i][j] = abij;
 		}
 	}
 
