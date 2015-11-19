@@ -78,8 +78,8 @@ int main(void)
 	{
 		for(int j = 0; j < M_SIDE; j++)
 		{
-			a[i][j] = i+j+2;
-			b[i][j] = i+j;
+			a[i][j] = i+j;
+			b[i][j] = i == j ? 1 : 0;
 		}
 	}
 
