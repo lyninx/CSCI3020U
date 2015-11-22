@@ -18,7 +18,6 @@ int main(void)
 	float run = 0;
 	float run2 = 0;
 
-	// Generate random integers from 0 to 100
 	for(int i = 0; i < NUM_INTS; i++){
 		nums[i] = rand() % (range+1);
 	}
@@ -34,7 +33,6 @@ int main(void)
 
 	printf("SERIAL\n");
 	printf("Sum: %f\n", sum);
-	// This sum doesn't make sense, the reduction sum makes sense.
 	printf("Average: %f\n",norm);
 	printf("Runtime: %f\n",run);
 
