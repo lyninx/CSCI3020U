@@ -11,7 +11,7 @@ int main(void)
 {
 	srand((unsigned)time(NULL));
 	int range = 100;
-	float sum = 0;
+	double sum = 0;
 	float norm = 0;
 	float start = 0;
 	float finish = 0;
