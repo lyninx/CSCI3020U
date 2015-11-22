@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <omp.h>
-int main (int argc, char *argv[])
+int main ()
 {
     printf("This statement will always print.\n");
 

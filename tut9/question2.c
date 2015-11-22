@@ -22,6 +22,7 @@ int main (int argc, char *argv[])
 	    for (int i=0; i<n; i++) {
 	    	x = i*dx;
 	    	y[i] = exp(x)*cos(x)*sin(x)*sqrt(5*x+6.0);
+	    	//printf("%f\n", y[i]);
 	    }
 	}
     return 0;
