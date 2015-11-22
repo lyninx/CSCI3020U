@@ -34,8 +34,11 @@ int main(void)
 	norm = sum/NUM_INTS;
 
 	printf("SERIAL\n");
-	printf("average: %f\n",norm);
-	printf("runtime: %f\n",run);
+	printf("Sum: %f\n", sum);
+	printf("Average: %f\n",norm);
+	printf("Runtime: %f\n",run);
+
+	sum = 0;
 
 	start = omp_get_wtime();
 	// Using reduction makes the average around 69... not sure why
@@ -51,8 +54,9 @@ int main(void)
 	norm = sum/NUM_INTS;
 
 	printf("PARALLEL\n");
-	printf("average: %f\n",norm);
-	printf("runtime: %f\n",run2);
+	printf("Sum: %f\n", sum);
+	printf("Average: %f\n",norm);
+	printf("Runtime: %f\n",run2);
 
 	run = run - run2;
 	printf("\n");
