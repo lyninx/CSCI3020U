@@ -9,11 +9,12 @@
 int main(int argc, char *argv[])
 {
 	remove("calculations.txt");
-	#ifdef _OPENMP
 	if(argc == 2){
 		int nthreads = atoi(argv[1]);
 
+        #ifdef _OPENMP
     	omp_set_num_threads(nthreads);
+        #endif
     	int n = MILLION*100;
 
     	float dx = 1.0/((float)n+1.0);
@@ -37,6 +38,5 @@ int main(int argc, char *argv[])
 	    	}
 	    }
 	}
-	#endif
 	return 0;
 }

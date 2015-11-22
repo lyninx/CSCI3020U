@@ -10,7 +10,7 @@ int nums[NUM_INTS];
 int main(void)
 {
 	srand((unsigned)time(NULL));
-	int range = 200;
+	int range = 100;
 	float sum = 0;
 	float norm = 0;
 	float start = 0;
@@ -19,35 +19,38 @@ int main(void)
 	float run2 = 0;
 
 	// generate random integers from 0 to 100
+	// Fixed the random number generator I think
 	for(int i = 0; i < NUM_INTS; i++){
-		nums[i] = rand() % range;
-		//printf("%d\n",nums[i]);
+		nums[i] = rand() % (range+1);
 	}
 
 	start = omp_get_wtime();
 	for(int i = 0; i < NUM_INTS; i++){
 		sum = sum + nums[i];
 	}
-	finish =  omp_get_wtime();
+	finish = omp_get_wtime();
 
 	run = finish - start;
 	norm = sum/NUM_INTS;
 
-	printf("SERIAL");
+	printf("SERIAL\n");
 	printf("average: %f\n",norm);
 	printf("runtime: %f\n",run);
 
 	start = omp_get_wtime();
-	#pragma omp parallel for shared(nums) private(sum) 
+	// Using reduction makes the average around 69... not sure why
+	// If you want to look at what you did (deleted and can't get ctrl + z back)
+	// Then check the commits
+	#pragma omp parallel for reduction(+:sum) 
 	for(int i = 0; i < NUM_INTS; i++){
 		sum = sum + nums[i];
 	}
-	finish =  omp_get_wtime();
-	run2 = finish - start;
+	finish = omp_get_wtime();
 
+	run2 = finish - start;
 	norm = sum/NUM_INTS;
 
-	printf("PARALLEL");
+	printf("PARALLEL\n");
 	printf("average: %f\n",norm);
 	printf("runtime: %f\n",run2);
 
