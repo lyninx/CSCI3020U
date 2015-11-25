@@ -1,0 +1,17 @@
+1. Explain what MPI is, what are it’s benefits?
+
+
+
+2. Explain briefly how MPI supports running on separate computers in a cluster.
+
+
+
+3. Name four​MPI data types (hint they all start with MPI_​).
+
+
+
+4. Read the documentation for and explain the MPI_Bcast​function.
+
+
+
+5. Read the documentation for and explain the MPI_Send​and MPI_Recv​functions.
