@@ -1,17 +1,44 @@
 1. Explain what MPI is, what are it’s benefits?
 
+	MPI (Message Passing Interface) is a library of routines used for programming parallel programs. MPI is portable, efficient, and flexible for writing message passing programs.
 
+2. Explain briefly how MPI supports running on separate computers in a cluster. The host file includes names of all the computerson which your MPI job will execute.
 
-2. Explain briefly how MPI supports running on separate computers in a cluster.
+	The use of a host file allows MPI to support running on seperate computers in a cluster which is used as a parameter during the execution of the program. You could also simply specify all of the computers as paramaters during execution as well. All computers should have SSH access and avoid the SSH password prompt.
 
+3. Name four​ MPI data types (hint they all start with MPI_​).
 
+	MPI_INT, MPI_LONG, MPI_CHAR, MPI_FLOAT
 
-3. Name four​MPI data types (hint they all start with MPI_​).
+4. Read the documentation for and explain the MPI_Bcast​ function.
 
+	The MPI_Bcast function broadcasts a message from the root process to all processes of the group (this includes itself). This allows the root process to easily send data to all processes.
 
+5. Read the documentation for and explain the MPI_Send​ and MPI_Recv​ functions.
 
-4. Read the documentation for and explain the MPI_Bcast​function.
+	MPI_Send​: 
 
+		Sends data based on the parameters. This routine blocks until the message is received by the destination process.
 
+		int MPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm)
 
-5. Read the documentation for and explain the MPI_Send​and MPI_Recv​functions.
+		buf = Initial address of the data being sent
+		count = Number of elements being sent in the buf
+		datatype = The datatype of the elements being sent
+		dest = Rank of the recieving destination
+		tag = The message tag
+		comm = Communicator handle
+
+	MPI_Send​: 
+
+		Sends data based on the parameters. This routine blocks until the message is received by the destination process.
+
+		int MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status *status)
+
+		buf = Initial address of the receiving element
+		count = Maximum number of elements in the receiving buffer
+		datatype = The datatype of the elements being recieved
+		dest = Rank of the source
+		tag = The message tag
+		comm = Communicator handle
+		status = The status object

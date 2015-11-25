@@ -28,12 +28,16 @@ int main (int argc, char* argv[])
     int n_proc;             // Number of processes
 
     // Initialize MPI
+    // Must be done in main thread, can only be initialized once
+    // Initializes the MPI execution environment
     MPI_Init(&argc, &argv);
     
     // Get the current process id
+    // Gives the rank of the calling process in the communicator
     MPI_Comm_rank(MPI_COMM_WORLD, &proc_id);
     
     // Get the current number of processes
+    // Gives the size of the group associated with a communicator
     MPI_Comm_size(MPI_COMM_WORLD, &n_proc);
 
     // Display a "Hello world" message from each child/parent
@@ -47,5 +51,6 @@ int main (int argc, char* argv[])
     }
 
     // Required to terminate all MPI processes
+    // Terminates the MPI execution environment
     MPI_Finalize();
 }

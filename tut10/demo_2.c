@@ -38,6 +38,7 @@ void master(int n_proc)
     {
         // Send CHUNK_SIZE of data to each process initially
         // Sends data, of type double to process 'i'
+        // Blocks until the message is sent to the destination
         MPI_Send(&data[n_sent*CHUNK_SIZE], CHUNK_SIZE, MPI_DOUBLE, i, 
                  n_sent, MPI_COMM_WORLD);
         n_sent++;
@@ -47,6 +48,8 @@ void master(int n_proc)
     for (int i = 0; i < total_chunks; ++i)
     {
         // Receive the computed chunk back from the slave
+        // Standard-mode blocking receive
+        // Returns only after the receive buffer contains the newly received message
         MPI_Recv(chunk, CHUNK_SIZE, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG,
                  MPI_COMM_WORLD, &status);
         // Get the process that sent the data and send it the next chunk
@@ -61,6 +64,8 @@ void master(int n_proc)
 
         if (n_sent < total_chunks)
         {
+            // Standard-mode, blocking send
+            // Blocks until the message is sent to the destination
             MPI_Send(&data[n_sent*CHUNK_SIZE], CHUNK_SIZE, MPI_DOUBLE, proc, 
                      n_sent, MPI_COMM_WORLD);
             n_sent++;
@@ -70,6 +75,8 @@ void master(int n_proc)
     // Send all the slave processes STOP signal, (TAG of CHUNK_SIZE)
     for (int i = 1; i < n_proc; ++i)
     {
+        // Standard-mode, blocking send
+        // Blocks until the message is sent to the destination
         MPI_Send(chunk, CHUNK_SIZE, MPI_DOUBLE, i, 
                  CHUNK_SIZE, MPI_COMM_WORLD);
     }
@@ -99,6 +106,8 @@ void slave(int proc_id)
     MPI_Status status;                 // MPI status struct
 
     // Receive the chunk to calculate from MASTER
+    // Standard-mode blocking receive
+    // Returns only after the receive buffer contains the newly received message
     MPI_Recv(chunk, CHUNK_SIZE, MPI_DOUBLE, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
     n_recv = status.MPI_TAG;
 
@@ -112,9 +121,13 @@ void slave(int proc_id)
         }
 
         // Send the results back to MASTER, include in TAG the chunk that was calculated
+        // Standard-mode, blocking send
+        // Blocks until the message is sent to the destination
         MPI_Send(result, CHUNK_SIZE, MPI_DOUBLE, MASTER, n_recv, MPI_COMM_WORLD);
         
         // Wait for the next chunk of data to be received
+        // Standard-mode blocking receive
+        // Returns only after the receive buffer contains the newly received message
         MPI_Recv(chunk, CHUNK_SIZE, MPI_DOUBLE, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         n_recv = status.MPI_TAG;
     }
@@ -127,14 +140,17 @@ int main (int argc, char* argv[])
     int n_proc;             // Number of processes
 
     // Initialize MPI
+    // Must be done in main thread, can only be initialized once
+    // Initializes the MPI execution environment
     MPI_Init(&argc, &argv);
     
     // Get the current number of processes
+    // Gives the rank of the calling process in the communicator
     MPI_Comm_size(MPI_COMM_WORLD, &n_proc);
 
     // Get the current process id
+    // Gives the size of the group associated with a communicator 
     MPI_Comm_rank(MPI_COMM_WORLD, &proc_id);
-    
 
     if (proc_id == MASTER)
     {
@@ -146,5 +162,6 @@ int main (int argc, char* argv[])
     }
 
     // Required to terminate all MPI processes
+    // Terminates the MPI execution environment
     MPI_Finalize();
 }
