@@ -11,6 +11,17 @@
 // Define process 0 as MASTER
 #define MASTER 0
 
+#define DATA_SIZE 10000
+#define CHUNK_SIZE 100
+
+void master(int n_proc)
+{
+    double data[DATA_SIZE] = { 0 };
+    double chunks[CHUNK_SIZE] = { 0 };
+    double results[DATA_SIZE] = { 0 };
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
 int main (int argc, char* argv[])
 {
     int proc_id;            // Process rank
