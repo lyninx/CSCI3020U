@@ -62,7 +62,7 @@ int main (int argc, char* argv[])
     
     if(proc_id == MASTER){
         master(n_proc);
-    } else {
+    } else if(proc_id == SLAVE){
         slave(proc_id);
     }
 
