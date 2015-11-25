@@ -60,12 +60,9 @@ int main (int argc, char* argv[])
 
     MPI_Comm_rank(MPI_COMM_WORLD, &proc_id);
     
-    if(proc_id == MASTER)
-    {
+    if(proc_id == MASTER){
         master(n_proc);
-    }
-    else
-    {
+    } else {
         slave(proc_id);
     }
 
