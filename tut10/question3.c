@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <mpi.h>
+#include <stdbool.h>
 
 #define MATRIX_SIZE 100
 
@@ -143,6 +144,39 @@ void multiply_matricies_slave(int row_count)
 }
 
 /**
+* multiplies matricies without multiprocessing.
+**/
+void multiply_matricies_simple(int A[], int B[], int C[])
+{
+	// initialize C to 0
+	int size = MATRIX_SIZE*MATRIX_SIZE;
+	for(int i =0; i < size; i++)
+		C[i] = 0;
+
+	// sum 41
+	for(int i =0; i < MATRIX_SIZE; i++)
+		for(int j = 0; j < MATRIX_SIZE; j++)
+			for(int k = 0; k < MATRIX_SIZE; k++)
+				C[i*MATRIX_SIZE + j] += A[i*MATRIX_SIZE + k]*B[k*MATRIX_SIZE + j];
+}
+
+/**
+* compares two matrices for equality.
+**/
+bool compare_matricies(int A[], int B[])
+{
+	int max = MATRIX_SIZE*MATRIX_SIZE;
+	for(int i = 0; i < max; i++)
+	{
+		if(A[i] != B[i])
+			return false;
+	}
+
+
+	return true;
+}
+
+/**
 * Driver
 **/
 int main(int argc, char* argv[]){
@@ -218,6 +252,16 @@ int main(int argc, char* argv[]){
 		// print results
 		printf("[ MATRIX C %dx%d ]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(C, 4, 4, 4, 4);
+
+		// announce how you're gonna verify the result
+		printf("Evaluation of result:");
+
+		// now do it
+		int C2[MATRIX_SIZE*MATRIX_SIZE];
+		multiply_matricies_simple(A, B, C2);
+		bool success = compare_matricies(C, C2);
+		printf(" %s\n", success ? "correct" : "incorrect");
+
 	}
 	else
 	{
