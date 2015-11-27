@@ -4,7 +4,7 @@
 
 2. Explain briefly how MPI supports running on separate computers in a cluster. The host file includes names of all the computerson which your MPI job will execute.
 
-	The use of a host file allows MPI to support running on seperate computers in a cluster which is used as a parameter during the execution of the program. You could also simply specify all of the computers as paramaters during execution as well. All computers should have SSH access and avoid the SSH password prompt.
+	The use of a host file allows MPI to support running on seperate computers in a cluster which is used as a parameter during the execution of the program. You could also simply specify all of the computers as parameters during execution as well. All computers should have SSH access and avoid the SSH password prompt.
 
 3. Name four​ MPI data types (hint they all start with MPI_​).
 
@@ -12,33 +12,33 @@
 
 4. Read the documentation for and explain the MPI_Bcast​ function.
 
-	The MPI_Bcast function broadcasts a message from the root process to all processes of the group (this includes itself). This allows the root process to easily send data to all processes.
+	The MPI_Bcast function broadcasts a message from the root process to all processes of the group (this includes itself). This allows the root process to easily send data to all processes. To optimize this procedure, the root does not nessecarily send this message directly to every process: child processes help out by propogating the chunk to other processes after recieving the data, creating a tree-like structure of communication.
 
 5. Read the documentation for and explain the MPI_Send​ and MPI_Recv​ functions.
 
 	MPI_Send​: 
 
-		Sends data based on the parameters. This routine blocks until the message is received by the destination process.
+		Sends data to another process. This routine blocks until the message is received by the destination process.
 
 		int MPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm)
 
-		buf = Initial address of the data being sent
-		count = Number of elements being sent in the buf
-		datatype = The datatype of the elements being sent
-		dest = Rank of the recieving destination
-		tag = The message tag
+		buf = Pointer to the first element to send
+		count = Number of elements to send
+		datatype = The datatype of the elements being sent (MPI_INT, MPI_LONG, etc.)
+		dest = Rank of the receiving process
+		tag = Integer passed along with the data that acts as metainformation
 		comm = Communicator handle
 
 	MPI_Recv​: 
 
-		Recieves data based on the parameters. This routine blocks until the recieve buffer recieves the newly received message.
+		Receives data from another process. Like MPI_Send, this routine blocks until the receive buffer receives the newly received message.
 
 		int MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status *status)
 
-		buf = Initial address of the receiving element
+		buf = Pointer to the first element of the recieving buffer.
 		count = Maximum number of elements in the receiving buffer
 		datatype = The datatype of the elements being recieved
-		dest = Rank of the source
-		tag = The message tag
+		dest = Rank of the source process
+		tag = Looks for a message bearing this tag (may be set to accept any tag)
 		comm = Communicator handle
-		status = The status object
+		status = Stores status here.
