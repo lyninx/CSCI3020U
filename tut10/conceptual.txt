@@ -29,9 +29,9 @@
 		tag = The message tag
 		comm = Communicator handle
 
-	MPI_Send​: 
+	MPI_Recv​: 
 
-		Sends data based on the parameters. This routine blocks until the message is received by the destination process.
+		Recieves data based on the parameters. This routine blocks until the recieve buffer recieves the newly received message.
 
 		int MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status *status)
 
