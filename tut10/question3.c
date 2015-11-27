@@ -41,11 +41,62 @@ void print_matrix(int m[], int nleft, int nright, int ntop, int nbot)
 	printf("\n");
 }
 
-/*void multiply_matricies_master(int A[], int B[], int C[], int nprocs)
+// master procedure
+void multiply_matricies_master(int A[], int B[], int C[], int world_size, int rows_per_proc[])
 {
-	//todo
-}*/
+	// send each row of A
+	int n_sent = 0;
+	for(int i = 0; i < world_size; i++)
+	{
+		if(i != MASTER_PROC)
+		{
+			// figure out number of rows
+			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
 
+			printf("[master] sending to %d\n", i);
+
+			// send that chunk
+			if(MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD) != MPI_SUCCESS)
+			{
+				fprintf(stderr, "[master]Error: send A failed\n");
+			}
+
+			// update n_sent
+			n_sent += chunk_size;
+		}
+	}
+
+	// broadcast B
+	if(MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, MASTER_PROC, MPI_COMM_WORLD) != MPI_SUCCESS)
+	{
+		fprintf(stderr, "[master]Error: broadcast failed\n");
+	}
+
+	// get results for C
+	int n_recv = 0;
+	for(int i = 0; i < world_size; i++)
+	{
+		if(i != MASTER_PROC)
+		{
+			// get chunk size
+			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
+
+			printf("[master] recieving [%d, %d] from %d\n", n_recv, n_recv + chunk_size, i);
+
+			// read into C
+			if(MPI_Recv(&C[n_recv], chunk_size, MPI_INTEGER, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE) != MPI_SUCCESS)
+			{
+				fprintf(stderr, "[master]Error: recieve C from %d failed\n", i);
+			}
+
+			// update n_recv
+			n_recv += chunk_size;
+
+		}
+	}
+}
+
+// slave procedure
 void multiply_matricies_slave(int world_rank, int row_count)
 {
 	int chunk_size = MATRIX_SIZE*row_count;
@@ -127,7 +178,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-
+		
 		// print matricies
 		printf("[ MATRIX A ]:\n");
 		print_matrix(A, 4, 4, 4, 4);
@@ -136,56 +187,10 @@ int main(int argc, char* argv[]){
 		printf("[ MATRIX C ]:\n");
 		print_matrix(C, 4, 4, 4, 4);
 
-		// send each row of A
-		int n_sent = 0;
-		for(int i = 0; i < world_size; i++)
-		{
-			if(i != MASTER_PROC)
-			{
-				// figure out number of rows
-				int chunk_size = MATRIX_SIZE*rows_per_proc[i];
+		// multiply em
+		multiply_matricies_master(A, B, C, world_size, rows_per_proc);
 
-				printf("[master] sending to %d\n", i);
-
-				// send that chunk
-				if(MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD) != MPI_SUCCESS)
-				{
-					fprintf(stderr, "[master]Error: send A failed\n");
-				}
-
-				// update n_sent
-				n_sent += chunk_size;
-			}
-		}
-
-		// broadcast B
-		if(MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, MASTER_PROC, MPI_COMM_WORLD) != MPI_SUCCESS)
-		{
-			fprintf(stderr, "[master]Error: broadcast failed\n");
-		}
-
-		// get results for C
-		int n_recv = 0;
-		for(int i = 0; i < world_size; i++)
-		{
-			if(i != MASTER_PROC)
-			{
-				// get chunk size
-				int chunk_size = MATRIX_SIZE*rows_per_proc[i];
-
-				printf("[master] recieving [%d, %d] from %d\n", n_recv, n_recv + chunk_size, i);
-
-				// read into C
-				if(MPI_Recv(&C[n_recv], chunk_size, MPI_INTEGER, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE) != MPI_SUCCESS)
-				{
-					fprintf(stderr, "[master]Error: recieve C from %d failed\n", i);
-				}
-
-				// update n_recv
-				n_recv += chunk_size;
-
-			}
-		}
+		
 		
 		// print results
 		printf("[ MATRIX C ]:\n");
