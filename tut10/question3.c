@@ -60,9 +60,11 @@ int main(int argc, char* argv[]){
 	int rows_per_proc[world_size];
 	int rows_per_proc_avg = MATRIX_SIZE/(world_size-1);
 	rows_per_proc[0] = 0;
-	for(int i = 1; i < world_size; i++)
+	for(int i = 0; i < world_size; i++)
 	{
-		if(i == world_size-1)
+		if(i == MASTER_PROC)
+			rows_per_proc[i] = 0;
+		else if(i == world_size-1 || (i == world_size-2 && MASTER_PROC == world_size-1))
 			rows_per_proc[i] = MATRIX_SIZE - rows_per_proc_avg*(world_size-2);
 		else
 			rows_per_proc[i] = rows_per_proc_avg;
@@ -132,21 +134,25 @@ int main(int argc, char* argv[]){
 
 		// get results for C
 		int n_recv = 0;
-		for(int i = 1; i < world_size; i++)
+		for(int i = 0; i < world_size; i++)
 		{
-			// get chunk size
-			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
-
-			printf("[master] recieving [%d, %d] from %d\n", n_recv, n_recv + chunk_size, i);
-
-			// read into C
-			if(MPI_Recv(&C[n_recv], chunk_size, MPI_INTEGER, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE) != MPI_SUCCESS)
+			if(i != MASTER_PROC)
 			{
-				fprintf(stderr, "[master]Error: recieve C from %d failed\n", i);
-			}
+				// get chunk size
+				int chunk_size = MATRIX_SIZE*rows_per_proc[i];
 
-			// update n_recv
-			n_recv += chunk_size;
+				printf("[master] recieving [%d, %d] from %d\n", n_recv, n_recv + chunk_size, i);
+
+				// read into C
+				if(MPI_Recv(&C[n_recv], chunk_size, MPI_INTEGER, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE) != MPI_SUCCESS)
+				{
+					fprintf(stderr, "[master]Error: recieve C from %d failed\n", i);
+				}
+
+				// update n_recv
+				n_recv += chunk_size;
+
+			}
 		}
 		
 		// print results
