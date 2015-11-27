@@ -118,6 +118,11 @@ void multiply_matricies_slave(int row_count)
 	// slice of C for this proc
 	int C_chunk[chunk_size];
 
+
+	// initialize C to 0
+	for(int i = 0; i < chunk_size; i++)
+		C_chunk[i] = 0;
+
 	// status of recieved data
 	MPI_Status status;
 
@@ -193,9 +198,11 @@ int main(int argc, char* argv[]){
 		{
 			for(int j = 0; j < MATRIX_SIZE; j++)
 			{
-				A[i*MATRIX_SIZE + j] = i+j+2;
-				B[i*MATRIX_SIZE + j] = i == j ? 3 : 0;
-				C[i*MATRIX_SIZE + j] = 0;
+				// initialize A to the row number
+				A[i*MATRIX_SIZE + j] = i+1;
+
+				// have B be diagonal with increasing entries
+				B[i*MATRIX_SIZE + j] = i == j ? i+1 : 0;
 			}
 		}
 
