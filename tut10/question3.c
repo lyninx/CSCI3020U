@@ -110,14 +110,20 @@ int main(int argc, char* argv[]){
 			printf("[master] sending to %d\n", i);
 
 			// send that chunk
-			MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD);
+			if(MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD) != MPI_SUCCESS)
+			{
+				fprintf(stderr, "[master]Error: send A failed\n");
+			}
 
 			// update n_sent
 			n_sent += chunk_size;
 		}
 
 		// broadcast B
-		MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, 0, MPI_COMM_WORLD);
+		if(MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, 0, MPI_COMM_WORLD) != MPI_SUCCESS)
+		{
+			fprintf(stderr, "[master]Error: broadcast failed\n");
+		}
 
 		// get results for C
 		int n_recv = 0;
@@ -126,10 +132,13 @@ int main(int argc, char* argv[]){
 			// get chunk size
 			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
 
-			printf("[master] recieving from %d\n", i);
+			printf("[master] recieving [%d, %d] from %d\n", n_recv, n_recv + chunk_size, i);
 
 			// read into C
-			MPI_Recv(&C[n_recv], chunk_size, MPI_INTEGER, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+			if(MPI_Recv(&C[n_recv], chunk_size, MPI_INTEGER, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE) != MPI_SUCCESS)
+			{
+				fprintf(stderr, "[master]Error: recieve C from %d failed\n", i);
+			}
 
 			// update n_recv
 			n_recv += chunk_size;
