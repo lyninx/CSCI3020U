@@ -7,8 +7,10 @@
 
 #define MASTER_PROC 0
 
-// convenience print.
-// set it up to not flood console too badly.
+/**
+* convenience print.
+* set it up to not flood console too badly.
+**/
 void print_matrix(int m[], int nleft, int nright, int ntop, int nbot)
 {
 	// go through each row
@@ -41,7 +43,13 @@ void print_matrix(int m[], int nleft, int nright, int ntop, int nbot)
 	printf("\n");
 }
 
-// master procedure
+/**
+* Master procedure;
+* Calculates product of matricies 'A' and 'B' AB and stores in 'C'.
+* The work is split up into procedures depending on the number of rows
+* specified in 'rows_per_proc', which has a size equal to the number of
+* procedures indicated by 'world_size'.
+**/
 void multiply_matricies_master(int A[], int B[], int C[], int world_size, int rows_per_proc[])
 {
 	// send each row of A
@@ -92,29 +100,46 @@ void multiply_matricies_master(int A[], int B[], int C[], int world_size, int ro
 	}
 }
 
-// slave procedure
+/**
+* Slave procedure;
+* Calculates product AB for 'row_count' rows.
+**/
 void multiply_matricies_slave(int row_count)
 {
+	// size of array to recieve
 	int chunk_size = MATRIX_SIZE*row_count;
-	MPI_Status status;
+
+	// slice of A for this proc
 	int A_chunk[chunk_size];
+
+	// operand B
 	int B[MATRIX_SIZE*MATRIX_SIZE];
+
+	// slice of C for this proc
 	int C_chunk[chunk_size];
+
+	// status of recieved data
+	MPI_Status status;
+
+	// recieve slice of A
 	MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
-
+	// recieve B
 	MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, MASTER_PROC, MPI_COMM_WORLD);
 
-	// do calculations
+	// put result of matrix multiplication into C slice
 	for(int i = 0; i < row_count; i++)
 		for(int j = 0; j < MATRIX_SIZE; j++)
 			for(int k = 0; k < MATRIX_SIZE; k++)
 				C_chunk[i*MATRIX_SIZE + j] += A_chunk[i*MATRIX_SIZE + k] * B[k*MATRIX_SIZE + j];
 
-	// return result
+	// send C slice back to master proc
 	MPI_Send(C_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, 0, MPI_COMM_WORLD);
 }
 
+/**
+* Driver
+**/
 int main(int argc, char* argv[]){
 	
 	
@@ -130,22 +155,28 @@ int main(int argc, char* argv[]){
 	int world_rank;
 	MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-	// calculate what rows are given to which processes
+	// number of rows allocated to each process
 	int rows_per_proc[world_size];
+
+	// number of rows allocated to each process, but like floored or something.
 	int rows_per_proc_avg = MATRIX_SIZE/(world_size-1);
-	rows_per_proc[0] = 0;
+
+	// calculate what rows are given to which processes
 	for(int i = 0; i < world_size; i++)
 	{
 		if(i == MASTER_PROC)
+			// master process ain't doing any of this.
 			rows_per_proc[i] = 0;
 		else if(i == world_size-1 || (i == world_size-2 && MASTER_PROC == world_size-1))
+			// the last slave process will take on the remaining rows.
 			rows_per_proc[i] = MATRIX_SIZE - rows_per_proc_avg*(world_size-2);
 		else
+			// assign the number we calculated before to most slaves.
 			rows_per_proc[i] = rows_per_proc_avg;
 	}
 
 
-	// master process
+	// split depending on proc number
 	if(world_rank == MASTER_PROC)
 	{
 		// operand A
@@ -156,7 +187,6 @@ int main(int argc, char* argv[]){
 
 		// result matrix
 		int C[MATRIX_SIZE*MATRIX_SIZE];
-
 
 		// initialize matrices
 		for(int i = 0; i < MATRIX_SIZE; i++)
@@ -169,7 +199,6 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-
 		// print matricies
 		printf("[ MATRIX A %dx%d ]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(A, 4, 4, 4, 4);
@@ -178,24 +207,18 @@ int main(int argc, char* argv[]){
 
 		// multiply em
 		multiply_matricies_master(A, B, C, world_size, rows_per_proc);
-
-		
 		
 		// print results
 		printf("[ MATRIX C %dx%d ]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(C, 4, 4, 4, 4);
-
-
-
 	}
-	// slave process
 	else
 	{
+		// slave process
 		multiply_matricies_slave(rows_per_proc[world_rank]);
 	}
 
-
-	// done with this environment
+	// done with this procedure
 	MPI_Finalize();
 
 
