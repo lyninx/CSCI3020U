@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
 			for(int j = 0; j < MATRIX_SIZE; j++)
 			{
 				A[i*MATRIX_SIZE + j] = i;
-				B[i*MATRIX_SIZE + j] = j;
+				B[i*MATRIX_SIZE + j] = i == j ? 3 : 0;
 				C[i*MATRIX_SIZE + j] = 0;
 			}
 		}
@@ -162,7 +162,6 @@ int main(int argc, char* argv[]){
 		int C_chunk[chunk_size];
 		MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		int n_sent = status.MPI_TAG;
-		int row_offset = n_sent / MATRIX_SIZE;
 
 		printf("[proc %d] recieved chunk [%d, %d)\n", world_rank, n_sent, n_sent + chunk_size);
 
@@ -172,20 +171,9 @@ int main(int argc, char* argv[]){
 
 		// do calculations
 		for(int i = 0; i < row_count; i++)
-		{
-			// calculate offset
-			int offset = (i + row_offset)*MATRIX_SIZE;
 			for(int j = 0; j < MATRIX_SIZE; j++)
-			{
-				//todo
-				C_chunk[i*MATRIX_SIZE + j] = B[offset + j];
-
 				for(int k = 0; k < MATRIX_SIZE; k++)
-				{
-					//todo
-				}
-			}
-		}
+					C_chunk[i*MATRIX_SIZE + j] = A_chunk[i*MATRIX_SIZE + k] * B[k*MATRIX_SIZE + j];
 
 		// return result
 		printf("[proc %d] sending result\n", world_rank);
