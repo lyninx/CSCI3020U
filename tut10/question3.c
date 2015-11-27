@@ -54,6 +54,19 @@ int main(int argc, char* argv[]){
 	int world_rank;
 	MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
+	// calculate what rows are given to which processes
+	int rows_per_proc[world_size];
+	int rows_per_proc_avg = MATRIX_SIZE/(world_size-1);
+	rows_per_proc[0] = 0;
+	for(int i = 1; i < world_size; i++)
+	{
+		if(i == world_size-1)
+			rows_per_proc[i] = MATRIX_SIZE - rows_per_proc_avg*(world_size-2);
+		else
+			rows_per_proc[i] = rows_per_proc_avg;
+	}
+
+
 	// master process
 	if(world_rank == 0)
 	{
@@ -66,6 +79,7 @@ int main(int argc, char* argv[]){
 		// result matrix
 		int C[MATRIX_SIZE*MATRIX_SIZE];
 
+
 		// initialize matrices
 		for(int i = 0; i < MATRIX_SIZE; i++)
 		{
@@ -77,15 +91,8 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-		// broadcast each row of A
-		for(int i = 0; i < MATRIX_SIZE; i++)
-		{
-			//MPI_Send((void*)A[i], MATRIX_SIZE, MPI_INTEGER, i % world_size)
-		}
-
-		//todo
-
-		// print results
+		
+		// print matricies
 		printf("[ MATRIX A ]:\n");
 		print_matrix(A, 4, 4, 4, 4);
 		printf("[ MATRIX B ]:\n");
@@ -93,11 +100,39 @@ int main(int argc, char* argv[]){
 		printf("[ MATRIX C ]:\n");
 		print_matrix(C, 4, 4, 4, 4);
 
+		// broadcast each row of A
+		int n_sent = 0;
+		for(int i = 1; i < world_size; i++)
+		{
+			// figure out number of rows
+			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
+
+			// send that chunk
+			MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD);
+
+			// update n_sent
+			n_sent += chunk_size;
+		}
+
+		//todo
+
+		
+
 
 	}
 	// slave process
 	else
 	{
+		int chunk_size = MATRIX_SIZE*rows_per_proc[world_rank];
+		MPI_Status status;
+		int A_chunk[chunk_size];
+		MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		int n_sent = status.MPI_TAG;
+
+		printf("[proc %d] recieved chunk [%d, %d)\n", world_rank, n_sent, n_sent + chunk_size);
+
+
+
 
 	}
 
