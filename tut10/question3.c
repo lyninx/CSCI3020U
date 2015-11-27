@@ -41,6 +41,38 @@ void print_matrix(int m[], int nleft, int nright, int ntop, int nbot)
 	printf("\n");
 }
 
+/*void multiply_matricies_master(int A[], int B[], int C[], int nprocs)
+{
+	//todo
+}*/
+
+void multiply_matricies_slave(int world_rank, int row_count)
+{
+	int chunk_size = MATRIX_SIZE*row_count;
+	MPI_Status status;
+	int A_chunk[chunk_size];
+	int B[MATRIX_SIZE*MATRIX_SIZE];
+	int C_chunk[chunk_size];
+	MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+	int n_sent = status.MPI_TAG;
+
+	printf("[proc %d] recieved chunk [%d, %d)\n", world_rank, n_sent, n_sent + chunk_size);
+
+
+	MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, MASTER_PROC, MPI_COMM_WORLD);
+	printf("[proc %d] recieved B\n", world_rank);
+
+	// do calculations
+	for(int i = 0; i < row_count; i++)
+		for(int j = 0; j < MATRIX_SIZE; j++)
+			for(int k = 0; k < MATRIX_SIZE; k++)
+				C_chunk[i*MATRIX_SIZE + j] += A_chunk[i*MATRIX_SIZE + k] * B[k*MATRIX_SIZE + j];
+
+	// return result
+	printf("[proc %d] sending result\n", world_rank);
+	MPI_Send(C_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, 0, MPI_COMM_WORLD);
+}
+
 int main(int argc, char* argv[]){
 	
 	
@@ -165,33 +197,7 @@ int main(int argc, char* argv[]){
 	// slave process
 	else
 	{
-		int row_count = rows_per_proc[world_rank];
-		int chunk_size = MATRIX_SIZE*row_count;
-		MPI_Status status;
-		int A_chunk[chunk_size];
-		int B[MATRIX_SIZE*MATRIX_SIZE];
-		int C_chunk[chunk_size];
-		MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		int n_sent = status.MPI_TAG;
-
-		printf("[proc %d] recieved chunk [%d, %d)\n", world_rank, n_sent, n_sent + chunk_size);
-
-
-		MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, MASTER_PROC, MPI_COMM_WORLD);
-		printf("[proc %d] recieved B\n", world_rank);
-
-		// do calculations
-		for(int i = 0; i < row_count; i++)
-			for(int j = 0; j < MATRIX_SIZE; j++)
-				for(int k = 0; k < MATRIX_SIZE; k++)
-					C_chunk[i*MATRIX_SIZE + j] += A_chunk[i*MATRIX_SIZE + k] * B[k*MATRIX_SIZE + j];
-
-		// return result
-		printf("[proc %d] sending result\n", world_rank);
-		MPI_Send(C_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, 0, MPI_COMM_WORLD);
-
-
-
+		multiply_matricies_slave(world_rank, rows_per_proc[world_rank]);
 	}
 
 
