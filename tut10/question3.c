@@ -178,14 +178,12 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-		
+
 		// print matricies
-		printf("[ MATRIX A ]:\n");
+		printf("[ MATRIX A %dx%d]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(A, 4, 4, 4, 4);
-		printf("[ MATRIX B ]:\n");
+		printf("[ MATRIX B %dx%d]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(B, 4, 4, 4, 4);
-		printf("[ MATRIX C ]:\n");
-		print_matrix(C, 4, 4, 4, 4);
 
 		// multiply em
 		multiply_matricies_master(A, B, C, world_size, rows_per_proc);
@@ -193,7 +191,7 @@ int main(int argc, char* argv[]){
 		
 		
 		// print results
-		printf("[ MATRIX C ]:\n");
+		printf("[ MATRIX C %dx%d]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(C, 4, 4, 4, 4);
 
 
