@@ -53,8 +53,6 @@ void multiply_matricies_master(int A[], int B[], int C[], int world_size, int ro
 			// figure out number of rows
 			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
 
-			printf("[master] sending to %d\n", i);
-
 			// send that chunk
 			if(MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD) != MPI_SUCCESS)
 			{
@@ -81,8 +79,6 @@ void multiply_matricies_master(int A[], int B[], int C[], int world_size, int ro
 			// get chunk size
 			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
 
-			printf("[master] recieving [%d, %d] from %d\n", n_recv, n_recv + chunk_size, i);
-
 			// read into C
 			if(MPI_Recv(&C[n_recv], chunk_size, MPI_INTEGER, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE) != MPI_SUCCESS)
 			{
@@ -97,7 +93,7 @@ void multiply_matricies_master(int A[], int B[], int C[], int world_size, int ro
 }
 
 // slave procedure
-void multiply_matricies_slave(int world_rank, int row_count)
+void multiply_matricies_slave(int row_count)
 {
 	int chunk_size = MATRIX_SIZE*row_count;
 	MPI_Status status;
@@ -105,13 +101,9 @@ void multiply_matricies_slave(int world_rank, int row_count)
 	int B[MATRIX_SIZE*MATRIX_SIZE];
 	int C_chunk[chunk_size];
 	MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	int n_sent = status.MPI_TAG;
-
-	printf("[proc %d] recieved chunk [%d, %d)\n", world_rank, n_sent, n_sent + chunk_size);
 
 
 	MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, MASTER_PROC, MPI_COMM_WORLD);
-	printf("[proc %d] recieved B\n", world_rank);
 
 	// do calculations
 	for(int i = 0; i < row_count; i++)
@@ -120,7 +112,6 @@ void multiply_matricies_slave(int world_rank, int row_count)
 				C_chunk[i*MATRIX_SIZE + j] += A_chunk[i*MATRIX_SIZE + k] * B[k*MATRIX_SIZE + j];
 
 	// return result
-	printf("[proc %d] sending result\n", world_rank);
 	MPI_Send(C_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, 0, MPI_COMM_WORLD);
 }
 
@@ -180,9 +171,9 @@ int main(int argc, char* argv[]){
 
 
 		// print matricies
-		printf("[ MATRIX A %dx%d]:\n", MATRIX_SIZE, MATRIX_SIZE);
+		printf("[ MATRIX A %dx%d ]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(A, 4, 4, 4, 4);
-		printf("[ MATRIX B %dx%d]:\n", MATRIX_SIZE, MATRIX_SIZE);
+		printf("[ MATRIX B %dx%d ]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(B, 4, 4, 4, 4);
 
 		// multiply em
@@ -191,7 +182,7 @@ int main(int argc, char* argv[]){
 		
 		
 		// print results
-		printf("[ MATRIX C %dx%d]:\n", MATRIX_SIZE, MATRIX_SIZE);
+		printf("[ MATRIX C %dx%d ]:\n", MATRIX_SIZE, MATRIX_SIZE);
 		print_matrix(C, 4, 4, 4, 4);
 
 
@@ -200,7 +191,7 @@ int main(int argc, char* argv[]){
 	// slave process
 	else
 	{
-		multiply_matricies_slave(world_rank, rows_per_proc[world_rank]);
+		multiply_matricies_slave(rows_per_proc[world_rank]);
 	}
 
 
