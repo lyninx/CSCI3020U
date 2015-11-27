@@ -91,7 +91,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-		
+
 		// print matricies
 		printf("[ MATRIX A ]:\n");
 		print_matrix(A, 4, 4, 4, 4);
@@ -100,12 +100,14 @@ int main(int argc, char* argv[]){
 		printf("[ MATRIX C ]:\n");
 		print_matrix(C, 4, 4, 4, 4);
 
-		// broadcast each row of A
+		// send each row of A
 		int n_sent = 0;
 		for(int i = 1; i < world_size; i++)
 		{
 			// figure out number of rows
 			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
+
+			printf("[master] sending to %d\n", i);
 
 			// send that chunk
 			MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD);
@@ -114,23 +116,71 @@ int main(int argc, char* argv[]){
 			n_sent += chunk_size;
 		}
 
-		//todo
+		// broadcast B
+		MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, 0, MPI_COMM_WORLD);
 
+		// get results for C
+		int n_recv = 0;
+		for(int i = 1; i < world_size; i++)
+		{
+			// get chunk size
+			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
+
+			printf("[master] recieving from %d\n", i);
+
+			// read into C
+			MPI_Recv(&C[n_recv], chunk_size, MPI_INTEGER, i, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+			// update n_recv
+			n_recv += chunk_size;
+		}
 		
+		// print results
+		printf("[ MATRIX C ]:\n");
+		print_matrix(C, 4, 4, 4, 4);
+
 
 
 	}
 	// slave process
 	else
 	{
-		int chunk_size = MATRIX_SIZE*rows_per_proc[world_rank];
+		int row_count = rows_per_proc[world_rank];
+		int chunk_size = MATRIX_SIZE*row_count;
 		MPI_Status status;
 		int A_chunk[chunk_size];
+		int B[MATRIX_SIZE*MATRIX_SIZE];
+		int C_chunk[chunk_size];
 		MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		int n_sent = status.MPI_TAG;
+		int row_offset = n_sent / MATRIX_SIZE;
 
 		printf("[proc %d] recieved chunk [%d, %d)\n", world_rank, n_sent, n_sent + chunk_size);
 
+
+		MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, 0, MPI_COMM_WORLD);
+		printf("[proc %d] recieved B\n", world_rank);
+
+		// do calculations
+		for(int i = 0; i < row_count; i++)
+		{
+			// calculate offset
+			int offset = (i + row_offset)*MATRIX_SIZE;
+			for(int j = 0; j < MATRIX_SIZE; j++)
+			{
+				//todo
+				C_chunk[offset + j] = B[offset + j];
+
+				for(int k = 0; k < MATRIX_SIZE; k++)
+				{
+					//todo
+				}
+			}
+		}
+
+		// return result
+		printf("[proc %d] sending result\n", world_rank);
+		MPI_Send(C_chunk, chunk_size, MPI_INTEGER, 0, 0, MPI_COMM_WORLD);
 
 
 
