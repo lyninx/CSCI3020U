@@ -178,7 +178,7 @@ int main(int argc, char* argv[]){
 			for(int j = 0; j < MATRIX_SIZE; j++)
 			{
 				//todo
-				C_chunk[offset + j] = B[offset + j];
+				C_chunk[i*MATRIX_SIZE + j] = B[offset + j];
 
 				for(int k = 0; k < MATRIX_SIZE; k++)
 				{
