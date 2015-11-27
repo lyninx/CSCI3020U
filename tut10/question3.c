@@ -5,6 +5,8 @@
 
 #define MATRIX_SIZE 100
 
+#define MASTER_PROC 0
+
 // convenience print.
 // set it up to not flood console too badly.
 void print_matrix(int m[], int nleft, int nright, int ntop, int nbot)
@@ -68,7 +70,7 @@ int main(int argc, char* argv[]){
 
 
 	// master process
-	if(world_rank == 0)
+	if(world_rank == MASTER_PROC)
 	{
 		// operand A
 		int A[MATRIX_SIZE*MATRIX_SIZE];
@@ -102,25 +104,28 @@ int main(int argc, char* argv[]){
 
 		// send each row of A
 		int n_sent = 0;
-		for(int i = 1; i < world_size; i++)
+		for(int i = 0; i < world_size; i++)
 		{
-			// figure out number of rows
-			int chunk_size = MATRIX_SIZE*rows_per_proc[i];
-
-			printf("[master] sending to %d\n", i);
-
-			// send that chunk
-			if(MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD) != MPI_SUCCESS)
+			if(i != MASTER_PROC)
 			{
-				fprintf(stderr, "[master]Error: send A failed\n");
-			}
+				// figure out number of rows
+				int chunk_size = MATRIX_SIZE*rows_per_proc[i];
 
-			// update n_sent
-			n_sent += chunk_size;
+				printf("[master] sending to %d\n", i);
+
+				// send that chunk
+				if(MPI_Send(&A[n_sent], chunk_size, MPI_INTEGER, i, n_sent, MPI_COMM_WORLD) != MPI_SUCCESS)
+				{
+					fprintf(stderr, "[master]Error: send A failed\n");
+				}
+
+				// update n_sent
+				n_sent += chunk_size;
+			}
 		}
 
 		// broadcast B
-		if(MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, 0, MPI_COMM_WORLD) != MPI_SUCCESS)
+		if(MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, MASTER_PROC, MPI_COMM_WORLD) != MPI_SUCCESS)
 		{
 			fprintf(stderr, "[master]Error: broadcast failed\n");
 		}
@@ -160,13 +165,13 @@ int main(int argc, char* argv[]){
 		int A_chunk[chunk_size];
 		int B[MATRIX_SIZE*MATRIX_SIZE];
 		int C_chunk[chunk_size];
-		MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		MPI_Recv(A_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		int n_sent = status.MPI_TAG;
 
 		printf("[proc %d] recieved chunk [%d, %d)\n", world_rank, n_sent, n_sent + chunk_size);
 
 
-		MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, 0, MPI_COMM_WORLD);
+		MPI_Bcast(B, MATRIX_SIZE*MATRIX_SIZE, MPI_INTEGER, MASTER_PROC, MPI_COMM_WORLD);
 		printf("[proc %d] recieved B\n", world_rank);
 
 		// do calculations
@@ -177,7 +182,7 @@ int main(int argc, char* argv[]){
 
 		// return result
 		printf("[proc %d] sending result\n", world_rank);
-		MPI_Send(C_chunk, chunk_size, MPI_INTEGER, 0, 0, MPI_COMM_WORLD);
+		MPI_Send(C_chunk, chunk_size, MPI_INTEGER, MASTER_PROC, 0, MPI_COMM_WORLD);
 
 
 
